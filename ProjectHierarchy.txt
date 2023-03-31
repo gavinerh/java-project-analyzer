@@ -127,7 +127,7 @@ AirRetroResponseBatchImpl.executeJob-46
                     [if isToAwardPromo]
                         RetroFacadeImpl.awardRetroPromotionOnline-87-[sends request to queue]
                     [else if isToReversePromo]
-                        RetroFacadeImpl.awardRetroPromotionAfterReversal-96-[sends request to queue] 
+                        RetroFacadeImpl.awardRetroPromotionAfterReversal-96-[sends request to async method]-[todo]
 
 
 RetroFacadeImpl.awardRetroPromotionOnline
@@ -135,19 +135,148 @@ RetroFacadeImpl.awardRetroPromotionOnline
     [check if is air or non-air]
     PromotionAwardingFacadeImpl.awardPromotions-133
         PromotionAwardingFacadeImpl.validateEligibilityRecord-237
+            [if eligibilityRecord == null, throw error]
+            [if userId == null || empty string, throw error]
+            [if kickedOffBy == null || empty string, throw error]
+            [else if kickedOffBy == PX && refId == null or empty string, throw error]
+            [else if kickedOffBy == TR || BR && batchId == null || empty string, throw error, batchDate == null, throw error]
+            [else if kickedOffBy == NR && transIds == null or empty string, throw error]
+            [else if kickedOffBy == FC && paxAndRefIdMap == null or empty map, throw error]
+            [else throw error as kickedOffBy does not match any values]
         [if not forceCredit and not pax manifest]
             [set promo type to AC]
             PromotionAwardingFacadeImpl.awardPromotion-177
+                PromotionAwardingImpl.extractEligibleRecordsForActivePromotions-51
+                    PromotionAwardingData.extractEligibleRecordsForActivePromotions
+                PromotionAwardingFacadeImpl.getAwardableMembers-309
+                    PromotionAwardingData.getAwardableMembers
+                [if eligibilityRecord.promoType == QL]
+                    PromotionAwardingImpl.awardPromotionFFPEliteBonus-86
+                        PromotionAwardingImpl.checkPromotionMaxLimitReached-490-[returns boolean]
+                            PromotionAwardingData.checkPromoMaxLimitReached
+                        PromotionAwardingImpl.checkCustomerAccountStatus-468-[returns boolean]
+                            CustomerAcctHandlerImpl.getCustomerAccountByIntID-40
+                                [if programCode == null or empty string]
+                                    [throw error]
+                                CustomerAcctHandlerImpl.getcustomerID-69-[returns customerID]
+                                    CustomerIDHandlerImpl.getCustomerID--[hierarchy done]
+                                [if customerID == null or empty string]
+                                    [throw error]
+                                CustomerAcctData.getCustomerAccountByIntID
+                            CustomerServiceImpl.verifyAcctStatusFuncEligibility--[hierarchy done]
+                            [end]
+                        PromotionAwardingImpl.checkCustomerType-455-[returns boolean]
+                            CustomerServiceImpl.getCustomerParticulars--[hierarchy done, returns customerParticulars obj]
+                            [if returned customerParticulars.getSpecialCustomerType != null]
+                                CustomerServiceImpl.verifyCustomerTypeFunc--[hierarchy done, returns a boolean]
+                                [returns the boolean from prev statement and end]
+                        [if the prev 2 boolean returned are both true]
+                            [check for duplicate, use the trans id from awd map to check for duplicate]
+                            PromotionAwardingData.getCountForDuplicateCheck--[returns dupCheck]
+                            PromotionAwardingData.checkForNewDupAward--[returns dupRes]
+                            [if !dupRes && !dupCheck]
+                                PromotionAwardingImpl.awardFFPEliteMiles-214
+                                PromotionAwardingImpl.awardNonMiles-177
+                                [if awardType == null || awardType != EN || awardType != MN]
+                                    PromotionAwardingData.voidAwardedRecordsInWkgTable
+                            [else]
+                                [if dupRes == true]
+                                    PromotionAwardingData.updateDuplicateAwdWkProcessFlg
+                        [else]
+                            PromotionAwardingData.updateErrorRecordsInWkgTable
+                [else]
+                    PromotionAwardingFacadeImpl.isPromotionAwardedToMember-315-[returns boolean]
+                        PromotionAwardingData.isPromotionAwardedToMember
+                    PromotionAwardingFacadeImpl.isKFAlrQualifiedToTargetedTier-322-[returns boolean]
+                        PromotionAwardingData.isKFAlrQualifiedToTargetedTier
+                    [if both statements above returns true]
+                    PromotionAwardingImpl.awardQualificationPromotion-498
+                        QualificationServiceImpl.forceQualifyByPromotion-106
+                            QualificationServiceImpl.forceQualifyByPromotion-112
+                                QualificationServiceImpl.forceQualify-138
+                                    QualificationServiceImpl.valididateForceQualAccountStatus-6967-[check account status]-todo
+                                    [target tier status cannot be null or basic tier]
+                                    QualificationServiceImpl.getTierStatByName-6950-todo
+                                    QualificationServiceImpl.validateTierType-6918
+                                        [just validate tierType from parameters]
+                                    [decide which action to perform and who will perform]
+                                    [if forceQualType == FX]
+                                        [if targetTierType == ELITE]
+                                            QualificationServiceImpl.processEliteCustToBeExtened-6327-todo
+                                        [else if targetTierType == PPS]
+                                            QualificationServiceImpl.processPPSCustToBeExtened-5997-todo
+                                    [else if forceQualType == FI]
+                                        [force reinstate case]
+                                        [if targetTierType == ELITE]
+                                            QualificationServiceImpl.processEliteCustToBeReinstate-3676-todo
+                                        [else if targetTierType == PPS]
+                                            QualificationServiceImpl.processPPSCustToBeReinstate-3299-todo
+                                    [else if forceQualType == FS]
+                                        [force softlanding case]
+                                        [if targetTierType == ELITE]
+                                            QualificationServiceImpl.processSoftlandQPPToSilver-3091-todo
+                                        [else if targetTierType == PPS]
+                                            QualificationServiceImpl.processSoftlandSolitaireToQPP-2567-todo
+                                    [else if forceQualType == FD]
+                                        [force downgrade]
+                                        QualificationServiceImpl.processDowngradeSolitaireToQPP-2396-todo
+                                    [else if forceQualType == ER]
+                                        [enable qpp tracking case]
+                                        QualificationServiceImpl.processEnableQPPTracking-2364-todo
+                                    [else]
+                                        [if targetTierType == ELITE]
+                                            QualificationServiceImpl.getEliteCustomerData-8250-[returns customerTier obj]-todo
+                                            [if customerTier.qlfyInd == EP]
+                                                TierUtil.compareUtil-570-[returns result]
+                                                    [compare first tier status hierarchy with that of second tier status]
+                                                    [if first is higher in hierarchy than second then return 1]
+                                                    [if first is lower in hierarchy than second, then return -1]
+                                                    [if first and second are on same hierarchy then return 0]
+                                                    [if any of the tier status hierarchy cannot be determined, return -2]
+                                                [if result == 0]
+                                                    [set cardCreateCD = RQ: requalify]
+                                                    QualificationServiceImpl.processEliteCustToBeRequalified-1171-todo
+                                                [else if result > 0]
+                                                    [set cardCreateCD = UP: upgrade]
+                                                    QualificationServiceImpl.processEliteCustToBeQualified-328-todo
+                                                [else throw error]
+                                            [else]
+                                                [non elite to elite tier]
+                                                [set cardCreateCD = UP: upgrade]
+                                                QualificationServiceImpl.processEliteCustToBeQualified-328-todo
+                                        [else if targetTierType == PPS]
+                                            QualificationServiceImpl.getPPSCustomerData-7750-[returns CustomerTier obj]
+                                                QualificationData.vLoadVOpps
+                                            [if customerTier.getQlfyInd != PP: pps_pre_qualify_ind]
+                                                TierUtil.compareUtil-570-[returns result]
+                                                [if result == 0]
+                                                    [set cardCreateCD = RQ: requalify]
+                                                    QualificationServiceImpl.processPPSCustToBeRequalified-1397
+                                                [else if result > 0]
+                                                    [set cardCreateCD = UP: upgrade]
+                                                    QualificationServiceImpl.processPPSCustToBeQualified-5184-todo
+                                                [else throw error]
+                                            [else]
+                                                [non pps to pps tier]
+                                                [set cardCreateCD = UP: upgrade]
+                                                QualificationServiceImpl.processPPSCustToBeQualified-5184-[hierarchy done]
+                                [end]     
+                        [if awardType == null || !(awardType == EN || MN)]
+                            PromotionAwardingData.voidAwardedRecordsInWkgTable
+                            PromotionAwardingData.updatePreSelAwdFlg
+                    PromotionAwardingFacadeImpl.tagPreSeletedAsAwarded-325
+                        PromotionAwardingData.updatePreSelAwdFlg
         [if forceCredit and pax manifest]
             [set promo type to SA]
-            PromotionAwardingFacadeImpl.awardPromotion-177
+            PromotionAwardingFacadeImpl.awardPromotion-177-[hierarchy done]
         [if not forceCredit and not pax manifest]
             [set promo type to QL]
-            PromotionAwardingFacadeImpl.awardPromotion-177
+            PromotionAwardingFacadeImpl.awardPromotion-177-[hierarchy done]
         [if not forceCredit and not pax manifest]
             [set promo type to AQ]
-            PromotionAwardingFacadeImpl.awardPromotion-177
+            PromotionAwardingFacadeImpl.awardPromotion-177-[hierarchy done]
         PromotionAwardingImpl.voidExtractedRecordsInTransTables-518
+            PromotionAwardingData.updatePromotionFlagInTransTables
 
 
 
@@ -1036,8 +1165,9 @@ BatchAirRetroServiceImpl.processTC-1174
                 AirAccrualImpl.checkAirEligibility-5058-[to perform air eligibility checks before accruing miles to members, checks include checks for codeshare flight, checkResidencyExclusion, checkFlightExclusion and validateTravelCls]
                     [deconstruct the parameters into separate obj]
                     AirAccrualImpl.checkAirlineCode-5282-[returns boolean isMI]
+                        [checks if airlineCode == MI]
                     [if !isMi && isCodeShare && (accrualFlg == FP) || accrualFlg == F]
-                        AccrualValidatorImpl.check3Star-814-[returns true]
+                        AccrualValidatorImpl.check3Star-814-[returns true, hierarchy done]
                     [if customer is not pending or OFFP]
                         AccrualValidatorImpl.setResidencyExclusionFlg-707-[residency exclusion checks]
                             AccrualValidatorImpl.getPrt-1450-[hierarchy done]
@@ -1113,6 +1243,8 @@ BatchAirRetroServiceImpl.processTC-1174
                                 [if exclDtLst size not 0]
                                     [if flightDtlExcl obj not null and flightDtlExcl.getIncExclInd == E]
                                         AccrualValidatorImpl.updateExclFlgs-488
+                                            [if ffpAwdFlg == Y, set to N, else set to Y]
+                                            [if eliteAwdFlg == Y set to N, else set to Y]
                                     AccrualValidatorImpl.setAwardFlg-443-[hierarchy done]
                                 [return acrTxn and end]
                     [set up updated accrualPax obj and return and end]
@@ -1264,17 +1396,242 @@ BatchAirRetroServiceImpl.processTC-1174
                                     [if ffpBktFlg == Y]
                                         [check if tier bonus records for the participant exists]
                                         ValidatorImpl.getTierBonus-105-[returns list of bonus records]
+                                            ReferenceData.getTierBonus
                                         [if bonus record list not empty]
                                             TierHandlerImpl.getTierBonusEligibility-34
+                                                TierHandlerImpl.getPPSCustomerData-179-[search in customer pps data, returns customerTier obj]
+                                                    QualificationData.getPPSRecordFromView
+                                                    QualificationData.getPPSRecord
+                                                [if tierBonusStartDate and tierBonusEndDate not null and tierBonusStartDate is before flightDate]
+                                                    [if tierBonusEndDate is after flightDate]
+                                                        [set retVal to cusTier.getTierStatus]
+                                                    [else if qlfyEndDate == tierBonusEndDate]
+                                                        AccrualData.getPASOnHoldDays
+                                                        [setting retVal from cusTier.getTierStatus if ...]
+                                                [if retVal == null]
+                                                    [search in customer elite data]
+                                                    TierHandlerImpl.getEliteCustomerData-126
+                                                        QualificationData.getEliteRecordFromView
+                                                        QualificationData.getEliteRecord
+                                                    [series of logic to check dates and set retVal]
+                                                    [if retVal still null]
+                                                        QualificationData.checkEliteHistoryForTierBonusEligibility--[set retVal]
+                                                [returns retVal and end]
                                             [check if member is eligible for elite miles, if tier is null, awardTierFlg = false]
                                         [compute mileage, not required for AC trans code as member has passed in the mileage]
                                         [if transCd != AC]
                                             AirAccrualImpl.computeMileage-6919-[compute mileage to award the mileage in accrual process]
+                                                AirAccrualImpl.getReferenceCd-7870-[returns keyword]
+                                                    ReferenceData.getReferenceRecCd
+                                                [set the FFPA float value depending on the keyword returned]
+                                                [if creditCls == K && tktDt not null && (prtCd == SQ || prtCd == MI) && ffpCode == SQ]
+                                                    AirAccrualImpl.checkForKCabinCutover-7889-[returns fltDt]
+                                                        ControlParamImpl.getString--[hierarchy done]
+                                                AirAccrualImpl.calculateMilesAndBonus-7019-[calculate the miles and bonus for a given origin and destination]
+                                                    [The class array for which the miles need to be calculated is passed in]
+                                                    [The method is used for Accrual Calculator and TPF interface and in SQ/ MI accruals]
+                                                    AirAccrualImpl.getAirportList-7927
+                                                        ValidatorImpl.getAirportList-93
+                                                            ReferenceData.getAirports
+                                                    AccrualValidatorImpl.checkPEYCutOvr-1382-[hierarchy done]
+                                                    AirAccrualImpl.setBonusAndClsM-7246
+                                                        [set the bonus and class multiplier values]
+                                                        [for each class that is passed in an array. The class multiplier]
+                                                        [and bonus values are taken from the trvl_cls and tier_bonus tables based on the flight date passed]
+                                                        [Flight date is null in case of AccrualCalculator]
+                                                        ValidatorImpl.getTravelClass--[hierarchy done]
+                                                        ValidatorImpl.getTierBonus--[hierarchy done]
+                                                    AirAccrualImpl.checkIfFixedMlesRule-7408
+                                                        AccrualData.checkIfFixedMlesRule
+                                                    [if not isFixedMilesRule]
+                                                        AirAccrualImpl.getAccrualCalcRule-7395
+                                                            AccrualData.getAccrualCalcRule
+                                                        AirAccrualImpl.getDollarValueForScoot-7372
+                                                            AccrualData.getDollarValueForScoot
+                                                    AirAccrualImpl.getFixedMiles-7957
+                                                        AccrualData.getFixedMiles
+                                                    [logic to set the eliteBonus, ppsBonus]
+                                                    AirAccrualImpl.getPPSSector-7501
+                                                        [get the pps sector based on the gcd value]
+                                                        [the pps sector value is based on a range within which the gcd value falls]
+                                                        [The range and their values are provided in AccrualConstant.j]
+                                                        [end]
+                                                    ValidatorImpl.getTravelClass--[hierarchy done]
+                                                    [return accrualCalculator]
+                                                [end]
                                         ControlParamData.getCtrlParaRef
                                         [if prtCd == TR && eliteBktFlg == Y && transCd != AC && eliteTRSwitch == Y]
                                             [awardTREliteMiles = true]
                                             [setEliteBktFlg == N]
-                                        AirAccrualImpl.awardMileage-5759-[award mileage to the passenger in accrual process]-todo
+                                        AirAccrualImpl.awardMileage-5759-[award mileage to the passenger in accrual process]
+                                            AirAccrualImpl.checkAirlineCode--[hierarchy done]
+                                            [if isMI && not isKF]
+                                                AccrualValidator.getPrtForMI-821
+                                                    AccrualData.getPrtForMI
+                                            [set values in points for different updates like qualifications, ffp accrual etc. Not required for AC trans as member has passed in the miles]
+                                            [if transCd != AC]
+                                                AirAccrualImpl.setAccrualPointsValues-6068-[set accrualPoints obj from accrualCalculator]
+                                                    [if exclNonExpMilesFlg == N or null or empty String]
+                                                        AirAccrualImpl.getNonExpiryMilesPrd-6310
+                                                            ReferenceServiceImpl.getValidityPrdFromCusId-56
+                                                                ReferenceServiceImpl.getTierStatusOfKF-190-[returns cusTier]
+                                                                    CustomerAcctData.getTierStatusOfKF
+                                                                ReferenceServiceImpl.getIntID-167
+                                                                    CustomerAcctData.getIntID
+                                                                ReferenceServiceImpl.getTierStatusofPrincipalID-241-[returns prinCusTier]
+                                                                    CustomerAcctData.getTierStatusofPrincipalID
+                                                                [multiple if statements to check cusTier and prinCusTier and assign airlineTier accordingly]
+                                                                ReferenceServiceImpl.getValidityPrdFromTier-261-[returns nonExpflg]
+                                                                    ReferenceData.getReferenceExt
+                                                                [returns validityPrd = 99 if nonExpFlg == Y and end]
+                                                    [else]
+                                                        ValidatorImpl.getCtrlParaObject--[hierarchy done]
+                                                        AirAccrualImpl.checkRdpnPaxTag-6225
+                                                            PaxMFlightInfoData.checkRdpnPaxTag--[to award PWM for upgraded tkt, returns upgradeMMKFlg]
+                                                        [if redemptionPaxTag == K || U and upgradeMMKFlg == K]
+                                                            AirAccrualImpl.getFareDetailsForPPSAccrual-6289-[get the net fare paid and total fare value from Rdpn_trans and rdpn_pax_air tables using ticket num]
+                                                                AccrualData.getFareDetailsForPPSAccrual
+                                                            [accrual logic to set the tierbonus and miles from cash spent on tickets]
+                                                        AirAccrualImpl.getPromoCodeforGvnRwdNo-6266-[get promoCode, hierarchy done]
+                                                        ReferenceServiceImpl.searchReference-223-[hierarchy done, get list of promoDesc]
+                                                        [set the miles with promoCode and return accrualPax and end]
+                                                [if vchrNumber not empty string]
+                                                    [if isKF]
+                                                        AirAccrualImpl.doubleMilesPromotion-7588
+                                                            AirAccrualImpl.getVchrPaxDetails-7727
+                                                                CustomerData.getVchrPaxDetails
+                                                            [if voucherStatusDb == null || empty string]
+                                                                [set doubleMilesElig = false]
+                                                                AirAccrualImpl.insertIntoCusRwdLog-7739-[insert rwd vchr not present in DB constant]
+                                                                    CustomerData.insertIntoCusRwdLog
+                                                            [if voucherStatusDb != null && not empty String, check voucher type mismatch]
+                                                                AirAccrualImpl.insertIntoCusRwdLog-7739-[hierarchy done, insert different constants for 3 if checks]
+                                                                AirAccrualImpl.changeRewardStatus-7992-[hierarchy done]
+                                                            [else if check whether the voucher status is available]
+                                                                AirAccrualImpl.insertIntoCusRwdLog--[hierarchy done]
+                                                                AirAccrualImpl.changeRewardStatus--[hierarchy done]
+                                                                RewardServiceImpl.createEventLog-434
+                                                                    RewardsData.getValuefrmRule
+                                                                    EventLogServiceImpl.createEventLog--[hierarchy done]
+                                                            [else if pax details are not available, it will compare the intid tagged]
+                                                                AccrualValidatorImpl.checkNameMatchNew-930-[hierarchy done]
+                                                                AirAccrualImpl.insertIntoCusRwdLog--[hierarchy done]
+                                                                AirAccrualImpl.changeRewardStatus--[hierarchy done]
+                                                                RewardServiceImpl.createEventLog--hierarchy done
+                                                            [else if check whether the voucher status is already used]
+                                                                AirAccrualImpl.insertIntoCusRwdLog--[hierarchy done]
+                                                            [else if check whether the status is suspended]
+                                                                AirAccrualImpl.insertIntoCusRwdLog--[hierarchy done]
+                                                            [returns doubleMilesElig and end]
+                                                    [else]
+                                                        AirAccrualImpl.doubleMilesPromotionForOFFP-7757
+                                                            AirAccrualImpl.getVchrPaxDetails--[hierarchy done]
+                                                            AirAccrualImpl.insertIntoCusRwdLog--[hierarchy done]
+                                                            AirAccrualImpl.changeRewardStatus--[hierarchy done]
+                                                            RewardServiceImpl.createEventLog--[hierarchy done]
+                                                    [if not eligibleForDblMilesPromotion]
+                                                        [set double miles promo points to 0]
+                                            [if ffpAwdFlg == Y && isKF]
+                                                [ffp bucket and credit to SQ only]
+                                                [if pendingCustomer]
+                                                    AirAccrualImpl.createOrUpdatePndgAcct-2865--[hierarchy done]
+                                                    [if awardTierFlg == true]
+                                                        AirAccrualImpl.getATTransId--[hierarchy done]
+                                                        UtilServiceImpl.getTransRefId--[hierarchy done]
+                                                    AirAccrualImpl.accrueFFPMileage-945-[perform update ffp points in pointsHandler, hierarchy done]
+                                            [if transCd != AC]
+                                                [award elite and pps for qualification]
+                                                [if ffpAwdFlg == N && isKF && (ppsAwdFlg == Y || eliteAwdFlg == Y)]
+                                                    [if isPendingCust]
+                                                        AirAccrualImpl.createOrUpdatePndgAcct-2865-[create or update record into table cus_pndg]
+                                                            [set up pendingCustomer obj]
+                                                            PendingCustomerData.updatePndgTxn--[update]
+                                                            PendingCustomerData.insertPndgTxn--[insert if update failed]
+                                                AirAccrualImpl.awardElitePPS--[hierarchy done]
+                                                [Only Revenue Tracking is applicable if cabin class is Y else both PPS and Revenue Tracking are applicable]
+                                                AirAccrualImpl.updatePpsRevenueTracker-1322-[hierarchy done]
+                                            [if !KF && ffpAwdFlg == Y]
+                                                [create offp trans and offp bill trans]
+                                                AirAccrualImpl.createOFFPTransaction-7819
+                                                    [to insert record into table offp_extrc_trans]
+                                                    [generate transXrefID for the record]
+                                                    AirAccrualImpl.getATTransId--[hierarchy done]
+                                                    UtilServiceImpl.getTransRefId--[hierarchy done]
+                                                    AirAccrualImpl.createOFFPExtractTransaction-7846-[insert record into table offp_extrc_trans]
+                                                        AirAccrualImpl.convertOFFPBillTrans-6613
+                                                            [retrieve family and given name from pax manifest]
+                                                            [P inficate from pax manifest]
+                                                            [set the class info in codeShareFlightInfo]
+                                                            [set up offpBillTrans and return end]
+                                                        OFFPAccrualData.createOFFPTransaction
+                                                AirAccrualImpl.createOFFPBillTrans-6578-[insert record into table offp_bill_trans]
+                                                    UtilServiceImpl.getTransRefId--[hierarchy done]-[generate transaction xrefid if there is no xref id]
+                                                    AirAccrualImpl.convertOFFPBillTrans--[hierarchy done]
+                                                    OFFPAccrualData.createOFFPBillTrans
+                                                    [returns transRefId]
+                                            [if isKF]
+                                                [create TC transaction in at_trans for members accrue to KF]
+                                                AirAccrualImpl.getPPSOnHoldTrans-6543-[returns accrualPax]
+                                                    AccrualData.getPPSOnHoldTrans
+                                                [if returnedAccrualPax != null && eliteAwdFlg == N && ppsAwdFlg == Y]
+                                                    AirAccrualImpl.createPPSLinkedTrans-6511
+                                                        [to create pps trans in at_trans table and link to elite/ffp trans by PPS_XREF_ID]
+                                                        AccrualData.createAirTrans
+                                                        AccrualData.updatePPSOnHoldFlg
+                                                        [end]
+                                                [else]
+                                                    AirAccrualImpl.createAirTrans-6323-[to insert record into at_trans]
+                                                        AccrualData.createAirTrans
+                                                    [if ffpAwdFlg == N && eliteAwdFlg == N && ppsAwdFlg == Y]
+                                                        AirAccrualImpl.updateLastActivityDt-6350
+                                                            [update the member acct status, for dormant status, plastic card will be issued if member only has paper card]
+                                                            [for enrolled status, new card will be issued]
+                                                            PointsHandlerImpl.updateMileageSum--[hierarchy done]
+                                            [if awardTierFlg == true && isKF]
+                                                [create tier bonus and eligible for those accrue to KF]
+                                                AirAccrualImpl.getPromoDesc-6488-[derived promo desc from whether eliteBonusFactor or ppsBonusFactor or eliteBonusValue or ppsBonusValue more than 0, hierarchy done]
+                                                AirAccrualImpl.createTierPromoBonus-1001
+                                                    UtilServiceImpl.getTransRefId--hierarchy done
+                                                    PromotionAwardingData.createPromotionTransaction
+                                                    [if prtTypeInd == A]
+                                                        [create a record in trans_bucket_pts for air accrual only]
+                                                        AirAccrualImpl.createTransPts-1108
+                                                            [create TransBucketPoints obj from parameters]
+                                                        PointsHandlerImpl.insertTransBucketPts--[hierarchy done]
+                                            [if isEligibleForDblMilesPromotion]
+                                                AirAccrualImpl.createDblMilesPromoBonus-6383
+                                                    ReferenceServiceImpl.searchReference-223
+                                                        RefTableData.searchReference-
+                                                    AirAccrualImpl.getPromoCodeforGvnRwdNo-6266
+                                                        RewardsData.getPromoCodeforGvnRwdNo
+                                                    [get promotion description]
+                                                    [if dblPromoBonus > 0]
+                                                        AirAccrualImpl.getATTransId--[hierarchy done]
+                                                        UtilServiceImpl.getTransRefId--[hierarchy done]
+                                                        AirAccrualImpl.createPromoAwd-1139
+                                                            [set up promotionAward obj from parameters]
+                                                        PromotionAwardingData.createPromotionTransaction
+                                                        AirAccrualImpl.createTransPts-1108-[hierarchy done]-[create transBucketPoints obj]
+                                                        PointsHandlerImpl.insertTransBucketPts--[hierarchy done]
+                                                        RewardServiceImpl.getVleByRwdNo--[hierarchy done]
+                                                        AirAccrualImpl.changeRewardStatus--[hierarchy done]
+                                                        RewardServiceImpl.createEventLog-426-[hierarchy done]
+                                            [if ppsAwdFlg == Y && !isKF]
+                                                [insert or update prt_cus_at_offp_pts table for members accrue to OFFP]
+                                                AirAccrualImpl.updateLastActivityDt-6350-[hierarchy done]
+                                                [if pendingCustomer]
+                                                    AirAccrualImpl.createOrUpdatePndgAcct--[hierarchy done]
+                                                [if ffpAwdFlg == Y || (ffpCrDt != null && ffpRreverseDt == null)]
+                                                    PointsHandlerImpl.updatePrtCusATOFFPPts--[hierarchy done]-[to update prt_cus_at_offp_pts]
+                                                    PointsHandlerImpl.updatePrtAtOffpMthPts--[hierarchy done]-[update or insert by prtCd and processingMth into prt_at_offp_mth_pts]
+                                                [To retain back the same values for ffp and elite. Gave bind variables not set error in updatePaxRecord when this not done.]
+                                                [Also, PaxManifest DAO is changed to check on only ffp flag to update ffp code credit, no etc.]
+                                                [OFFP member eligible for PPS, set FFP Flag and Elite Flag to N]
+                                                AirAccrualImpl.createAirTrans-6323-[hierarchy done]
+                                            [if isNameMismatch]
+                                                [for name unmatch cases, create name unmatch record]
+                                                AirAccrualImpl.createNameUnMatchRec--hierarchy done
+                                            [end]
                                         [if awardTREliteMiles]
                                             AirAccrualImpl.getATTransId-3361-[hierarchy done]
                                             UtilServiceImpl.getTransRefId-24-[hierarchy done]
@@ -1321,37 +1678,96 @@ BatchAirRetroServiceImpl.processTC-1174
                                 PaxManifestServiceImpl.updatePaxAccrualStatus-186
                                     PaxMFlightInfoData.updatePaxAccrualStatus
                     [else if channel == B && passengerInfo.isNameMismatch && gracePrd != 0]
-                        AirAccrualImpl.createOnHoldTxn-2609-[todo]
+                        AirAccrualImpl.createOnHoldTxn-2609
+                            AccrualData.createOnHoldTxn
                 [if !passEligChk && getRejReasonCd.size > 0]
                     AirAccrualImpl.createRejTxn-3264-[hierarchy done]
             [else]
                 [for paxManifest][retro, do not handle hold case]
                 [if passEligChk]
                     [if "Y".equals(acrPts.getPPSBktFlg()) && acrPts.getPpsValue() > 0]
-                        AirAccrualImpl.checkCutOverForFSC-2277-[returns chkForCutOverDate]-[todo]
+                        AirAccrualImpl.checkCutOverForFSC-2277-[returns chkForCutOverDate]
+                            [if flightDt >= cutOverDate return true]
+                            [else return false]
                         [if chkForCutOverDate == true]
-                            AirAccrualImpl.searchFscValInfo-2481-[todo]
+                            AirAccrualImpl.searchFscValInfo-2481
+                                AirAccrualImpl.searchPAS-2340
+                                    [if carrierCode not null]
+                                        [if disruptedFltInd == Y]
+                                            AirAccrualImpl.searchPASForDisrptdFlt-2313
+                                                AccrualData.searchPASForDisrptdFlt
+                                                [loop over list and return pasTicket is ticketNumber is found]
+                                            [return and end]
+                                        [else if disruptedFltInd == N]
+                                            AirAccrualImpl.searchPASInternal-2463
+                                                AccrualData.searchPAS
+                                                [return pasTicket]
+                                        [else]
+                                            [if fltNumStr not empty string]
+                                                [if fltNumStr.length == 4]
+                                                    AirAccrualImpl.searchPASForDisrptdFlt-2313-[hierarchy done]
+                                                    AirAccrualImpl.searchPASInternal--[hierarchy done]
+                                                [see method for more information]
+                                                [end]
+                                [if carrierCode != null]
+                                    AirAccrualImpl.getFSCValFromDB-8375-[to get default FSC with POS if FSC for ticketed POS is unavailable]
+                                        AccrualData.deriveDefFscVal
+                                [get exchange rate from PAS_EXCHG_RATE]
+                                [if curr_cd != SGD]
+                                    RedemptionEnquiryServiceImpl.deriveExchgRt-21
+                                        RedemptionReferenceData.getExchgRate
+                                [end]
                             [if defFscVal.get("fscCredit) == null]
                                 [set error code]
                             [else]
                                 [if paxMTicketInfo.redemptionPaxTag == K]
-                                    AirAccrualImpl.doPPSAccrual-2212-[todo]
+                                    AirAccrualImpl.doPPSAccrual-2212
+                                        [if accrualPoints != null && paxMTicketInfo]
+                                            AirAccrualImpl.getFareDetailsForPPSAccrual-6289
+                                                AccrualData.getFareDetailsForPPSAccrual--[to get the net fare paid and total fare value from RDPN_TRANS and RDPN_PAX_AIR tables using ticket number]
+                                        [set ppsValue and set FscValue into acrTxn]
                             [check for error code]
-                                AirAccrualImpl.checkIfRejTxnExists-8013-[todo]
+                                AirAccrualImpl.checkIfRejTxnExists-8013
+                                    AccrualData.checkIfRejTxnExists
                                 [if rejTxn not exist]
-                                    AirAccrualImpl.createRejTxn-2661-[todo]
+                                    AirAccrualImpl.createRejTxn-2661-[hierarchy done]
                     [if "Y".equals(acrPts.getPPSBktFlg()) && acrPts.getPpsValue() <= 0 && !("O".equals(acrPts.getPpsValueSrcInd()))]
-                        AirAccrualImpl.searchProValInfo-8029-[try to retrieve pps val]-[todo]
+                        AirAccrualImpl.searchProValInfo-8029-[try to retrieve pps val]
+                            [if ((tktNo == null || tktNo.length() == 0) && (altTktNo == null || altTktNo.length() == 0))]
+                                [set the errorCode and rsncode and crSrcInd]
+                            [if crSrcInd == P]
+                                AirAccrualImpl.searchPAS--[returns pasTicket, hierarchy done]
+                                [retry to searchPAS using alternate ticket number if pasTicket is null]
+                            AirAccrualImpl.checkCutOverForFSC--[returns chkForCutOverDate, hierarchy done]
+                            [if ...]
+                            [else if chkForCutOverDate == true]
+                                AirAccrualImpl.searchFscValInfo--[hierarchy done]
+                            [if crSrcInd == P && pasTicket.getTktNo == null]
+                                [set crSrcInd, errorcode and rsnCode]
+                            [if crSrcInd == P ...]
+                            [if crSrcInd == P]
+                                AirAccrualImpl.computePASSegVal-8338
+                                    AirAccrualImpl.getValtoDetCreditVal-8362
+                                        AccrualData.getValtoDetCreditVal
+                            [if crSrcInd == D]
+                                AirAccrualImpl.checkIfWithinPASOnHoldDays-8286-[returns boolean]
+                                    AccrualData.getPASOnHoldDays
+                                    AirAccrualImpl.getDateWithoutTime--[hierarchy not important]
+                                AirAccrualImpl.deriveDefSegVal--[hierarchy done]
+                            [some other setting of local variables, see if important]
+                            [set up the result map and return]
                         [if error code == N2428 ...]
                             [checkIfRejTxnExists and createRejTxn]
                         [else if !isOnHold && pasTicket != null]
                             [setting acrTxn]
                             [if acrTxn.paxMTicketInfo.redemptionPaxTag == K]
-                                AirAccrualImpl.doPPSAccrual-2212-[todo]
+                                AirAccrualImpl.doPPSAccrual-2212-[hierarchy done]
                             [if errorCode != null]
-                                AirAccrualImpl.createWarningTrans-8394-[todo]
+                                AirAccrualImpl.createWarningTrans-8394
+                                    AccrualData.createWarningTrans
                             [isFoundSQ]
-                                PaxManifestServiceImpl.updatePaxProRatedFareForRetro-166-[todo]
-                    AirAccrualImpl.processAccruals-5574-[todo]
+                                PaxManifestServiceImpl.updatePaxProRatedFareForRetro-166
+                                    PaxMFlightInfoData.updatePaxProRatedFareForRetro
+                    AirAccrualImpl.processAccruals-5574-[hierarchy done]
                     [if isFoundSQ]
                         PaxManifestServiceImpl.updatePaxRecord-206-[hierarchy done]                
