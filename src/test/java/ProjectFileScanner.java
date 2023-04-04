@@ -34,7 +34,7 @@ public class ProjectFileScanner {
         for(File f : files){
             try{
                 fileInputStream = new FileInputStream(f.getPath());
-//                if(!f.getName().contains("VoucherInfoServiceImpl")) continue;
+//                if(!f.getName().contains("QualificationServiceImpl")) continue;
                 sc = new Scanner(fileInputStream, "UTF-8");
                 int count = 0;
                 String potentialMethod = "";
@@ -42,8 +42,11 @@ public class ProjectFileScanner {
                 boolean isLineCommentStart = false;
                 while(sc.hasNextLine()){
                     count++;
+//                    if(count == 2794 || count == 2884 || count == 3299){
+//                        System.out.println("reached checkpoint");
+//                    }
                     String line = sc.nextLine();
-                    if (line.startsWith("//")) continue;
+                    if (line.trim().startsWith("//")) continue;
                     int commentStartIndex = 0;
                     String linesNotCommented = "";
                     if(line.contains("//")){

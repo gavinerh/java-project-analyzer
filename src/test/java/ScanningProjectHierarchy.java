@@ -6,14 +6,18 @@ import java.util.Scanner;
 
 public class ScanningProjectHierarchy {
     public static void main(String[] args) {
-        String filePath = "/Users/macuser/Documents/ProjectHierarchy.txt";
-        checkImplMethodsNotChecked(filePath);
+        // to check if the method in projectHierarchy is done
+//        String filePath = "/Users/macuser/eclipse-workspace/java-reflections/ProjectHierarchy.txt";
+//        checkImplMethodsNotChecked(filePath);
+
+        // not in use
 //        String filePath2 = "/Users/macuser/Documents/NewProjectHierarchy.txt";
 //        checkImplMethodsNotCheckedNew(filePath2);
 
-//        String filePath3 = "/Users/macuser/Documents/DatabaseModificationMtds.txt";
-//        String filePathToSrcFiles = "/Users/macuser/eclipse-workspace/lsl-batch/src/main/resources/com/sg/sq/lsl/batch/database/sql/persistence/mappers";
-//        listTheModificationMapperMtds(filePath3, filePathToSrcFiles);
+        // to scan and record all the methods declarations in mappers.xml
+        String filePath3 = "/Users/macuser/Documents/DatabaseModificationMtds.txt";
+        String filePathToSrcFiles = "/Users/macuser/eclipse-workspace/lsl-batch/src/main/resources/com/sg/sq/lsl/batch/database/sql/persistence/mappers";
+        listTheModificationMapperMtds(filePath3, filePathToSrcFiles);
     }
 
     private static void listTheModificationMapperMtds(String filepath, String filePathToSrcFiles){
