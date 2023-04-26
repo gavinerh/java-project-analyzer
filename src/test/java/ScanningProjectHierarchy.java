@@ -7,18 +7,23 @@ import java.util.Scanner;
 public class ScanningProjectHierarchy {
     public static void main(String[] args) {
         // to check if the method in projectHierarchy is done
-//        String filePath = "/Users/macuser/eclipse-workspace/java-reflections/ProjectHierarchy.txt";
-//        checkImplMethodsNotChecked(filePath);
+        String filePath = "/Users/macuser/eclipse-workspace/java-reflections/ProjectHierarchy.txt";
+//        checkImplOrDataMethodsNotChecked(filePath, "service");
+
+        // check if the data method in projectHierarchy is done
+        checkImplOrDataMethodsNotChecked(filePath, "data");
 
         // not in use
 //        String filePath2 = "/Users/macuser/Documents/NewProjectHierarchy.txt";
 //        checkImplMethodsNotCheckedNew(filePath2);
 
         // to scan and record all the methods declarations in mappers.xml
-        String filePath3 = "/Users/macuser/Documents/DatabaseModificationMtds.txt";
-        String filePathToSrcFiles = "/Users/macuser/eclipse-workspace/lsl-batch/src/main/resources/com/sg/sq/lsl/batch/database/sql/persistence/mappers";
-        listTheModificationMapperMtds(filePath3, filePathToSrcFiles);
+//        String filePath3 = "/Users/macuser/Documents/DatabaseModificationMtds.txt";
+//        String filePathToSrcFiles = "/Users/macuser/eclipse-workspace/lsl-batch/src/main/resources/com/sg/sq/lsl/batch/database/sql/persistence/mappers";
+//        listTheModificationMapperMtds(filePath3, filePathToSrcFiles);
     }
+
+
 
     private static void listTheModificationMapperMtds(String filepath, String filePathToSrcFiles){
         List<String> listOfAllUpdateInsertMappers = new ArrayList<>();
@@ -123,7 +128,7 @@ public class ScanningProjectHierarchy {
         }
     }
 
-    public static void checkImplMethodsNotChecked(String filepath){
+    public static void checkImplOrDataMethodsNotChecked(String filepath, String type){
         try{
             FileInputStream fileInputStream = new FileInputStream(filepath);
             Scanner sc = new Scanner(fileInputStream);
@@ -157,9 +162,16 @@ public class ScanningProjectHierarchy {
                     }
                     isPrevLineImpl = false;
                 }
-                if(line.contains("Impl.") || line.contains("Service.") || line.contains("ServiceImpl.")){
-                    lineNum = count;
-                    isPrevLineImpl = true;
+                if(type.equals("service")){
+                    if(line.contains("Impl.") || line.contains("Service.") || line.contains("ServiceImpl.")){
+                        lineNum = count;
+                        isPrevLineImpl = true;
+                    }
+                } else {
+                    if(line.contains("Data.")){
+                        lineNum = count;
+                        isPrevLineImpl = true;
+                    }
                 }
                 numberOfPrevStartingSpaces = numberOfCurrentStartingSpaces;
                 prevLine = line;
