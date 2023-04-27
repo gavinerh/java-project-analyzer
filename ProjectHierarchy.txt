@@ -5,18 +5,30 @@ AirRetroResponseBatchImpl.executeJob-46
                 PrtMapper.getPrtCdGivenPrtAbbr
         ParticipantServiceImpl.validateParticipant-26
             ParticipantData.countParticipant-42
+                PrtMapper.getCount--[returns countPrt: Integer]
         RetroFacadeImpl.validateResponseHdrPrtCd-152
             ParticipantServiceImpl.getParticipantDetails-51
                 ParticipantData.retrieveParticipantDetails-53
+                    PrtMapper.getAllGivenPrtCd--[returns prtList: List<Prt>]
+                    [returns list: List<Participant>]
         RetroFacadeImpl.processFileResponse-40-[process retro response record]
             BatchAirRetroServiceImpl.processAirRetroResponse-41-[validates and does the necessary processing on the retro response]
                 RetroCommonService.validateKFRefCode-78-[validates the KF Reference code that a record actually exists in AIR_RTR_KF_REQ and retrieves the retro claim from the table to  build the RetroRequest object]
-                    RetroRequestData.retrieveByKFRefCode-261
-                    RetroRequestData.retrieveNonAirRetroByKFRefCode-322
+                    RetroRequestData.retrieveByKFRefCode-270
+                        AirRtrKfReqMapper.getAllGivenRefCd--[returns airRtrKfReqs: List<AirRtrKfReq>]
+                        [constructs AirRetroClaimVO and customerSummary VO]
+                        [returns aRetroRequest: RetroRequest]
+                    RetroRequestData.retrieveNonAirRetroByKFRefCode-331
+                        NairRtrKfReqMapper.getAllGivenRefCd--[returns naurRtrKfReqs: List<NairRtrKfReq>]
+                        [constructs the CustomerSummaryVO and returns created RetroRequest]
                 RetroCommonService.validateGracePeriod-180-[checks that the grace period is not exceeded when the response is received if date sent to participant is null, continue without checking grace period]
-                    RetroRequestData.retrieveGracePeriod-307
+                    RetroRequestData.retrieveGracePeriod-316
+                        PrtRtrParaMapper.getCloseGracePrd--[returns periods: List<Integer>]
+                        [return the first integer in the list]
                 RetroCommonService.validateResponseCode-258
-                    RetroRequestData.countResponseCode-71
+                    RetroRequestData.countResponseCode-80
+                        RtrRejCdMapper.getCountGivenRejCd--[returns countResponseCd: Integer]
+                        [returns countResponseCd: Integer]
                 BatchAirRetroServiceImpl.RetroResponseReject-463-[if response code is reject, reject the record in the database accordingly.]
                     AirRetroCommonService.verify_Air_Code_ShareBillParticipantForRetroResponse-187-[get stmt participant and billed prt]-[if transaction code = RI or RH and status = CR]
                         AirRetroCommonService.getCodeShareCombi-514
@@ -25,51 +37,112 @@ AirRetroResponseBatchImpl.executeJob-46
                                 [construct own code share combi object and return]
                             AirRetroCommonService.getPayPrinciple-952
                                 AirRetroCommonService.getRetroCodeShareCombi-915
-                                    AirRetroClaimData.getRetroCodeShareCombi
-                            AirRetroCommonService.getRetroCodeShareCombi-915
-                                AirRetroClaimData.getRetroCodeShareCombi
+                                    AirRetroClaimData.getRetroCodeShareCombi-131
+                                        CdShareCombiMapper.getRetroCodeShareCombi--[returns List<CdShareCombi>]
+                                        [returns CodeShareCombi]
+                            AirRetroCommonService.getRetroCodeShareCombi-915-[hierarchy done]
                             AccrualValidatorImpl.getPrt-1450
-                                AccrualData.getPrt
+                                AccrualData.getPrt-1457
+                                    PrtMapper.getPrt--[returns List<Prt>]
+                                    [extract Participant from list and return]
                             [if cdSharePrt == null]
                                 RetroCommonService.getRetroException-45
-                                    RetroRequestData.retrieveRejectReason
+                                    RetroRequestData.retrieveRejectReason-237
+                                        RtrRejCdMapper.getRejDesc--[returns List<String> and extract first String to rejDesc var]
+                                        RetroRequestData.retrieveRejectDesc-256
+                                            MarmsPaiErrRecMapper.getPaiErrDesc--[get the description from the code]
+                                            [return description]
+                                        [return rejDesc]
                             [else]
                                 AccrualValidatorImpl.getIATAPrt-1469-[inner mtds are mappers, hierarchy done]
                                 [if cdSharePrt == null]
                                     RetroCommonService.getRetroException-45
-                                        RetroRequestData.retrieveRejectReason
+                                        RetroRequestData.retrieveRejectReason-237-[hierarchy done]
                                 [else]
                                     AirAccrualServiceImpl.getPayPrinciple-90
                                         AccrualValidator.getCodeShareCombi-1496
-                                            AccrualData.getCodeShareCombi
+                                            AccrualData.getCodeShareCombi--[hierarchy done]
                                     AccrualValidatorImpl.getValidatorReferenceCode-1560-[returns hashmap of ctrl parameter]
                                         AirAccrualServiceImpl.getReferenceCode-130
                                             ControlParamData.getEmailDetailsFromCtrlPara-44
+                                                [receives strFldIden String[]]
+                                                [initialise hmMonitorEmailDetails: HashMap]
+                                                [loop through the strFldIden string arr]
+                                                    CtrlParaRefMapper.getValue--[return fldValue from each fldIdentifier]
+                                                    [put fldValue into hmMonitorEmailDetails hashmap]
+                                                [return hmMonitorEmailDetails hashmap]
                                     [set pay principle prt cd]                                                        
                     AirRetroCommonService.airTransDuplicateCheckForResponse-265-[check method for batch air response. This has more 'lenient' duplicate check logic]
                         AccrualValidatorImpl.checkAirDuplicate-1520
-                            AccrualData.checkAirDuplicate--[check in at_trans]
+                            AccrualData.checkAirDuplicate-1373-[check in at_trans]
+                                [receives flightInfo: CodeShareFlightInfo, ffpNo: String, constCreditDebit: String, progCd: String, travelCls: String, transCd: String, stmtPrt: String]
+                                [if stmtPrt == flightInfo.carrier]
+                                    [flightNo = flightInfo.flightNo]
+                                [else]
+                                    [flightNo = flightInfo.cdShareFlightNo]
+                                [initialise acrPtsLst: List]
+                                [if constCreditDebit == AccrualConstant.ConstCredit]
+                                    [if transCd == AccrualConstant.ConstTxnCdSC]
+                                        [newTransCd = S%]
+                                    [else]
+                                        [newTransCd = %C]
+                                [else]
+                                    newTransCd = transCd
+                                AtTransMapper.checkAirDuplicate--[returns atTransList: List<AtTrans>]
+                                [if atTransList is not empty]
+                                    [loop through atTransList]
+                                        [create CreditedPPSFFP and AccrualPoints, and add to acrPtsLst list]
+                                [return acrPtsLst]
                             [if creditDebit == CREDIT]                        
-                                OFFPAccrualData.checkOFFPDuplicate--[check in offp_bill_trans]
+                                OFFPAccrualData.checkOFFPDuplicate-212-[check in offp_bill_trans]
+                                    [receives creditFFPLst: List, flightInfo: CodeShareFlightInfo, familyName: String, givenName: String, transCd: String, refId: String, paxId: String]
+                                    [trim and update familyName and givenName variables]
+                                    OffpBillTransMapper.checkOFFPDuplicate--[returns offpBillTransList: List<OffpBillTrans>]
+                                    [loop through offpBillTransList]
+                                        [initialise and populate CreditedPPSFFP and AccrualPoints, and add CreditedPPSFFP to creditFFPLst]
+                                    [return creditFFPLst]
                             [if creditDebit == CREDIT && ffpNoDcs != null && ffpCdDcs != null]
-                                OFFPAccrualData.checkOFFPCdDuplicate
+                                OFFPAccrualData.checkOFFPCdDuplicate-157
+                                    [receives creditFFPLst: List, flightInfo: CoeShareFlightInfo, transCd: String, ffpNoDcs: String, ffpCdDcs: String]
+                                    OffpBillTransMapper.checkOFFPCdDuplicate--[returns offpBillTransList: List<OffpBillTrans>]
+                                    [loop through offpBillTransList]
+                                        [initialise CreditedPPSFFP, AccrualPoints and add to creditFFPLst]
+                                    [return creditFFPLst]
                     AirRetroCommonService.constructAccrualPax-402-[if duplicate found in at trans table]
                         AirRetroCommonService.getCodeShareCombi-514-[hierarchy done]
                     BatchAirRetroServiceImpl.processTD-1045-[if at trans mode is F or R, hierarchy done]
                     // to continue but not important since it is a reject condition
                 BatchAirRetroServiceImpl.commitAirRetro-706
-                    RetroRequestData.updateAirRetroForResponse-151-[just mapper methods]
+                    RetroRequestData.updateAirRetroForResponse-160-[just mapper methods]
+                        [receives anAirRetroClaim: AirRetroClaim, aRetroRequester: CustomerSummary, userId: String, expiredAcctFlg: String]
+                        [initialise timestamp = anAirRetroClaim.receiveDtFrmParticipant]
+                        [check table AIR_RTR_KF_REQ if data is modified]
+                        AirRtrKfReqMapper.updateAirRetroForResponse
+                        [initialise mapParam: HashMap]
+                        [send event data]
                 RetroCommonService.validateRetroTransactionCode-424-[checks for invalid or null transaction code in the retro response]
                     [validates parameters, no methods called]
                 RetroCommonService.verifyCustAcctStatusEligibleForRetro-303
-                    RetroRequestData.get_Retro_AccStatus_FuncEligibility-81-[returns eligibleCol]
+                    RetroRequestData.get_Retro_AccStatus_FuncEligibility-90-[returns eligibleCol: List]
+                        [receives program: String, participantCode: String, functionCd: String, accStatus: String]
+                        [initialise rsList: List]
+                        AcctStatusFuncMapper.getEligibilityFlgAndRtrCrdInd--[returns list: List<AcctStatusFunc>]
+                        [loop through the list]
+                            [add eligibleFlg and rtrCrdInd to rsList]
+                        [return rsList]
                     [if eligibleCol not empty]
                         [if acc status not eligible for retro]
                             [if acct suspended, update error code]
                             [else if acct expired]
                                 [if expiredDate == null]
                                     CustomerServiceImpl.getCustomerAccount-537
-                                        CustomerAcctData.getCustomerAccount
+                                        CustomerAcctData.getCustomerAccount-190
+                                            [initialise customerAccountList: List]
+                                            CusAccountMapper.getCustomerAccount--[returns cusAccountList: List<CusAccount>]
+                                            [loop through the cusAccountList]
+                                                [initialise customerAcct: CustomerAcct]
+                                                [update customerAcct fields and add to customerAccountList]
+                                            [return customerAccountList]
                                 [get activity date]
                                 [compare expiry date against flight date]
                     [else]
@@ -118,7 +191,7 @@ AirRetroResponseBatchImpl.executeJob-46
                             [else]
                                 BatchAirRetroServiceImpl.processTC-1174-[hierarchy done]
                 BatchAirRetroServiceImpl.commitAirRetro-706-[after this step is catching of exceptions]
-                    RetroRequestData.updateAirRetroForResponse-151-[just mapper methods, hierarchy done]
+                    RetroRequestData.updateAirRetroForResponse-160-[hierarchy done]
             MarmsRetroServiceImpl.sendAcknowledgementEmailToCustomerNew-41-[hierarchy about sending email]
             [if resultMap != null && resultMap not empty]
                 [if processMsg != null]
@@ -147,7 +220,78 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
             [set promo type to AC]
             PromotionAwardingFacadeImpl.awardPromotion-177
                 PromotionAwardingImpl.extractEligibleRecordsForActivePromotions-51
-                    PromotionAwardingData.extractEligibleRecordsForActivePromotions
+                    PromotionAwardingData.extractEligibleRecordsForActivePromotions-495
+                        [receives eligibilityRecord: PromotionEligibilityRecord]
+                        PromotionAwardingData.getActivePromotionsForEligibility-2796-[returns activePromotions: ArrayList, get active promotions for air or nonAir]
+                            [receives eligibilityRecord: PromotionEligibilityRecord]
+                            [initialise query: StringBuffer transIdBuffer: StringBuffer, refIdBuffer: StringBuffer, batchDt: String, count: int]
+                            [if isForAirTracking == true]
+                                [if kickedOffBy == TR || kickedOffBy == BR]
+                                    [count++]
+                                [else if kickedOffBy == PX]
+                                    [count++]
+                                [else if kickedOffBy == NR]
+                                    [count++]
+                                    [if transIds not empty]
+                                        [loop through transIds and append to transIdBuffer]
+                                [else]
+                                    [for force credit]
+                                    [if paxAndRefIdMap not empty]
+                                        [count++]
+                                        [append refId to refIdBuffer]
+                            [else]
+                                [for nonair]
+                                [if kickedOffBy == TR || kickedOffBy == BR]
+                                    [count++]
+                            [if count == 0]
+                                [return empty arrayList]
+                            AtTransMapper.getActivePromotionsForEligibility--[returns list]
+                            [initialise finalResult: List]
+                            [if list is not empty]
+                                [loop through the list]
+                                    [extract prtCd, orgCd, desCd, minDatte, maxDate from the list]
+                                    [if minDate not null && maxDate not null]
+                                        PromotionAwardingData.getActivPromotionsForGivenDates-2935-[returns result: List]-todo
+                                        [loop through result]
+                                            [if finalResult does not contain each valueObj of the result]
+                                                [add the valueObj to the finalResult]
+                                    [else]
+                                        [if kickedOffBy == NR]
+                                            [populate the transIdBuffer]
+                                        AtTransMapper.getTransXrefIdAndPromoProcessFlg--[return List<AtTrans>]
+                            [return finalResult and end]
+                        [initialise members: Hashtable]
+                        [if promoType == AC]
+                            PromotionAwardingData.getMembersForPromotion-2746-[returns Hashtable, todo]
+                        [initialise codeList: ArrayList, isListPresent: boolean, worldpromo: boolean, intId: String, paxId: String]
+                        [loop through activePromotions list]
+                            [get promotionCode: String from each iteration]
+                            [PromotionSetupData.m_PromotionCode = promotionCode]
+                            [if promoType == AC]
+                                PromotionAwardingData.getOriginDestination--[returns codeList given promotionCode, todo]
+                            [loop through codeList]
+                                [if "WORLD" exist in the codeList]
+                                    [worldpromo = true]
+                            PromotionSetupData.load--[get promotionDetails: Promotion, todo]
+                            [if promotionDetails.ruleInfo.size > 0]
+                                [if promotionDetails.eligibilityList not null]
+                                    [isListPresent = true]
+                                [if worldpromo == true and isListPresent == false]
+                                    [if members hashtable is not empty]
+                                        [loop through the members]
+                                            [get activityVector from members hashtable given memNo]
+                                            [get details: PromotionActivityDetails from activityVector]
+                                            PromotionAwardingData.isMemberSatisfiedAllRules--[returns boolean todo]
+                                            [if the previous statement returns true]
+                                                PromotionAwardingData.getEligiblityCheckQueryForWorldPromotion--[todo]
+                                                PromotionAwardingData.insertEligibleRecordsIntoWkgTable--[insert the data returned from previous statement]
+                                [else]
+                                    PromotionAwardingData.getEligiblityCheckQueryForPromotion--[todo]
+                                    PromotionAwardingData.insertEligibleRecordsIntoWkgTable--[inserts data returned from the previous statement, hierarchy done]
+                            [else if promoType == AQ && promotionDetails.acqActvtMilesAwardInfo.size > 0]
+                                PromotionAwardingData.getEligibilityQueryForAcqPromotionWithOutRules--[todo]
+                                PromotionAwardingData.insertEligibleRecordsIntoWkgTable--[inserts data returned from the previous statement, hierarchy done]
+                        [end]
                 PromotionAwardingFacadeImpl.getAwardableMembers-309
                     PromotionAwardingData.getAwardableMembers
                 [if eligibilityRecord.promoType == QL]
@@ -1757,7 +1901,7 @@ BatchAirRetroServiceImpl.processTD-1045
                     AirAccrualImpl.airReversalDupChk-1388-[returns creditFFPLst]
                         AccrualValidatorImpl.checkAirDuplicate-1520-[hierarchy done]
                         OFFPAccrualData.checkOFFPDuplicate-208
-                        OFFPAccrualData.checkOFFPCdDuplicate-153
+                        OFFPAccrualData.checkOFFPCdDuplicate-157-[hierarchy done]
                     AirAccrualImpl.nonAccruableTransReversalDupChk-1354-[returns nonAccruableTransLst]
                         AccrualValidatorImpl.checkNonAccruableDuplicate-1427
                             AccrualData.checkNonAccruableDuplicate
