@@ -6,9 +6,20 @@ import java.util.List;
 import java.util.Map;
 
 public class SampleT {
-    private static String setStatements = "pstmt.setString(1, splCustType);\n" +
-            "            pstmt.setString(2, auditID);\n" +
-            "pstmt.setLong(7, internalID);";
+    private static String setStatements = "ps.setString( j++, userProfile.getCreationUserID() );\n" +
+            "\t\t\t\tps.setString( j++, syst.getUserID());\n" +
+            "\t\t\t\tps.setString( j++, syst.getSysID() );\n" +
+            "\t\t\t\tps.setString( j++, syst.getRoleID() );\n" +
+            "\t\t\t\tps.setString( j++, syst.getLoginFlag() );\n" +
+            "\t\t\t\tps.setString( j++, syst.getConcurrentLoginFlag() );\n" +
+            "\t\t\t\tps.setDate( j++, effectiveDate);\n" +
+            "\t\t\t\t\tps.setDate( j++, expiryDate);\n" +
+            "\t\t\t\tps.setString( j++, syst.getSupervisorFlag() );\n" +
+            "\t\t\t\tps.setString( j++, syst.getUserStatus() );\n" +
+            "\t\t\t\t\tps.setDate( j++, lastLoginDate);\n" +
+            "\t\t\t\tps.setInt( j++, loginCnt );\n" +
+            "\t\t\t\tps.setString(j++, syst.getDataAccess());\n" +
+            "\t\t\t\tps.setString(j++, syst.getDefaultBillingParticipant());";
 
     public static void main(String[] args) {
 //        generateMethodsFromSetAndGetQueryClass();
@@ -16,9 +27,9 @@ public class SampleT {
         String[] typesArr = new String[]{"List<String>",
                 "List<GeneralSqlObject>", "int", "List<Integer>"};
         String sql = "SELECT MAX(SEQ_NO) FROM CUSTYPE_CHG_DTLS WHERE INT_ID = ?";
-        String sqlOperation = "update";
-        String nameOfXMLMethod = "updateCusPersCustomerTypeData";
-        String mapperName = "cus_pers";
+        String sqlOperation = "insert";
+        String nameOfXMLMethod = "insertNewUserProfileSys";
+        String mapperName = "usr_profile_sys";
         String returnType = typesArr[2];
         boolean toIncludeM_ = false;
         returnType = toConvertReturnType(returnType, mapperName,false);
@@ -26,7 +37,7 @@ public class SampleT {
         String xmlSql = convertQuestionMrkToParam(sql, sqlOperation, nameOfXMLMethod, returnType, toIncludeM_); // ? --> #{}
         convertMybatisCodeToMethodParams(xmlSql, returnType); // mybatis xml --> java mapper method
         printMethodUsage(nameOfXMLMethod, mapperName, returnType, toIncludeM_);
-        printSetStatementsForTest(nameOfXMLMethod); // convert get to set statements for testing
+//        printSetStatementsForTest(nameOfXMLMethod); // convert get to set statements for testing
 
 //        returnGetMethodNames(); // rs.getString --> getCustomColumn
 //
@@ -539,14 +550,44 @@ public class SampleT {
                 map.put(existingMapperSplit[i].trim(), 1);
             }
         }
-        String setter = "flightInfo.setBoardPoint(rs.getString(\"ORG_CD\"));\n" +
-                "        flightInfo.setCarrierCode(rs.getString(\"BP_CARRIER_CD\"));\n" +
-                "        flightInfo.setCarrierFltNo(rs.getInt(\"BP_FLT_NO\"));\n" +
-                "        flightInfo.setFlightDate(rs.getDate(\"FLT_DT\"));\n" +
-                "        flightInfo.setMarketCarrierCode(rs.getString(\"TKT_CARRIER_CD\"));\n" +
-                "        flightInfo.setMarketFltNo(rs.getInt(\"TKT_FLT_NO\"));\n" +
-                "        flightInfo.setOffPoint(rs.getString(\"DES_CD\"));\n" +
-                "        flightInfo.setAirCodeShare(rs.getString(\"CD_SHARE_IND\"));";
+        String setter = "ctlrFlds.setDedupPattern( rs.getString( \"DEDUP_PATTERN\" ) );\n" +
+                "                ctlrFlds.setDedupWeightage( rs.getInt( \"DEDUP_WEIGHTAGE\" ) );\n" +
+                "                ctlrFlds.setExpiringPtsExtPrd( rs.getInt( \"EXPIRING_PTS_EXT_PRD\" ) );\n" +
+                "                ctlrFlds.setExpiredPtsExtPrd( rs.getInt( \"EXP_PTS_EXT_PRD\" ) );\n" +
+                "                ctlrFlds.setTotalPtsPerExtFee( rs.getInt( \"TOT_PTS_PER_EXT_FEE\" ) );\n" +
+                "                ctlrFlds.setExtExpPrtCd( rs.getString( \"EXT_EXP_PRT_CD\" ) );\n" +
+                "                ctlrFlds.setWebRtrValidityPrd( rs.getInt( \"WEB_RTR_VALIDITY_PRD\" ) );\n" +
+                "                ctlrFlds.setYECMaxAge( rs.getInt( \"YEC_MAX_AGE\" ) );\n" +
+                "                ctlrFlds.setChkNoOfCardLoss( rs.getInt( \"CHECK_NO_OF_CARD_LOSS\" ) );\n" +
+                "                ctlrFlds.setMaxNoOfCardLoss( rs.getInt( \"MAX_NO_OF_CARD_LOSS\" ) );\n" +
+                "                ctlrFlds.setCardValidityPrd( rs.getInt( \"CARD_VALIDITY_PRD\" ) );\n" +
+                "                ctlrFlds.setCardLossPrd( rs.getInt( \"CARD_LOSS_PRD\" ) );\n" +
+                "                ctlrFlds.setPtsValidityPrd( rs.getInt( \"PTS_VALIDITY_PRD\" ) );\n" +
+                "                ctlrFlds.setKfEnrToDormPrd( rs.getInt( \"KF_ENR_TO_DORM_PRD\" ) );\n" +
+                "                ctlrFlds.setKfActToDormPrd( rs.getInt( \"KF_ACT_TO_DORM_PRD\" ) );\n" +
+                "                ctlrFlds.setKfDormToExpPrd( rs.getInt( \"KF_DORM_TO_EXP_PRD\" ) );\n" +
+                "                ctlrFlds.setKfPndgToClosePrd( rs.getInt( \"KF_PNDG_TO_CLOSE_PRD\" ) );\n" +
+                "                ctlrFlds.setNaPrToExpPrd( rs.getInt( \"NA_PR_TO_EXP_PRD\" ) );\n" +
+                "                ctlrFlds.setNaActToDormPrd( rs.getInt( \"NA_ACT_TO_DORM_PRD\" ) );\n" +
+                "                ctlrFlds.setNaDormToExpPrd( rs.getInt( \"NA_DORM_TO_EXP_PRD\" ) );\n" +
+                "                ctlrFlds.setMaxUserFFPPts( rs.getLong( \"MAX_USER_FFP_PTS\" ) );\n" +
+                "                ctlrFlds.setMaxUserPromoPts( rs.getLong( \"MAX_USER_PROMO_PTS\" ) );\n" +
+                "                ctlrFlds.setMaxSupFFPPts( rs.getLong( \"MAX_SUPERVISOR_FFP_PTS\" ) );\n" +
+                "                ctlrFlds.setMaxSupPromoPts( rs.getLong( \"MAX_SUPERVISOR_PROMO_PTS\" ) );\n" +
+                "                ctlrFlds.setNomineesChangePeriod( rs.getInt( \"NOMINEES_CHG_PRD\" ) );\n" +
+                "                ctlrFlds.setMaxNoOfRdpnNominees( rs.getInt( \"MAX_NO_OF_RDPN_NOMINEES\" ) );\n" +
+                "                ctlrFlds.setEliteQualStartDate( rs.getDate( \"ELITE_QUAL_PRD_START\" ) );\n" +
+                "                ctlrFlds.setForceExtentionLimit( rs.getInt( \"QUAL_MAX_EXTENSION_PRD\" ) );\n" +
+                "                ctlrFlds.setMailerTypeReqEmailack( rs.getString( \"MAILER_TYPE_REQ_EMAILACK\" ) );\n" +
+                "                ctlrFlds.setSegmentFilePath( rs.getString( \"SGMT_FILE_PATH\" ) );\n" +
+                "                ctlrFlds.setEnquiryMaxRecs( rs.getInt( \"ENQUIRY_MAX_REC\" ) );\n" +
+                "                ctlrFlds.setCurrencyThreshold( rs.getInt( \"CURRENCY_THRESHOLD\" ) );\n" +
+                "                ctlrFlds.setNoOfUpgradeSegements(rs.getInt( \"MUA_NO_OF_SEGMENT\" ));\n" +
+                "                ctlrFlds.setNoOfUpgradePax(rs.getInt( \"MUA_NO_OF_PAX\" ));\n" +
+                "                ctlrFlds.setEcertOpenStatusHskpPrd(rs.getInt( \"HSKP_ECERT_OPEN_PRD\" ));\n" +
+                "                ctlrFlds.setEcertUsedStatusHskpPrd(rs.getInt( \"HSKP_ECERT_USED_PRD\" ));\n" +
+                "                ctlrFlds.setEcertRfndStatusHskpPrd(rs.getInt( \"HSKP_ECERT_RFND_PRD\" ));\n" +
+                "                ctlrFlds.setEcertBkupHskpPrd(rs.getInt( \"HSKP_ECERT_BKUP_PRD\" ));";
         String sqlColumns = "";
         boolean variableContainM_ = true;
         boolean variableFirstCharIsLowercase = true;
@@ -1311,8 +1352,26 @@ public class SampleT {
     }
 
     public static String generateSqlStatementsFromString() { // change the variable s only
-        String s = "buffer.append(\" UPDATE CUS_PERS SET SPL_CUS_TYPE = ?, LCHG_USER_ID = ?, LCHG_DT = sysdate\");\n" +
-                "            buffer.append(\" WHERE INT_ID = ?\");";
+        String s = "SQL.append( \"INSERT INTO USR_PROFILE_SYS ( \" )\n" +
+                "            .append( \"RCRE_USER_ID, \" )\n" +
+                "            .append( \"RCRE_DT, \" )\n" +
+                "            .append( \"LCHG_USER_ID, \" )\n" +
+                "            .append( \"LCHG_DT, \" )\n" +
+                "            .append( \"USER_ID, \" )\n" +
+                "            .append( \"SYS_CD, \" )\n" +
+                "            .append( \"ROL_CD, \" )\n" +
+                "            .append( \"LOGIN_FLG, \" )\n" +
+                "            .append( \"CONCURRENT_LOGIN_FLG, \" )\n" +
+                "            .append( \"JOIN_DT, \" )\n" +
+                "            .append( \"EXP_DT, \" )\n" +
+                "            .append( \"SUPERVISOR_FLG, \" )\n" +
+                "            .append( \"USER_STATUS, \" )\n" +
+                "            .append( \"LAST_LOGIN_DT, \" )\n" +
+                "            .append( \"LOGIN_CNT, \")\n" +
+                "            .append( \"DATA_ACCESS_LEVEL, \")\n" +
+                "            .append( \"PROMO_BLG_PRT_CD ) \" )\n" +
+                "            .append( \"VALUES ( ?, sysdate, null, null, ?, ?, ?, \" )\n" +
+                "            .append( \"?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) \" );";
         printNumberOfQuestionMark(s);
         String[] splitStr = s.split("\n");
         String finalString = "";

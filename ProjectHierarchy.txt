@@ -251,7 +251,19 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                 [loop through the list]
                                     [extract prtCd, orgCd, desCd, minDatte, maxDate from the list]
                                     [if minDate not null && maxDate not null]
-                                        PromotionAwardingData.getActivPromotionsForGivenDates-2935-[returns result: List]-todo
+                                        PromotionAwardingData.getActivPromotionsForGivenDates-2935-[returns result: List]
+                                            [minDate: Date, maxDate: Date, promoType: String, isAirTracking: boolean, prtCd: String, orgCd: String, desCd: String]
+                                            [initialise result: ArrayList, promoCds: List<String>]
+                                            [if promoType == RD || isAirTracking == false]
+                                                PrmMasterMapper.getActivPromotionsForGivenDatesPromoTypeRD--[returns list List<String>]
+                                                [loop through list and add each item to result]
+                                            [else]
+                                                [if promoType != AQ]
+                                                    PrmMasterMapper.getActivPromotionsForGivenDatesPromoTypeNotAQ--[returns promoCds: List]
+                                                [else]
+                                                    PrmMasterMapper.getActivPromotionsForGivenDatesPromoTypeAQ--[returns promoCds: List]
+                                                [loop through the promoCds list and add to result list]
+                                            [return result and end]
                                         [loop through result]
                                             [if finalResult does not contain each valueObj of the result]
                                                 [add the valueObj to the finalResult]
@@ -262,17 +274,43 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                             [return finalResult and end]
                         [initialise members: Hashtable]
                         [if promoType == AC]
-                            PromotionAwardingData.getMembersForPromotion-2746-[returns Hashtable, todo]
+                            PromotionAwardingData.getMembersForPromotion-2746-[returns Hashtable]
+                                [eligibilityRecord: PromotionEligibilityRecord from parameter]
+                                [initialise dateFormatter: SimpleDateFormatter, members: Hashtable]
+                                [if batchDate, batchId, refIds, transIds are null or empty]
+                                    [return members and end]
+                                [initialise batchDate with eligibilityRecord.batchDate]
+                                AtTransMapper.getMembersForPromotion--[returns list: List<AtTrans>]
+                                [loop through the list]
+                                    [extract intId: double from each iteration]
+                                    [convert atTrans: AtTrans to details: PromotionActivityDetails obj]
+                                    [if members hashtable does not contains key -- intId]
+                                        [add the details obj to the members table]
+                                [return members]
                         [initialise codeList: ArrayList, isListPresent: boolean, worldpromo: boolean, intId: String, paxId: String]
                         [loop through activePromotions list]
                             [get promotionCode: String from each iteration]
-                            [PromotionSetupData.m_PromotionCode = promotionCode]
+                            [PromotionSetupData.m_PromotionCode = promotionCode]-[hierarchy not important]
                             [if promoType == AC]
-                                PromotionAwardingData.getOriginDestination--[returns codeList given promotionCode, todo]
+                                PromotionAwardingData.getOrginDestination-2694-[returns codeList given promotionCode]
+                                    [promoCd: String from parameter]
+                                    [initialise codeList: ArrayList, orgCode: String, desCode: String, orgSegCode: String, desSegCode: String]
+                                    PrmWzdItinDtlsMapper.getOrginDestination--[return list: List<PrmWzdItinDtls>]
+                                    [if list is not empty]
+                                        [loop through list and extract orgCode and desCode]
+                                            [if orgCode != UD || desCode != UD]
+                                                [add orgCode and desCode to codeList]
+                                    [if orgCode == UD || desCode == UD]
+                                        PrmWzdItinSgmtDtlsMapper.getOrginDestination--[returns sgmtList: List<PrmWzdItinSgmtDtls>]
+                                        [loop through sgmtList and add orgCd and desCd to codeList]
+                                    [return codeList]
                             [loop through codeList]
                                 [if "WORLD" exist in the codeList]
                                     [worldpromo = true]
-                            PromotionSetupData.load--[get promotionDetails: Promotion, todo]
+                            PromotionSetupData.load-159-[get promotionDetails: Promotion]
+                                PrmMasterMapper.getDetails--[return prmMasterList: List<PrmMaster>]
+                                [create Promotion obj and populate fields with PrmMaster obj]
+                                [return Promotion obj as ValueObject]
                             [if promotionDetails.ruleInfo.size > 0]
                                 [if promotionDetails.eligibilityList not null]
                                     [isListPresent = true]
@@ -281,23 +319,237 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                         [loop through the members]
                                             [get activityVector from members hashtable given memNo]
                                             [get details: PromotionActivityDetails from activityVector]
-                                            PromotionAwardingData.isMemberSatisfiedAllRules--[returns boolean todo]
+                                            PromotionAwardingData.isMemberSatisfiedAllRules-2591-[returns boolean]
+                                                [memNo: String, promotion: Promotion, activityDetails: Vector from parameter]
+                                                [initialise completionQuery: StringBuffer, isSatisfiedNonAir, isSatisfiedSegment, isSatisfiedQuery, isNonAir, isSegment, flag all boolean]
+                                                [generate completionQuery]
+                                                [if rule.code starts with N]
+                                                    [isNonAir = true]
+                                                    PromotionAwardingData.isMemberCompletedNonAirActivity-6726
+                                                        [receives rule: Rule, activityDetails: Vector, miles: double[]]
+                                                        [generate completionQuery]
+                                                        [if completionQuery does not return an empty list]
+                                                            PromotionAwardingData.calculateRuleAward-7111
+                                                                [receives rule: Rule, activityDetails: Vector, miles: double[], (distanceQuery, pointsQuery, combinationPointsQuery, combinationDistanceQuery) StringBuffer]
+                                                                [populate the miles array and return]
+                                                            [return true]
+                                                        [update the values of miles arr to 0]
+                                                        [return false and end]
+                                                    [if isMemberCompletedNonAirActivity == true]
+                                                        [isSatisfiedNonAir = true]
+                                                    [else: isSatisfiedNonAir = false]
+                                                [else if rule.code starts with S]
+                                                    [isSegment = true]
+                                                    PromotionAwardingData.isMemberSatisfiedSegmentRule-6612
+                                                        [generate completionQuery and query db, returns a list]
+                                                            PromotionAwardingData.getRuleDetails-7075
+                                                                [depending on whether id ruleType == Air || NonAir || Segment, call the method on the next line]
+                                                                [if ruleType is not Air, NonAir, or Segment, return false]
+                                                                AirRuleMasterMapper.getRuleDetails--[returns list]
+                                                                [if list is empty, return false]
+                                                                [if ruleType == Air]
+                                                                    AirRuleSetupDate.load-33
+                                                                        AirRuleMasterMapper.load--[return list: List<AirRuleMaster>]
+                                                                        [convert the first value of the list to AirRule obj and return]
+                                                                [else if ruleType == NonAir]
+                                                                    NonAirRuleSetupData.load-30
+                                                                        NonAirRuleMasterMapper.load--[returns list: List<NonAirRuleMaster>]
+                                                                        [extract first value from the list and convert it to NonAirRule obj and return it]
+                                                                [else if ruleType == Segment]
+                                                                    SegmentRuleSetupData.load-28
+                                                                        NonActvtRuleMapper.load--[returns list: List<NonActvtRule>]
+                                                                        [extract first value from the list and convert it to SegmentRuleMaster obj and return it]
+                                                        [if list is empty, returns false]
+                                                        [else return true and end]
+                                                    [if isMemberSatisfiedSegmentRule == true]
+                                                        [isSatisfiedSegment = true]
+                                                    [else: isSatisfiedSegment = false]
+                                                [if completionQuery is executed and does not return an empty list]
+                                                    [isSatisfiedQuery = true]
+                                                [if isNonAir == true]
+                                                    [if isSatisfiedQuery and isSatisfiedNonAir == true]
+                                                        [return true]
+                                                [else if isSegment == true]
+                                                    [return true]
+                                                [else: return false]
+                                                [end]
                                             [if the previous statement returns true]
-                                                PromotionAwardingData.getEligiblityCheckQueryForWorldPromotion--[todo]
-                                                PromotionAwardingData.insertEligibleRecordsIntoWkgTable--[insert the data returned from previous statement]
+                                                PromotionAwardingData.getEligiblityCheckQueryForWorldPromotion-1465
+                                                    [receives promotion: Promotion, eligibilityRecord: PromotionEligibilityRecord, memNo: String, paxId: String]
+                                                    [initialise result: StringBuffer, promoRules: Vector, isActvtRuleExist: boolean]
+                                                    [if isForAirTracking]
+                                                        [generate air sql query]
+                                                        [isActvtRuleExist = true]
+                                                    [else]
+                                                        [generate non-air query]
+                                                        [if rule.code starts with N && promoType != SA]
+                                                            [isActvtRuleExist = true]
+                                                    [if isActvtRuleExist == false && promoType == AQ]
+                                                        PromotionAwardingData.getEligibilityQueryForAcqPromotionWithOutRules-2479
+                                                            [generate sql query and return]
+                                                        [return query string]
+                                                    [return result]
+                                                PromotionAwardingData.insertEligibleRecordsIntoWkgTable-1039-[insert the data returned from previous statement]
+                                                    [receives eligiblityQuery: String, promoCd: String, promoType: String]
+                                                    [if eligiblityQuery not empty string]
+                                                        PrmAwdWkMapper.insertEligibleRecordsIntoWkgTable-[returns response: int]
+                                                        [if response > 0 && promoType == SA]
+                                                            PromotionAwardingData.calculateDistanceTravelled-1122
+                                                                PrmAwdWkMapper.calculateDistanceTravelled--[returns list: List<PrmAwdWk>]
+                                                                [if list is empty: return]
+                                                                [else]
+                                                                    [loop through the list]
+                                                                        PromotionAwardingData.getLatitudeAndLongitude-1146-[returns origin and destination]
+                                                                            AirportMapper.getLatitudeAndLongitude--[return list: List<Airport>]
+                                                                            [return airport Latitude And Longitude]
+                                                                        [calculate the distance from origin to destination]
+                                                                        PrmAwdWkMapper.updateDistanceTravelled
+                                                                [end]
+                                                    [end]
                                 [else]
-                                    PromotionAwardingData.getEligiblityCheckQueryForPromotion--[todo]
+                                    PromotionAwardingData.getEligiblityCheckQueryForPromotion-626
+                                        [receive promotion: Promotion, eligibilityRecord: PromotionEligibilityRecord]
+                                        [initialise result: StringBuffer, promoRules: Vector]
+                                        [if isForAirTracking]
+                                            [get query for air tracking]
+                                        [else]
+                                            [get non-air query]
+                                        [if isActvtRuleExist == false && promoType == AQ]
+                                            [get eligibility query for promotion without rules]
+                                            PromotionAwardingData.getEligibilityQueryForAcqPromotionWithOutRules-2479-[hierarchy done]
+                                            [return returned String from the previous method]
+                                        [return result]
                                     PromotionAwardingData.insertEligibleRecordsIntoWkgTable--[inserts data returned from the previous statement, hierarchy done]
                             [else if promoType == AQ && promotionDetails.acqActvtMilesAwardInfo.size > 0]
-                                PromotionAwardingData.getEligibilityQueryForAcqPromotionWithOutRules--[todo]
+                                PromotionAwardingData.getEligibilityQueryForAcqPromotionWithOutRules-2479-[hierarchy done]
                                 PromotionAwardingData.insertEligibleRecordsIntoWkgTable--[inserts data returned from the previous statement, hierarchy done]
                         [end]
                 PromotionAwardingFacadeImpl.getAwardableMembers-309
-                    PromotionAwardingData.getAwardableMembers
+                    PromotionAwardingData.getAwardableMembers-4093-[return List]
+                        PromotionAwardingData.getActivePromotionsForAwarding-4109-[return list]
+                            [receives eligibilityRecord: PromotionEligibilityRecord]
+                            [initialise query: StringBuffer, batchDate: String, count: int, transIdBuffer: StringBuffer, refIdBuffer: StringBuffer, promoCds: List<String>]
+                            [if isForAirTracking]
+                                [if kickedOffBy == TR || BR]
+                                    [count++]
+                                [else if kickedOffBy == PX]
+                                    [count++]
+                                [else if kickedOffBy == NR]
+                                    [count++]
+                                    [get transIds and append to transIdBuffer]
+                                [else]
+                                    [count++]
+                                    [if paxAndRefIdMap not empty]
+                                        [loop over paxAndRefIdMap]
+                                            [extract redId from each iteration, check if refIdTable does not contain redId, add it to refIdTable and refIdBuffer]
+                                [if count == 0]
+                                    [return empty arrayList]
+                                PrmMasterMapper.getActivePromotionsForAirAwarding--[return promoCds]
+                            [else]
+                                [non air]
+                                [if kickedOffBy == TR || BR]
+                                    [count++]
+                                [if count == 0]
+                                    [return empty arrayList]
+                                PrmMasterMapper.getActivePromotionsForNonAirAwarding--[returns promoCds]
+                            [initialise new arrayList, and add the objects in promoCds list to the arrayList and return]
+                        PromotionAwardingData.getAwardableMembersFromWorkingTable-4202
+                            [receives activePromotions: List, eligibilityRecord: PromotionEligibilityRecord, highestPromotions: List]
+                            [initialise awardableMembers: List, acqAwardableMembers: Hashtable, eligibleHighestPromotions: Hashtable, completedHighestPromotions: Hashtable, promotionSetup: PromotionSetupData]
+                            [loop through activePromotions]
+                                PromotionSetupData.load-[return promotionDetails: Promotion]-[hierarchy done]
+                                [check if pps promotion is true]
+                                [if promotionDetails.type == AQ && promotionDetails.AcqActvtMilesAwardInfo.size > 0]
+                                    PromotionAwardingData.getAwardableMembersForAcquisitionPromotion-[returns acqAwardableMembers]-5706
+                                        [receives promotionDetails: Promotion, eligibilityRecord: PromotionEligibilityRecord as parameters]
+                                        PromotionAwardingData.getEligibleMembersForPromotion-4733-[returns a hashtable of members, hierarchy done]
+                                        [loop through the members]
+                                            [initialise activityVector from members, and duplicate activityVector to a tempVector obj]
+                                            [if promotionDetails.ruleInfo.size > 0]
+                                                PromotionAwardingData.isMemberCompletedThePromotion-5764-[returns boolean]
+                                                    [generate completion, distance, points, combinationDistance, combinationPoints sql queries]
+                                                    PromotionAwardingData.calculatePromotionAward-5891-[returns boolean]
+                                                        [receives distanceQuery, pointsQuery, promotion, combinationDistanceQuery, combinationPointsQuery]
+                                                        [receives activityDetails, rulePoints, awardDetails, bonus, memNo]
+                                                        The method starts by initializing several local variables and processing promotion data.
+                                                        It then checks if the promotion has any miles award information and calculates the promotion bonus, elite bonus, and PPS bonus [Priority Passengers] based on the award details.
+                                                        The method iterates through activity details vector and identifies eligible promotions for a member based on rule codes.
+                                                        If the eligible sequence is not present, it assigns the highest value of distance or points to the sequence.
+                                                        It calculates the total promotion and total elite promotion bonus and stores transaction dates, ids, and rule details.
+                                                        Iterates through the promotion's billing information for regular members, elite members, and PPS members and sets the billing details for each participant based on their awards.
+                                                        If required, it sets the NonMilesAward information which is not based on miles.
+                                                        Checks if the rule allows applying StopOverSatisfied promotions and if it satisfies the rule, assigns the bonus to the member.
+                                                        Finally, it returns a boolean value true if a promotion bonus is applied; otherwise, it returns false, and bonus[0] is set to 0d.
+                                                [if isMemberCompletedThePromotion]
+                                                    [if award.transIds.size != 0]
+                                                        [loop through award.transIds]
+                                                            [loop through tempVector]
+                                                                [for each iteration of tempVector obj, check if the transId matches, add to activityVector]
+                                                    [put the activityVector into acqAwardableMembers]
+                                            [else]
+                                                [put activityVector into acqAwardableMembers]
+                                        [return acqAwardableMembers]
+                                    PromotionAwardingData.getAcqAwardableMembers-4775-[returns list and added to awardableMembers]
+                                        [internal method called]
+                                            PromotionAwardingData.prepareAwardForAcquisition-4944
+                                                The method first processes various flags and information related to the promotion, such as PPS promotion eligibility, PPS bonus, flown class, segment value, and other relevant data.
+                                                It then calculates the bonus and elite bonus miles using getAcqMilesAward and getAcqEliteMilesAward methods, and it computes any non-miles awards using the getAcqNonMilesAward method.
+                                                Afterward, the method initializes a new PromotionAward object and sets its attributes based on the results obtained from the previous calculations.
+                                                It also checks if the introducer has exceeded the maximum allowed miles awards or non-miles awards for the promotion. If so, the method returns null. If not, the PromotionAward object gets updated with the billing participant information, and other attributes are set accordingly.
+                                                Finally, if the member is an introducer, the method checks if the introducer has exceeded the maximum number of allowed introducees for the promotion. If not, the PromotionAward object is returned. If the introducer has exceeded the maximum limit, the method returns null.
+                                        The method starts by initializing an empty ArrayList called awardableMembers which will store the PromotionAward objects for each valid member. It then checks if the members hashtable is not empty and iterates through each member.
+                                        For each member, the method calculates whether they are eligible for the promotion by iterating through promotion.getAcqActvtMilesAwardInfo(), which returns a list of MilesAward objects containing the rules for each promotion.
+                                        It also checks if there are any NonMilesAward objects available for the promotion and keeps track of various flags and counters related to the process.
+                                        The core of the method is in the nested loop iterating through the actvtVector, which contains the activity details for each member. Here, the method checks if the member is eligible for the award based on defined rules, and if so, it creates a new PromotionAward object 
+                                        by calling the prepareAwardForAcquisition method, updating relevant flags and counters, and finally adds the PromotionAward object to awardableMembers.
+                                        Once all eligible members have been processed, the method returns the awardableMembers list containing the PromotionAward objects for each valid member.
+                                [else if promotionDetails.ruleInfo.size > 0]
+                                    PromotionAwardingData.getEligibleMembersForPromotion-4733-[returns members: Hashtable]-todo
+                                    [if members not empty]
+                                        [loop through the members table]
+                                            [get the memNo: key, activityVector: value]
+                                            [check if pax id is present]
+                                            [if activityVector.size > 1 && isPPSPromotion]
+                                                [loop through activityVector]
+                                                    PromotionAwardingData.isActivityToBeRemoved-4710
+                                                        PrmAwdWkMapper.isActivityToBeRemoved--[return count]
+                                                        [if count > 0, return true]
+                                                        [else return false, end]
+                                                    [if eligibilityRecord.isPPSPending == false]
+                                                        [if activityToBeRemoved == true, update act value]
+                                                        [else]
+                                                            [increase value of act by 1]
+                                                    [else]
+                                                        [if activityToBeRemoved == true && isPaxIDPresent]
+                                                            [update act value depending on paxId and initial value of act]
+                                            [create award: PromotionAward]
+                                            [loop through activityVector]
+                                                [initialise bonus: double[]]
+                                                PromotionAwardingData.isMemberCompletedThePromotion-5764-[returns boolean]-todo
+                                                [if the method above returns true]
+                                                    [initialise and populate the transIds and refIds in stringBuffers]
+                                                    [if promotionDetails.type == QL]
+                                                        [update award var and add to awardableMembers list]
+                                                    [else]
+                                                        [if promotionDetails.awardType != H]
+                                                            [add award to awardableMembers list]
+                                                        [else]
+                                                            [add to highest list]
+                                                [else if promotionDetails.awardType == H && promotionDetails.type != QL]
+                                                    [add promotionCode to eligibleHighestPromotions]
+                                                    [break loop]
+                                                [else]
+                                                    [break loop]
+                                [else]
+                                    PromotionAwardingData.getAwardablePreSelectedMembers-4632-[returns list]-todo
+                                    [add the result returned from the above method to awardableMembers]
+                            PromotionAwardingData.getCompletedHighestPromotions-4500-[return arrayList]-todo
+                            [add the result returned from above method to awardableMembers]
+                            [add eligibleHighestPromotions and completedHighestPromotions to highestPromotions]
                 [if eligibilityRecord.promoType == QL]
                     PromotionAwardingImpl.awardPromotionFFPEliteBonus-86
                         PromotionAwardingImpl.checkPromotionMaxLimitReached-490-[returns boolean]
-                            PromotionAwardingData.checkPromoMaxLimitReached
+                            PromotionAwardingData.checkPromoMaxLimitReached-todo
                         PromotionAwardingImpl.checkCustomerAccountStatus-468-[returns boolean]
                             CustomerAcctHandlerImpl.getCustomerAccountByIntID-40
                                 [if programCode == null or empty string]
@@ -306,7 +558,7 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                     CustomerIDHandlerImpl.getCustomerID--[hierarchy done]
                                 [if customerID == null or empty string]
                                     [throw error]
-                                CustomerAcctData.getCustomerAccountByIntID
+                                CustomerAcctData.getCustomerAccountByIntID-todo
                             CustomerServiceImpl.verifyAcctStatusFuncEligibility--[hierarchy done]
                             [end]
                         PromotionAwardingImpl.checkCustomerType-455-[returns boolean]
@@ -316,7 +568,7 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                 [returns the boolean from prev statement and end]
                         [if the prev 2 boolean returned are both true]
                             [check for duplicate, use the trans id from awd map to check for duplicate]
-                            PromotionAwardingData.getCountForDuplicateCheck--[returns dupCheck]
+                            PromotionAwardingData.getCountForDuplicateCheck--[returns dupCheck]-todo
                             PromotionAwardingData.checkForNewDupAward--[returns dupRes]
                             [if !dupRes && !dupCheck]
                                 PromotionAwardingImpl.awardFFPEliteMiles-214
@@ -332,12 +584,12 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                         [if (!((award.getAwardType() != null && award.getAwardType().equals("MN")) && (award.getPromoType() != null && award.getPromoType().equalsIgnoreCase("AC")))) || !check]
                                             [if award.promoType == AC]
                                                 ReferenceServiceImpl.getExclNonExpMilesFlg-40-[returns expFlg: String]
-                                                    ParticipantData.getNonExpMilesFlg
+                                                    ParticipantData.getNonExpMilesFlg-todo
                                                 [if expFlg == null || expFlg == N]
                                                     ReferenceServiceImpl.getValidityPrdFromCusId-56-[returns valPrd: int, hierarchy done]
                                                 [set the ptsValidityPeriod]
                                             [else]
-                                                PromotionAwardingData.getPointsValidityPeriod--[returns the validityPeriod: int, set in ptsValidityPeriod]
+                                                PromotionAwardingData.getPointsValidityPeriod--[returns the validityPeriod: int, set in ptsValidityPeriod]-todo
                                         [else if (award.getAwardType() != null && award.getAwardType().equals("MN")) && (award.getPromoType() != null && award.getPromoType().equalsIgnoreCase("AC"))]
                                             [if billingPrtp not null]
                                                 ReferenceServiceImpl.getExclNonExpMilesFlg-40-[hierarchy done, returns expFlg]
@@ -346,21 +598,21 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                                 [if valPrd != NON_EXPIRY_VALIDITY_PRD]
                                                     [valPrd = award.ptsValidityPeriod]
                                             [set ptsValidityPeriod]
-                                        PromotionAwardingData.getParticipantType--[return string to setPrtpTypeInd]
+                                        PromotionAwardingData.getParticipantType--[return string to setPrtpTypeInd]-todo
                                         [set statementPrtpCd]
                                         [if promoBonus - prmBonus > 0]
                                             prmBonus += 1
                                         [update prmBonusEllite]
                                         [update promoBonusPPS]
                                         [if award.awardType != EN && != MN]
-                                            PromotionAwardingData.retreivePromoTransId--[returns promoTransXRefId]
+                                            PromotionAwardingData.retreivePromoTransId--[returns promoTransXRefId]-todo
                                         [if promoTransXRefId != null]
                                             [isPPSPending = true]
                                         [if promoBonusPPS > 0 && isOFFP == false || (isPPSPending == true && awardType != EN && awardType != MN && actualPPSPromoFlg == Y && isIntroducer == true && isOFFP == false)]
                                             [if award.isIntroducerExceededMaxValues == true]
                                                 [award.ppsPromoFlg = X]
                                             [update promoXRefId and userId]
-                                            PromotionAwardingData.updatePromotionTransaction--[update the award in db]
+                                            PromotionAwardingData.updatePromotionTransaction--[update the award in db]-todo
                                             PromotionAwardingImpl.updatePPSPoints-445
                                                 PromotionAwardingImpl.updateQualificationBucket-789-[hierarchy done]
                                         [else]
@@ -380,7 +632,7 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                                     [if prmBonus == 0 && promoBonusEllite == 0 && promoBonusPPS == 0]
                                                         [continue loop]
                                                 [update ppsPromoFlg and statementPrtpCd]
-                                                PromotionAwardingData.createPromotionTransaction
+                                                PromotionAwardingData.createPromotionTransaction-todo
                                     [end]
                                 PromotionAwardingImpl.awardNonMiles-177
                                     [receives award: PromotionAward]
@@ -393,20 +645,20 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                             [initialise nonMilesInd: String, nonMQty: String]
                                             [update map with nonMilesInd key]
                                         [update transXrefId and isMilesAward]
-                                        PromotionAwardingData.createPromotionTransaction--[call creation of ZC non-air awarding]
+                                        PromotionAwardingData.createPromotionTransaction--[call creation of ZC non-air awarding]-todo
                                     [end]
                                 [if awardType == null || awardType != EN || awardType != MN]
-                                    PromotionAwardingData.voidAwardedRecordsInWkgTable
+                                    PromotionAwardingData.voidAwardedRecordsInWkgTable-todo
                             [else]
                                 [if dupRes == true]
-                                    PromotionAwardingData.updateDuplicateAwdWkProcessFlg
+                                    PromotionAwardingData.updateDuplicateAwdWkProcessFlg-todo
                         [else]
-                            PromotionAwardingData.updateErrorRecordsInWkgTable
+                            PromotionAwardingData.updateErrorRecordsInWkgTable-todo
                 [else]
                     PromotionAwardingFacadeImpl.isPromotionAwardedToMember-315-[returns boolean]
-                        PromotionAwardingData.isPromotionAwardedToMember
+                        PromotionAwardingData.isPromotionAwardedToMember-todo
                     PromotionAwardingFacadeImpl.isKFAlrQualifiedToTargetedTier-322-[returns boolean]
-                        PromotionAwardingData.isKFAlrQualifiedToTargetedTier
+                        PromotionAwardingData.isKFAlrQualifiedToTargetedTier-todo
                     [if both statements above returns true]
                     PromotionAwardingImpl.awardQualificationPromotion-498
                         QualificationServiceImpl.forceQualifyByPromotion-106
@@ -414,18 +666,18 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                 QualificationServiceImpl.forceQualify-138
                                     QualificationServiceImpl.valididateForceQualAccountStatus-6967-[check account status]
                                         QualificationServiceImpl.getAccountStatus-7025-[returns accountStatus]
-                                            QualificationData.getAccountStatus
+                                            QualificationData.getAccountStatus-todo
                                         [if accountStatus == E]
                                             [throw error]
                                         [else]
                                             QualificationServiceImpl.validateAccountStatus-6967-[returns boolean]
-                                                QualificationData.validateAccountStatus
+                                                QualificationData.validateAccountStatus-todo
                                             [if the validateAccountStatus method returns false]
                                                 [throw error]
                                             [end]
                                     [target tier status cannot be null or basic tier]
                                     QualificationServiceImpl.getTierStatByName-6950
-                                        TierStatData.getTierStatByName--[returns tierStat obj]
+                                        TierStatData.getTierStatByName--[returns tierStat obj]-todo
                                         [if tierStat obj == null]
                                             [throw error]
                                     QualificationServiceImpl.validateTierType-6918
@@ -447,13 +699,13 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                                 [tier expiry in tier qual]
                                                 [if runDate is after orgQlfyEndDate && runDate is before orgQlfyEndDateAfterXDays]
                                                 QualificationServiceImpl.getMilesByParticipents-3896-[returns elitePrtList]
-                                                    EliteParticipantData.getMilesByParticipants
+                                                    EliteParticipantData.getMilesByParticipants-todo
                                                 [loop through the elitePrtList and aggregate the miles from prt obj]
                                                 [set the curMileage to aggregated miles]
                                                 QualificationServiceImpl.updateEliteInfo-3922-[update database]
-                                                    QualificationData.updateEliteInfo
+                                                    QualificationData.updateEliteInfo-todo
                                                 QualificationServiceImpl.getTierStatList-6932
-                                                    TierStatData.getTierStatList
+                                                    TierStatData.getTierStatList-todo
                                                 [if issueCard == true]
                                                     TierUtil.compareUtil--[hierarchy done, returns result]
                                                     [if result >= 0]
@@ -491,7 +743,7 @@ RetroFacadeImpl.awardRetroPromotionOnline-87
                                             QualificationServiceImpl.processPPSCustToBeExtened-5997
                                                 QualificationServiceImpl.getPPSCustomerData-7474
                                                     QualificationServiceImpl.getPPSCustomerData-7750
-                                                        QualificationData.vLoadVOpps-[get customer elite data]
+                                                        QualificationData.vLoadVOpps-[get customer elite data]-todo
                                                     [end]
                                                 [if currentTierStatus == QUALIFIED_TIER constant]
                                                     [create new PPSYearQual obj and set into customerTier obj]

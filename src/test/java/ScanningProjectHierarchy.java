@@ -145,6 +145,9 @@ public class ScanningProjectHierarchy {
                 if(line.trim().equals("")){
                     continue;
                 }
+//                if (count == 293){
+//                    System.out.println("checkpoint reached");
+//                }
                 char[] charArrOfLine = line.toCharArray();
                 int spacesBeforeLine = 0;
                 for(char c : charArrOfLine){
