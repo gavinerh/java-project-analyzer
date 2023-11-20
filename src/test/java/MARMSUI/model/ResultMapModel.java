@@ -1,3 +1,5 @@
+package MARMSUI.model;
+
 public class ResultMapModel {
     public String type;
     public String columnName;

@@ -1,47 +1,45 @@
+import MARMSUI.model.ResultMapModel;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class ResultMapToVoFieldsAndPopulateAs {
     public static void main(String[] args) {
-        String resultMap = "<result column=\"TRANS_CD\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"RCRE_DT\" jdbcType=\"TIMESTAMP\" />\n" +
-                "<result column=\"APPROVAL_CD\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"NET_PTS_REQ\" jdbcType=\"NUMERIC\" />\n" +
-                "<result column=\"ACTION_CD\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"PROMO_SAVINGS\" jdbcType=\"NUMERIC\" />\n" +
-                "<result column=\"REVERSED_FLG\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"BATCH_ID\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"BATCH_DT\" jdbcType=\"TIMESTAMP\" />\n" +
-                "<result column=\"EVENT_ID\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"NA_RDPN_ID\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"UNIT_REDEEM\" jdbcType=\"NUMERIC\" />\n" +
-                "<result column=\"NO_OF_GUEST\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"FULFIL_DT\" jdbcType=\"TIMESTAMP\" />\n" +
-                "<result column=\"MEAL_TYPE\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"WINE_PREF\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"TRANSPORT_OPT\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"REMARK\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"DRESS_CD\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"VENUE\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"EVENT_CD\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"CATEGORY_CD\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"FULFIL_DT_1\" jdbcType=\"TIMESTAMP\" />\n" +
-                "<result column=\"EVENT_DESC_1\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"EVENT_DESC_2\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"EVENT_NAME\" jdbcType=\"VARCHAR\" />\n" +
-                "<result column=\"EVENT_SUBTYPE\" jdbcType=\"VARCHAR\" />";
+        String resultMap = "<result column=\"general_identifier\" jdbcType=\"VARCHAR\" />\n" +
+                "        <result column=\"TOT_PTS\" jdbcType=\"NUMERIC\" />\n" +
+                "        <result column=\"EXP_DT\" jdbcType=\"TIMESTAMP\" />\n" +
+                "        <result column=\"NEW_EXP_DT_1\" jdbcType=\"TIMESTAMP\" />";
         List<ResultMapModel> resultMapModelList = generateListOfColumnTitles(resultMap);
         System.out.println(resultMapModelList.size());
         printModifiedResultMap(resultMapModelList, resultMap.split("\n"));
         System.out.println("-----------------------------------------\n");
-        String sqlStatement = "SELECT TRANS_CD, A.RCRE_DT,A.APPROVAL_CD, NET_PTS_REQ ,  ACTION_CD,  \n" +
-                "B.PROMO_SAVINGS, REVERSED_FLG, BATCH_ID , BATCH_DT, \n" +
-                "B.EVENT_ID,B.NA_RDPN_ID, UNIT_REDEEM,NO_OF_GUEST,\n" +
-                "FULFIL_DT, MEAL_TYPE, WINE_PREF, TRANSPORT_OPT,\n" +
-                "REMARK ,DRESS_CD , VENUE, EVENT_CD , CATEGORY_CD, \n" +
-                "FULFIL_DT, EVENT_DESC_1, EVENT_DESC_2, EVENT_NAME,\n" +
-                "EVNT_SUBTYPE";
+        String sqlStatement = "select 'AIR_REDEMPTION' as TRANSACTION_TYPE, TRANS_CD as TRANS_CD, A.RCRE_DT as TRANS_DATE,A.APPROVAL_CD as APPROVAL_CD,  A.ADJ_APPROVAL_CD as ADJ_APPROVAL_CD,\n" +
+                "        NET_PTS_REQ as NET_PTS_REQ,  ACTION_CD as ACTION_CD,\n" +
+                "        TKT_MCO_NO as TKT_MCO_NO,  RDPN_TYPE as RDPN_TYPE,  AWD_ZONE as AWD_ZONE, B.PROMO_SAVINGS  as PROMO_SAVINGS,\n" +
+                "        BILLING_PRT as BILLING_PRT, A.RCRE_PCC as RCRE_PCC, A.RCRE_SALES_OFF as RCRE_SALES_OFF,\n" +
+                "        A.RCRE_AGENT_ID as RCRE_AGENT_ID, TKT_STOCK1 as TKT_STOCK1,  C.ITIN_XREF_ID  as ITIN_XREF_ID,  PNR_NAME as PNR_NAME,\n" +
+                "        ACTION_CD2 as ACTION_CD2, PNR_REF as PNR_REF, TURNPTS_BOARD as TURNPTS_BOARD,\n" +
+                "        TKT_SRC_IND as TKT_SRC_IND, AWD_TYPE as AWD_TYPE, TKT_VALIDITY_DT AS TKT_VALIDITY_DT,\n" +
+                "        B.RDPN_NET_PTS_REQ AS RDPN_NET_PTS_REQ, FORFEIT_PTS as FORFEIT_PTS, B.TRANS_PTS as TRANS_PTS,\n" +
+                "        REVERSED_FLG as REVERSED_FLG, D.PROMO_CD as PROMO_CD, PROMO_NAME as PROMO_NAME, BATCH_ID as BATCH_ID,\n" +
+                "        BATCH_DT as BATCH_DATE, TOT_STOPOVER_PTS as TOT_STOPOVER_PTS, C.CERTIFICATE_NUMBER  as CERTIFICATE_NUMBER ,\n" +
+                "        A.MMK_IND as MMK_IND, A.PYMT_RFND_LC as PYMT_RFND_LC, A.TOTAL_FARE_IN_LC as TOTAL_FARE_IN_LC,\n" +
+                "        A.FARE_WO_TAX_IN_LC as FARE_WO_TAX_IN_LC, A.TAX_IN_LC as TAX_IN_LC, A.NET_FARE_PAID_IN_LC as NET_FARE_PAID_IN_LC,\n" +
+                "        A.NET_KF_MILES_VAL_IN_LC as NET_KF_MILES_VAL_IN_LC,   A.TRANS_FARE_PAID_IN_LC as TRANS_FARE_PAID_IN_LC,\n" +
+                "        A.TRANS_KF_MILES_VAL_IN_LC as TRANS_KF_MILES_VAL_IN_LC, A.TOTAL_FARE_IN_SGD as TOTAL_FARE_IN_SGD,\n" +
+                "        A.FARE_WO_TAX_IN_SGD as FARE_WO_TAX_IN_SGD, A.TAX_IN_SGD as TAX_IN_SGD, A.NET_FARE_PAID_IN_SGD as NET_FARE_PAID_IN_SGD,\n" +
+                "        A.NET_KF_MILES_VAL_IN_SGD as NET_KF_MILES_VAL_IN_SGD,\n" +
+                "        A.TRANS_FARE_PAID_IN_SGD as TRANS_FARE_PAID_IN_SGD, A.TRANS_KF_MILES_VAL_IN_SGD as TRANS_KF_MILES_VAL_IN_SGD,\n" +
+                "        A.NET_TAX_PAID_IN_LC as NET_TAX_PAID_IN_LC, A.NET_TAX_PAID_IN_SGD as NET_TAX_PAID_IN_SGD,\n" +
+                "        A.ORIG_CURRENCY_CD as ORIG_CURRENCY_CD, A.initial_action_cd as INITIAL_ACTION_CD, A.rfic_cd as RFIC_CD, A.rfic_desc as RFIC_DESC,\n" +
+                "        case when TRANS_CD = 'ED' or TRANS_CD = 'EC' or TRANS_CD = 'FD' or TRANS_CD = 'FC' then TKT_MCO_NO\n" +
+                "        else null end as EMD,\n" +
+                "        case when TRANS_CD = 'ED' or TRANS_CD = 'EC' or TRANS_CD = 'FD' or TRANS_CD = 'FC' then null\n" +
+                "        else TKT_MCO_NO end as TICKET_NUMBER,\n" +
+                "        qBkt.NORMAL_PTS as NORMAL_PTS,\n" +
+                "        qBkt.EXTENDED_PTS as EXTENDED_PTS, qBkt.BUCKET_DT as EXPIRY_DT, flt.CARRIER_CD as CARRIER_CD, flt.FLT_NO as FLT_NO,\n" +
+                "        flt.SUB_CLASS as SUB_CLASS, flt.FLT_DEP_DT_TIME as FLT_DEP_DT, flt.FLT_ARR_DT_TIME as FLT_ARR_DT, flt.OFF_PT as DESTINATION_CD,\n" +
+                "        flt.BOARD_PT as ORIGIN_CD, flt.CONNECTION_IND as TRANSIT_IND, distPnr.dist_pnr as DIST_PNR_FLG";
 
         String[] sqlArr = new String[]{sqlStatement};
         addAsStatementToSqlString(sqlArr, resultMapModelList);
@@ -90,7 +88,9 @@ public class ResultMapToVoFieldsAndPopulateAs {
             fieldType = "Date";
         } else if (type.equals("NUMERIC")) {
             fieldType = "long";
-        } else {
+        } else if (type.equals("DOUBLE")){
+            fieldType = "double";
+        }else {
             throw new RuntimeException("Wrong type provided");
         }
         return fieldType;
@@ -102,6 +102,7 @@ public class ResultMapToVoFieldsAndPopulateAs {
         }
         for(int i=0; i<sentences.length; i++) {
             ResultMapModel resultMapModel = resultMapModelList.get(i);
+            System.out.println("@JsonInclude(JsonInclude.Include.NON_EMPTY)");
             String toPrint = String.format("private %s %s;", resultMapModel.fieldType, resultMapModel.fieldName);
             System.out.println(toPrint);
         }
