@@ -21,66 +21,33 @@ public class GenerateSqlFromBuffer {
         String airTransCode = "'RC','RD'";
         StringBuffer initial = new StringBuffer();
 
-        buffer.append(" select * from tier_stat where qual_proc_ind = 'PP' and rule_Active_ind = 'N' ");
-        buffer.append(" and rule_ind = 'M' and end_dt = ( select max(end_dt) from tier_stat ");
-        //Modified by Vinod for MKP92600 Starts
-        //qry.append(" where qual_proc_ind = 'PP' and rule_Active_ind = 'N' and rule_ind = 'M' ) " );
-        buffer.append(" where qual_proc_ind = 'PP' and rule_Active_ind = 'N' and rule_ind = 'M' ) AND NVL(QUAL_SCHEME,'N')!='Y' ");
-        //Modified by Vinod for MKP92600 Ends
+        buffer.append("SELECT TRANS_CD, A.RCRE_DT,A.APPROVAL_CD,  A.ADJ_APPROVAL_CD, NET_PTS_REQ ,  ACTION_CD,  TKT_MCO_NO,  RDPN_TYPE ,  AWD_ZONE, ");
+        buffer.append("B.PROMO_SAVINGS  ,  BILLING_PRT, A.RCRE_PCC, A.RCRE_SALES_OFF, A.RCRE_AGENT_ID, TKT_STOCK1,  C.ITIN_XREF_ID   ,  PNR_NAME, ");
+        buffer.append("ACTION_CD2, PNR_REF, TURNPTS_BOARD, A.INT_ID, TKT_SRC_IND, AWD_TYPE,TKT_VALIDITY_DT , B.RDPN_NET_PTS_REQ, FORFEIT_PTS, B.TRANS_PTS , REVERSED_FLG, D.PROMO_CD , PROMO_NAME, BATCH_ID , BATCH_DT,TOT_STOPOVER_PTS,C.CERTIFICATE_NUMBER  ");
 
-
-        // To get the in-active rule for Q PR
-        buffer.append(" UNION ALL ");
-        buffer.append(" select * from tier_stat where qual_proc_ind = 'PR' and rule_Active_ind = 'N' ");
-        buffer.append(" and rule_ind = 'M' and tier_status_ind = 'Q' and end_dt = ( select max(end_dt) from tier_stat ");
-        buffer.append(" where qual_proc_ind = 'PR' and rule_Active_ind = 'N' and rule_ind = 'M' and tier_status_ind = 'Q' ) ");
-
-        // To get the in-active rule for T PR
-        buffer.append(" UNION ALL ");
-        buffer.append(" select * from tier_stat where qual_proc_ind = 'PR' and rule_Active_ind = 'N' ");
-        buffer.append(" and rule_ind = 'M' and tier_status_ind = 'T' and end_dt = ( select max(end_dt) from tier_stat ");
-        //Modified by Vinod for MKP92600 Starts
-        //qry.append(" where qual_proc_ind = 'PR' and rule_Active_ind = 'N' and rule_ind = 'M' and tier_status_ind = 'T' ) " );
-        buffer.append(" where qual_proc_ind = 'PR' and rule_Active_ind = 'N' and rule_ind = 'M' and tier_status_ind = 'T' ) AND NVL(QUAL_SCHEME,'N')!='Y' ");
-        //Modified by Vinod for MKP92600 Ends
-
-        // To get the in-active rule for SL PU
-        buffer.append(" UNION ALL ");
-        buffer.append(" select * from tier_stat where qual_proc_ind = 'PU' and rule_Active_ind = 'N' ");
-        buffer.append(" and rule_ind = 'M' and applicable_qlfy_ind = 'SL' and end_dt = ( select max(end_dt) from tier_stat ");
-        //Modified by Vinod for MKP92600 Starts
-        //qry.append(" where qual_proc_ind = 'PU' and rule_Active_ind = 'N' and rule_ind = 'M' and applicable_qlfy_ind = 'SL' ) " );
-        buffer.append(" where qual_proc_ind = 'PU' and rule_Active_ind = 'N' and rule_ind = 'M' and applicable_qlfy_ind = 'SL' ) AND NVL(QUAL_SCHEME,'N')!='Y' ");
-        //Modified by Vinod for MKP92600 Ends
-
-        // To get the in-active rule for Non SL PU
-        buffer.append(" UNION ALL ");
-        buffer.append(" select * from tier_stat where qual_proc_ind = 'PU' and rule_Active_ind = 'N' ");
-        buffer.append(" and rule_ind = 'M' and applicable_qlfy_ind <> 'SL' and end_dt = ( select max(end_dt) from tier_stat ");
-        //Modified by Vinod for MKP92600 Starts
-        //qry.append(" where qual_proc_ind = 'PU' and rule_Active_ind = 'N' and rule_ind = 'M' and applicable_qlfy_ind <> 'SL' ) " );
-        buffer.append(" where qual_proc_ind = 'PU' and rule_Active_ind = 'N' and rule_ind = 'M' and applicable_qlfy_ind <> 'SL' ) AND NVL(QUAL_SCHEME,'N')!='Y' ");
-        //Modified by Vinod for MKP92600 Ends
-        //Modified by Logesh for MKP92708 Starts
-        //qry.append(" AND     NVL(QUAL_SCHEME,'N')!='Y' ");//Added by Vinod for MKP92600
-
-        //Modified by Logesh for MKP92708 Ends
-        buffer.append(" ORDER BY TIER_STATUS_IND DESC");
+        //SUMATHI Changes for - MKP91492 - KRISFLYER VALUE BASED REDEMPTION - START
+        buffer.append (" ,A.MMK_IND, A.PYMT_RFND_LC, A.TOTAL_FARE_IN_LC, A.FARE_WO_TAX_IN_LC, A.TAX_IN_LC, A.NET_FARE_PAID_IN_LC, A.NET_KF_MILES_VAL_IN_LC, ");
+        buffer.append("  A.TRANS_FARE_PAID_IN_LC, A.TRANS_KF_MILES_VAL_IN_LC, A.TOTAL_FARE_IN_SGD, A.FARE_WO_TAX_IN_SGD, A.TAX_IN_SGD, A.NET_FARE_PAID_IN_SGD, ");
+        buffer.append(" A.NET_KF_MILES_VAL_IN_SGD, A.TRANS_FARE_PAID_IN_SGD, A.TRANS_KF_MILES_VAL_IN_SGD");
+        //Added By Hari for MKP91775 - PwM Start
+        buffer.append(" ,A.NET_TAX_PAID_IN_LC, A.NET_TAX_PAID_IN_SGD");
+        //Added By Hari for MKP91775 - PwM End
+        buffer.append(" , A.ORIG_CURRENCY_CD"); // SUBHA - MKP91492 - Added for the Account Summary screen changes
+        buffer.append(" , A.initial_action_cd , A.rfic_cd , A.rfic_desc  ");
 
         String paramName = "modFunc";
-        String[] arrToReplace = {"startDate", "endDate"};
+        String[] arrToReplace = {"prgCd", "tierType", "processType"};
 
-        String[] arrTypes = {"TIMESTAMP","TIMESTAMP"};
+        String[] arrTypes = { "VARCHAR", "VARCHAR", "VARCHAR"};
 
 
         String toPrint = null;
         boolean toReplace = true;
         boolean paramsAreNotNestedObjects = true;
         if (toReplace) {
-            if(paramsAreNotNestedObjects){
-                    toPrint = replaceQuestionMarkForNonObj(buffer.toString(),arrToReplace,arrTypes);
-            }
-            else {
+            if (paramsAreNotNestedObjects) {
+                toPrint = replaceQuestionMarkForNonObj(buffer.toString(), arrToReplace, arrTypes);
+            } else {
                 toPrint = replaceQuestionMark(buffer.toString(), arrToReplace, paramName);
             }
         } else {
@@ -93,16 +60,17 @@ public class GenerateSqlFromBuffer {
         }
 
         System.out.println(toPrint);
+
     }
 
     private static String replaceQuestionMarkForNonObj(String sql, String[] params, String[] types) {
-        if(types.length != params.length){
+        if (types.length != params.length) {
             throw new RuntimeException("Length are not equal");
         }
         String finalString = "";
         int arrCount = 0;
-        for(char c : sql.toCharArray()) {
-            if(c == '?'){
+        for (char c : sql.toCharArray()) {
+            if (c == '?') {
                 finalString += String.format("#{%s,jdbcType=%s}", params[arrCount], types[arrCount]);
                 arrCount++;
             } else {

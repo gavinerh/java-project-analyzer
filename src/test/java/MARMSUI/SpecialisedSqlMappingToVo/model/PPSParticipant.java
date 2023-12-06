@@ -1,5 +1,5 @@
 // PPSParticipant.java
-package MARMSUI.SpecialisedSqlMappingToVo;
+package MARMSUI.SpecialisedSqlMappingToVo.model;
 
 import java.io.Serializable;
 

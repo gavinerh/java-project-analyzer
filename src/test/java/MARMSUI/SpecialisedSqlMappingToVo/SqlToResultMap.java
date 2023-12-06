@@ -1,5 +1,7 @@
 package MARMSUI.SpecialisedSqlMappingToVo;
 
+import MARMSUI.SpecialisedSqlMappingToVo.model.Tierstat;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -9,34 +11,38 @@ public class SqlToResultMap {
     public static void main(String[] args) {
         try {
             boolean toSortSqlColumns = true;
-            String sql = "";
+            String sql = "SEQ_NO, TIER_STATUS_IND, TIER_STATUS_PTS_REQ, TIER_STATUS_SECT_REQ, TIER_STATUS_MIN_PRD, TIER_HIERARCHY,\n" +
+                    "        TIER_STATUS_PTS_OFFSET, TIER_STATUS_SECT_OFFSET, TIER_STATUS_ACCUM_PTS_REQ, TIER_STATUS_ACCUM_SECT_REQ,\n" +
+                    "        TIER_STATUS_ACCUM_PTS_OFFSET, TIER_STATUS_ACCUM_SECT_OFFSET, RULE_ACTIVE_IND, APPLICABLE_QLFY_IND,\n" +
+                    "        TIER_QUAL_PRD, TIER_STATUS_VAL_REQ, TIER_STATUS_ACCUM_VAL_REQ, RULE_IND, START_DT, END_DT, YRS_IN_TIER,\n" +
+                    "        TIER_STATUS_VAL_OFFSET, TIER_STATUS_ACCUM_VAL_OFFSET,PER_EM_PPS ,QUAL_SCHEME,QUAL_PROC_IND";
 
-            String methodString = "ts.setSeqNo(rs.getInt(\"SEQ_NO\"));\n" +
-                    "            ts.setProgramCd(rs.getString(\"PRG_CD\"));\n" +
-                    "            ts.setTierTypeInd(rs.getString(\"TIER_TYPE_IND\"));\n" +
-                    "            ts.setTierStatus(rs.getString(\"TIER_STATUS_IND\"));\n" +
-                    "            ts.setPtsReq((long) rs.getLong(\"TIER_STATUS_PTS_REQ\"));\n" +
-                    "            ts.setSectReq((float) rs.getFloat(\"TIER_STATUS_SECT_REQ\"));\n" +
-                    "            ts.setMinPeriod((long) rs.getLong(\"TIER_STATUS_MIN_PRD\"));\n" +
-                    "            ts.setHierarchy(rs.getInt(\"TIER_HIERARCHY\"));\n" +
-                    "            ts.setPointOffset((long) rs.getLong(\"TIER_STATUS_PTS_OFFSET\"));\n" +
-                    "            ts.setSectorOffset((float) rs.getFloat(\"TIER_STATUS_SECT_OFFSET\"));\n" +
-                    "            ts.setQualProcID(rs.getString(\"QUAL_PROC_IND\"));\n" +
-                    "            ts.setAccPtsReq((long) rs.getLong(\"TIER_STATUS_ACCUM_PTS_REQ\"));\n" +
-                    "            ts.setAccSectReq((float) rs.getFloat(\"TIER_STATUS_ACCUM_SECT_REQ\"));\n" +
-                    "            ts.setAccPtsOffset((long) rs.getLong(\"TIER_STATUS_ACCUM_PTS_OFFSET\"));\n" +
-                    "            ts.setAcctSectOffset((float) rs.getFloat(\"TIER_STATUS_ACCUM_SECT_OFFSET\"));\n" +
-                    "            ts.setActive(rs.getString(\"RULE_ACTIVE_IND\"));\n" +
-                    "            ts.setApplQualInd(rs.getString(\"APPLICABLE_QLFY_IND\"));\n" +
-                    "            ts.setTierQuadPrd(rs.getInt(\"TIER_QUAL_PRD\"));\n" +
-                    "            ts.setValReq(rs.getLong(\"TIER_STATUS_VAL_REQ\"));\n" +
-                    "            ts.setValOffset(rs.getLong(\"TIER_STATUS_VAL_OFFSET\"));\n" +
-                    "            ts.setAccValReq(rs.getLong(\"TIER_STATUS_ACCUM_VAL_REQ\"));\n" +
-                    "            ts.setAccValOffset(rs.getLong(\"TIER_STATUS_ACCUM_VAL_OFFSET\"));\n" +
-                    "            ts.setRuleInd(rs.getString(\"RULE_IND\"));\n" +
-                    "            ts.setStartDate(rs.getDate(\"START_DT\"));\n" +
-                    "            ts.setEndDate(rs.getDate(\"END_DT\"));\n" +
-                    "            ts.setYrsInTier(rs.getInt(\"YRS_IN_TIER\"));";
+            String methodString = "ts.setSeqNo(rs.getInt(1));\n" +
+                    "        ts.setTierStatus(rs.getString(2));\n" +
+                    "        ts.setPtsReq((long) rs.getLong(3));\n" +
+                    "        ts.setSectReq((float) rs.getFloat(4));\n" +
+                    "        ts.setMinPeriod((long) rs.getLong(5));\n" +
+                    "        ts.setHierarchy(rs.getInt(6));\n" +
+                    "        ts.setPointOffset((long) rs.getLong(7));\n" +
+                    "        ts.setSectorOffset((float) rs.getFloat(8));\n" +
+                    "        ts.setAccPtsReq((long) rs.getLong(9));\n" +
+                    "        ts.setAccSectReq((float) rs.getFloat(10));\n" +
+                    "        ts.setAccPtsOffset((long) rs.getLong(11));\n" +
+                    "        ts.setAcctSectOffset((float) rs.getFloat(12));\n" +
+                    "            ts.setActive(rs.getString(13));\n" +
+                    "        ts.setApplQualInd(rs.getString(14));\n" +
+                    "        ts.setTierQuadPrd(rs.getInt(15));\n" +
+                    "        ts.setValReq(rs.getLong(16));\n" +
+                    "        ts.setAccValReq(rs.getLong(17));\n" +
+                    "        ts.setRuleInd(rs.getString(18));\n" +
+                    "        ts.setStartDate(rs.getDate(19));\n" +
+                    "        ts.setEndDate(rs.getDate(20));\n" +
+                    "        ts.setYrsInTier(rs.getInt(21));\n" +
+                    "        ts.setValOffset(rs.getLong(22));\n" +
+                    "        ts.setAccValOffset(rs.getLong(23));\n" +
+                    "        ts.setEliteOrPPSpercentage(rs.getInt(24));\n" +
+                    "        ts.setQualInterim(rs.getString(25))\n;" +
+                    "        ts.setQualProcID(rs.getString(26));";
             List<String> methodNamesList = generateMethodNamesUsed(methodString);
             // paste in the class file in use
             Tierstat ts = new Tierstat();
@@ -59,6 +65,10 @@ public class SqlToResultMap {
                 sqlColList = actualColListFromSqlQuery;
             }
             generateResultMap(sqlColList, fieldNameList, fieldTypesString);
+            System.out.println();
+            sqlColList.stream().forEach(x-> {
+                System.out.print(String.format("%s,",x));
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,12 +152,14 @@ public class SqlToResultMap {
         if(sqlColList.size() != fieldNameList.size() || fieldNameList.size() != fieldTypeList.size()) {
             throw new RuntimeException("List size is not the same");
         }
+        System.out.println("<resultMap id=\"\" type=\"\">");
         StringBuffer buffer = new StringBuffer();
         for(int i=0; i<sqlColList.size(); i++) {
             String toAppend = String.format("<result column=\"%s\" jdbcType=\"%s\" property=\"%s\"/>\n", sqlColList.get(i),fieldTypeList.get(i),fieldNameList.get(i));
             buffer.append(toAppend);
         }
-        System.out.println(buffer.toString());
+        System.out.print(buffer.toString());
+        System.out.println("</resultMap>");
     }
 
     private static List<Class> validateFieldNamesAndGenerateReturnType(List<String> fieldNameList, Class clazz) {

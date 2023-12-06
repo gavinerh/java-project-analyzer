@@ -1,4 +1,4 @@
-package MARMSUI.SpecialisedSqlMappingToVo;
+package MARMSUI.SpecialisedSqlMappingToVo.model;
 
 
 import java.util.Calendar;

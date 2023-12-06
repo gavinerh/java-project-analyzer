@@ -5,8 +5,7 @@ import java.util.Map;
 
 public class Compare2ResultMapByColumnAndProperty {
     public static void main(String[] args) {
-        String firstResultMap = "<result column=\"PRG_CD\" jdbcType=\"VARCHAR\" property=\"programCd\"/>\n" +
-                "        <result column=\"TIER_TYPE_IND\" jdbcType=\"VARCHAR\" property=\"tierTypeInd\"/>\n" +
+        String firstResultMap = "<result column=\"TIER_TYPE_IND\" jdbcType=\"VARCHAR\" property=\"tierTypeInd\"/>\n" +
                 "        <result column=\"QUAL_PROC_IND\" jdbcType=\"VARCHAR\" property=\"qualProcID\"/>\n" +
                 "        <result column=\"SEQ_NO\" jdbcType=\"NUMERIC\" property=\"seqNo\"/>\n" +
                 "        <result column=\"TIER_STATUS_IND\" jdbcType=\"VARCHAR\" property=\"tierStatus\"/>\n" +
@@ -20,15 +19,19 @@ public class Compare2ResultMapByColumnAndProperty {
                 "        <result column=\"TIER_STATUS_ACCUM_SECT_REQ\" jdbcType=\"DOUBLE\" property=\"accSectReq\"/>\n" +
                 "        <result column=\"TIER_STATUS_ACCUM_PTS_OFFSET\" jdbcType=\"NUMERIC\" property=\"accPtsOffset\"/>\n" +
                 "        <result column=\"TIER_STATUS_ACCUM_SECT_OFFSET\" jdbcType=\"DOUBLE\" property=\"acctSectOffset\"/>\n" +
+                "        <result column=\"RULE_ACTIVE_IND\" jdbcType=\"VARCHAR\" property=\"active\"/>\n" +
+                "        <result column=\"APPLICABLE_QLFY_IND\" jdbcType=\"VARCHAR\" property=\"applQualInd\"/>\n" +
                 "        <result column=\"TIER_QUAL_PRD\" jdbcType=\"NUMERIC\" property=\"tierQuadPrd\"/>\n" +
                 "        <result column=\"TIER_STATUS_VAL_REQ\" jdbcType=\"NUMERIC\" property=\"valReq\"/>\n" +
-                "        <result column=\"TIER_STATUS_VAL_OFFSET\" jdbcType=\"NUMERIC\" property=\"valOffset\"/>\n" +
                 "        <result column=\"TIER_STATUS_ACCUM_VAL_REQ\" jdbcType=\"NUMERIC\" property=\"accValReq\"/>\n" +
-                "        <result column=\"TIER_STATUS_ACCUM_VAL_OFFSET\" jdbcType=\"NUMERIC\" property=\"accValOffset\"/>\n" +
                 "        <result column=\"RULE_IND\" jdbcType=\"VARCHAR\" property=\"ruleInd\"/>\n" +
                 "        <result column=\"START_DT\" jdbcType=\"TIMESTAMP\" property=\"startDate\"/>\n" +
-                "        <result column=\"END_DT \" jdbcType=\"TIMESTAMP\" property=\"endDate\"/>\n" +
-                "        <result column=\"QUAL_SCHEME\" jdbcType=\"VARCHAR\" property=\"qualInterim\"/>";
+                "        <result column=\"END_DT\" jdbcType=\"TIMESTAMP\" property=\"endDate\"/>\n" +
+                "        <result column=\"YRS_IN_TIER\" jdbcType=\"NUMERIC\" property=\"yrsInTier\"/>\n" +
+                "        <result column=\"TIER_STATUS_VAL_OFFSET\" jdbcType=\"NUMERIC\" property=\"valOffset\"/>\n" +
+                "        <result column=\"TIER_STATUS_ACCUM_VAL_OFFSET\" jdbcType=\"NUMERIC\" property=\"accValOffset\"/>\n" +
+                "        <result column=\"QUAL_SCHEME\" jdbcType=\"VARCHAR\" property=\"interim\"/>\n" +
+                "        <result column=\"PRG_CD\" jdbcType=\"VARCHAR\" property=\"programCd\"/>";
         Map<String,String> mapOfColToProperty = generateKeyColValProp(firstResultMap);
         // baseResultMap should be more complete
         String baseResultMap = "<result column=\"SEQ_NO\" jdbcType=\"NUMERIC\" property=\"seqNo\"/>\n" +
@@ -52,11 +55,12 @@ public class Compare2ResultMapByColumnAndProperty {
                 "<result column=\"START_DT\" jdbcType=\"TIMESTAMP\" property=\"startDate\"/>\n" +
                 "<result column=\"END_DT\" jdbcType=\"TIMESTAMP\" property=\"endDate\"/>\n" +
                 "<result column=\"YRS_IN_TIER\" jdbcType=\"NUMERIC\" property=\"yrsInTier\"/>\n" +
+                "<result column=\"PRG_CD\" jdbcType=\"VARCHAR\" property=\"programCd\"/>\n" +
+                "<result column=\"TIER_TYPE_IND\" jdbcType=\"VARCHAR\" property=\"tierTypeInd\"/>\n" +
+                "<result column=\"QUAL_PROC_IND\" jdbcType=\"VARCHAR\" property=\"qualProcID\"/>\n" +
                 "<result column=\"TIER_STATUS_VAL_OFFSET\" jdbcType=\"NUMERIC\" property=\"valOffset\"/>\n" +
                 "<result column=\"TIER_STATUS_ACCUM_VAL_OFFSET\" jdbcType=\"NUMERIC\" property=\"accValOffset\"/>\n" +
-                "<result column=\"PER_EM_PPS \" jdbcType=\"NUMERIC\" property=\"eliteOrPPSpercentage\"/>\n" +
-                "<result column=\"QUAL_SCHEME\" jdbcType=\"VARCHAR\" property=\"qualInterim\"/>\n" +
-                "<result column=\"QUAL_PROC_IND\" jdbcType=\"VARCHAR\" property=\"qualProcID\"/>";
+                "<result column=\"QUAL_SCHEME\" jdbcType=\"VARCHAR\" property=\"interim\"/>";
         Map<String,String> mapOfBase = generateKeyColValProp(baseResultMap);
 
         // fieldNamesOfComparator must be same as the firstResultMap string

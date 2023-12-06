@@ -1,6 +1,6 @@
 // EliteParticipant.java
 
-package MARMSUI.SpecialisedSqlMappingToVo;
+package MARMSUI.SpecialisedSqlMappingToVo.model;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
  * 
  * @author sachin_datar
  */
-public class EliteParticipant extends QualificationValueObject  implements Serializable {
+public class EliteParticipant extends QualificationValueObject implements Serializable {
 
     private String intID;
     
