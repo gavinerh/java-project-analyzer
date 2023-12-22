@@ -9,8 +9,8 @@ public class StringComparator {
     public static void main(String[] args) {
         List<String> file1 = new ArrayList<>();
         List<String> file2 = new ArrayList<>();
-        String filename1 = "/Users/macuser/Documents/marms_gui-backend/user-creation-v2/src/main/resources/com/sg/sq/lsl/database/sql/persistence/mappers/UsrProfileDtlMapper.xml";
-        String filename2 = "/Users/macuser/Documents/marms_gui-backend/user-creation/src/main/resources/com.sg.sq.lsl.database.sql.persistence.mappers/UsrProfileDtlMapper.xml";
+        String filename1 = "/Users/macuser/Downloads/response.json";
+        String filename2 = "/Users/macuser/Documents/response2.json";
 
         try{
             FileInputStream inputStream = new FileInputStream(filename1);

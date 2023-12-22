@@ -1,36 +1,22 @@
 package MARMSUI.SpecialisedSqlMappingToVo;
 
+import MARMSUI.SpecialisedSqlMappingToVo.model.Tierstat;
+
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+
 public class ChangeClassInMethodDeclaration {
     public static void main(String[] args) {
-        String toReplace = "CusPpsQual";
-        String replacementString = "Tierstat";
-        String s = "private static void printSetterMethods(List<CusPpsQual> dataFromDb) throws ParseException, InvocationTargetException, IllegalAccessException {\n" +
-                "        List<CusPpsQual> generatedList = new ArrayList<>();\n" +
-                "        System.out.println(\"try{\");\n" +
-                "        System.out.println(\"List<CusPpsQual> generatedList = new ArrayList<>();\");\n" +
-                "        System.out.println(\"CusPpsQual tierstat = null;\");\n" +
-                "        System.out.println(\"SimpleDateFormat dateFormat = new SimpleDateFormat(\\\"yyyy-MM-dd\\\");\");\n" +
-                "//        System.out.println(\"tierstat = new CusPpsQual();\");\n" +
-                "        // print setter code\n" +
-                "        for (CusPpsQual tierstat1 : dataFromDb) {\n" +
-                "            System.out.println(\"tierstat = new CusPpsQual();\");\n" +
-                "            generatedList.add(reflectionOnDataFromDb(tierstat1));\n" +
-                "            System.out.println(\"generatedList.add(tierstat);\");\n" +
-                "        }\n" +
-                "        System.out.println(\"return generatedList;\");\n" +
-                "        System.out.println(\"} catch(Exception e) {\");\n" +
-                "        System.out.println(\"e.printStackTrace();\\n}\\nreturn null;\");\n" +
-                "        System.out.println(generatedList.size());\n" +
-                "    }\n" +
-                "\n" +
-                "\n" +
-                "    private static CusPpsQual reflectionOnDataFromDb(CusPpsQual tierstat) throws InvocationTargetException, IllegalAccessException, ParseException {\n" +
+        String toReplace = "UserProfileDetail";
+        String[] replacementString = {"Tierstat","TierMileageSummary","HisCusEliteQual","CusPpsQual","CustomerTier","TierQual","Long","AccountStatusFunc","GeneralSqlObject","QualDetailsMonthly","CusClubQual","TransReserveVal"};
+        String s = "    private static UserProfileDetail reflectionOnDataFromDb(UserProfileDetail tierstat) throws InvocationTargetException, IllegalAccessException, ParseException {\n" +
                 "        initializeMonthMapping();\n" +
                 "        Method[] methods = tierstat.getClass().getDeclaredMethods();\n" +
-                "        CusPpsQual generated = new CusPpsQual();\n" +
-                "        Method[] methodsToInvoke = CusPpsQual.class.getDeclaredMethods();\n" +
+                "        UserProfileDetail generated = new UserProfileDetail();\n" +
+                "        Method[] methodsToInvoke = UserProfileDetail.class.getDeclaredMethods();\n" +
                 "        Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();\n" +
                 "        for (Method method : methods) {\n" +
+                "\n" +
                 "            if (method.getName().startsWith(\"get\")) {\n" +
                 "                Object val = method.invoke(tierstat);\n" +
                 "                String type = method.getReturnType().getTypeName();\n" +
@@ -47,6 +33,8 @@ public class ChangeClassInMethodDeclaration {
                 "                        if ((int) val == 0) continue;\n" +
                 "                    } else if (type.equals(\"java.lang.Long\") || type.equals(\"long\")) {\n" +
                 "                        if ((long) val == 0) continue;\n" +
+                "                    } else if (type.equals(\"java.sql.Timestamp\")) {\n" +
+                "                        if (val == null) continue;\n" +
                 "                    } else if (type.equals(\"java.util.List\")) {\n" +
                 "                        continue;\n" +
                 "                    }\n" +
@@ -58,8 +46,7 @@ public class ChangeClassInMethodDeclaration {
                 "            }\n" +
                 "\n" +
                 "        }\n" +
-                "        for (\n" +
-                "                Method method : methodsToInvoke) {\n" +
+                "        for (Method method : methodsToInvoke) {\n" +
                 "            String name = method.getName();\n" +
                 "            if (name.startsWith(\"set\")) {\n" +
                 "                Object val = mapOfFieldNameAndValue.get(name);\n" +
@@ -74,6 +61,9 @@ public class ChangeClassInMethodDeclaration {
                 "                    toPrint = String.format(\"tierstat.%s(%sf);\", name, val);\n" +
                 "                } else if (val.getClass().getTypeName().equals(\"long\") || val.getClass().getTypeName().equals(\"java.lang.Long\")) {\n" +
                 "                    toPrint = String.format(\"tierstat.%s(%sl);\", name, val);\n" +
+                "                } else if (val.getClass().getTypeName().equals(\"java.sql.Timestamp\")) {\n" +
+                "                    String date = generateTimestamp((Timestamp) val);\n" +
+                "                    toPrint = String.format(\"tierstat.%s(new Timestamp(dateFormat.parse(\\\"%s\\\").getTime()));\", name, date);\n" +
                 "                } else {\n" +
                 "                    toPrint = String.format(\"tierstat.%s(%s);\", name, val);\n" +
                 "                }\n" +
@@ -83,8 +73,26 @@ public class ChangeClassInMethodDeclaration {
                 "        }\n" +
                 "        return generated;\n" +
                 "    }\n" +
-                "\n" +
-                "    private static String generateSetterName(String getter) {\n" +
+                "\n";
+                String secondStringToAppend ="private static void printSetterMethods(List dataFromDb) throws ParseException, InvocationTargetException, IllegalAccessException {\n" +
+                        "        List<Object> generatedList = new ArrayList<>();\n" +
+                        "        System.out.println(\"try{\");\n" +
+                        "        System.out.println(\"List<Tierstat> generatedList = new ArrayList<>();\");\n" +
+                        "        System.out.println(\"Tierstat tierstat = null;\");\n" +
+                        "        System.out.println(\"SimpleDateFormat dateFormat = new SimpleDateFormat(\\\"yyyy-MM-dd\\\");\");\n" +
+                        "//        System.out.println(\"tierstat = new Tierstat();\");\n" +
+                        "        // print setter code\n" +
+                        "        for (Object tierstat1 : dataFromDb) {\n" +
+                        "            System.out.println(\"tierstat = new Tierstat();\");\n" +
+                        "            generatedList.add(bridgingMethod(tierstat1));\n" +
+                        "            System.out.println(\"generatedList.add(tierstat);\");\n" +
+                        "        }\n" +
+                        "        System.out.println(\"return generatedList;\");\n" +
+                        "        System.out.println(\"} catch(Exception e) {\");\n" +
+                        "        System.out.println(\"e.printStackTrace();\\n}\\nreturn null;\");\n" +
+                        "        System.out.println(generatedList.size());\n" +
+                        "    }\n " +
+                        "   private static String generateSetterName(String getter) {\n" +
                 "        return \"set\" + getter.substring(3);\n" +
                 "    }\n" +
                 "\n" +
@@ -92,9 +100,14 @@ public class ChangeClassInMethodDeclaration {
                 "\n" +
                 "    private static String generateDateString(String dateStr) throws ParseException {\n" +
                 "        String[] dateArr = dateStr.split(\" \");\n" +
-                "        SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");\n" +
                 "        String s = String.format(String.format(\"%s-%s-%s\", dateArr[5], monthMapper.get(dateArr[1]), dateArr[2]));\n" +
                 "        return s;\n" +
+                "    }\n" +
+                "\n" +
+                "    private static String generateTimestamp(Timestamp timestamp) {\n" +
+                "        SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");\n" +
+                "        String dateString = dateFormat.format(timestamp);\n" +
+                "        return dateString;\n" +
                 "    }\n" +
                 "\n" +
                 "\n" +
@@ -113,15 +126,40 @@ public class ChangeClassInMethodDeclaration {
                 "        monthMapper.put(\"Dec\", \"12\");\n" +
                 "    }";
         String[] strArr = s.split("\n");
-        for(int i=0; i<strArr.length; i++) {
-            if(strArr[i].contains(toReplace)) {
-                strArr[i] = strArr[i].replace(toReplace,replacementString);
+        for(String replacement : replacementString) {
+            String[] dup = new String[strArr.length];
+            for(int i=0; i<strArr.length; i++) {
+//                if(strArr[i].contains("printSetterMethods")) {
+//                    dup[i] = strArr[i].replace("printSetterMethods", "printSetterMethods1");
+//                }
+                if(strArr[i].contains(toReplace)) {
+                    dup[i] = strArr[i].replace(toReplace,replacement);
+                } else {
+                    dup[i] = strArr[i];
+                }
             }
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String row : dup) {
+                stringBuilder.append(row + "\n");
+            }
+            System.out.println(stringBuilder.toString());
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        for(String row : strArr) {
-            stringBuilder.append(row + "\n");
+
+        // print bridging method
+        String toPrint = toPrint = "private static Object bridgingMethod(Object o) throws ParseException, InvocationTargetException, IllegalAccessException {\n";
+        for(int i=0; i<replacementString.length; i++) {
+            if(i == 0) {
+                toPrint += String.format("if(%s.class.isInstance(o)){\n", replacementString[i]);
+            }
+            else {
+                toPrint += String.format("else if (%s.class.isInstance(o)){\n", replacementString[i]);
+            }
+            toPrint += String.format("return reflectionOnDataFromDb((%s) o);\n}\n", replacementString[i]);
         }
-        System.out.println(stringBuilder.toString());
+        toPrint += "return null;\n}";
+        System.out.println();
+        System.out.println(secondStringToAppend);
+        System.out.println("====================");
+        System.out.println(toPrint);
     }
 }
