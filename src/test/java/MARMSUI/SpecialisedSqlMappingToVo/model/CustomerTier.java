@@ -1,9 +1,13 @@
 package MARMSUI.SpecialisedSqlMappingToVo.model;
 
 
-import java.util.Calendar;
+import MARMSUI.SpecialisedSqlMappingToVo.model.EliteParticipant;
+import MARMSUI.SpecialisedSqlMappingToVo.model.PPSReserveVal;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class CustomerTier {
     public static final String PENDING_AUTOREQUAL = "P";
@@ -17,32 +21,48 @@ public class CustomerTier {
     private String previousTierStatus = null;
     private String newTierStatus = null;
     private String qlfyInd = null;
-    private java.util.Date qlfyStartDate = null;
-    private java.util.Date qlfyEndDate = null;
-    private long curMileage = 0;
-    private float curSectCount = 0;
-    private int noYearsQlfd = 0;
-    private java.util.Date forceQlfyDate = null;
-    private java.util.Date forceQlfyExtendedDate = null;
-    private int noOfExtendedMonth = 0;
-    private java.util.Date origExp = null;
-    private java.util.Date qlfyDate = null;
-    private java.util.Date tierBonusStartDate = null;
-    private java.util.Date tierBonusEndDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date qlfyStartDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date qlfyEndDate = null;
+    private long curMileage;
+    private float curSectCount;
+    private int noYearsQlfd;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date forceQlfyDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date forceQlfyExtendedDate = null;
+    private int noOfExtendedMonth;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date origExp = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date qlfyDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date tierBonusStartDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date tierBonusEndDate = null;
     private String disctryTierFlag = null;
-    private java.util.Date tierExp = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date tierExp = null;
 
     private String cardCreateCode = null;
-    private java.util.Date rundate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date rundate = null;
     private boolean firstTimer = false;
     private boolean insertToHistory = false;
     private boolean updateAccount = false;
-    private java.util.Date tierBonusEndDateInHistory;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date tierBonusEndDateInHistory;
+
+    private TierQual tierQual;
+
+    public TierQual getTierQual() {
+        return tierQual;
+    }
 
 
-
-    private java.util.List ppsParticipantList = null;
-    private java.util.List eliteParticipantList = null;
+    private List<PPSParticipant> ppsParticipantList = null;
+    private List<EliteParticipant> eliteParticipantList = null;
 
     private boolean yearsToIncrement = false;
 
@@ -53,12 +73,14 @@ public class CustomerTier {
     public void setYearsToIncrement(boolean yearsToIncrement) {
         this.yearsToIncrement = yearsToIncrement;
     }
-
-    private java.util.Date promoCardExpDt = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date promoCardExpDt = null;
 
     private int yearsInQPP;
     private long curValue;
     private long cumulativeValue;
+
+    private PPSYearQual ppsYearQual;
 
     private String autoRequalInd;
 
@@ -69,6 +91,8 @@ public class CustomerTier {
 
     private long hisCurValue;
     private boolean reinstateCumVal = false;
+    private PPSReserveVal ppsReserveVal = null;
+    private TransReserveVal transReserveVal = null;
     private long reserveValToTrack;
     private int reserveValPeriod;
     private String qlfyWthRsrvVal;
@@ -89,9 +113,10 @@ public class CustomerTier {
     private String highValued = "N";
     //Added <Anila> on <17-May-2013> for <MKP91864> <ends>
     // Added by bhaskar MKP91867 starts
-
-    private java.util.Date qlfyGEndDate = null;
-    private java.util.Date qlfyGStartDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date qlfyGEndDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date qlfyGStartDate = null;
     private long curGoldMileage = 0;
     private boolean isInterimTPP = false; //Added by Aravind for MKP92600
     //Added by Vinod for MKP92600 Starts
@@ -108,10 +133,10 @@ public class CustomerTier {
     private int consecutiveYrsInPPS;
 
     private long rvForRI = 0;
-
-    private java.util.Date qlfyExpDate = null;
-
-    private java.util.Date qlfyEndDateRI = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date qlfyExpDate = null;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date qlfyEndDateRI = null;
 
     //Added by Logesh for MKP92708 - TPP Phase 2 - Ends
     //Added by Vinod for MKP92708 Starts
@@ -167,14 +192,14 @@ public class CustomerTier {
     public void setTierGroup(String tierGroup) {
         this.tierGroup = tierGroup;
     }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+    private Date actualQlfyStartDate = null;
 
-    private java.util.Date actualQlfyStartDate = null;
-
-    public java.util.Date getActualQlfyStartDate() {
+    public Date getActualQlfyStartDate() {
         return actualQlfyStartDate;
     }
 
-    public void setActualQlfyStartDate(java.util.Date actualQlfyStartDate) {
+    public void setActualQlfyStartDate(Date actualQlfyStartDate) {
         this.actualQlfyStartDate = actualQlfyStartDate;
     }
 
@@ -187,19 +212,19 @@ public class CustomerTier {
         this.curGoldMileage = curGoldMileage;
     }
 
-    public java.util.Date getQlfyGEndDate() {
+    public Date getQlfyGEndDate() {
         return qlfyGEndDate;
     }
 
-    public void setQlfyGEndDate(java.util.Date qlfyGEndDate) {
+    public void setQlfyGEndDate(Date qlfyGEndDate) {
         this.qlfyGEndDate = qlfyGEndDate;
     }
 
-    public java.util.Date getQlfyGStartDate() {
+    public Date getQlfyGStartDate() {
         return qlfyGStartDate;
     }
 
-    public void setQlfyGStartDate(java.util.Date qlfyGStartDate) {
+    public void setQlfyGStartDate(Date qlfyGStartDate) {
         this.qlfyGStartDate = qlfyGStartDate;
     }
 
@@ -246,7 +271,7 @@ public class CustomerTier {
         this.reinstateRsrvVal = reinstateRsrvVal;
     }
 
-    public String isQlfyWthRsrvVal() {
+    public String getQlfyWthRsrvVal() {
         return qlfyWthRsrvVal;
     }
 
@@ -255,9 +280,9 @@ public class CustomerTier {
     }
 
 
-    public void init(CustomerTier record) {
-        this.setIntID(record.getIntID());
-        this.setTierStatus(record.getTierStatus());
+    public void init(CustomerTier cus) {
+        this.setIntID(cus.getIntID());
+        this.setTierStatus(cus.getTierStatus());
     }
 
     public final String getIntID() {
@@ -284,7 +309,7 @@ public class CustomerTier {
     }
 
 
-    public java.util.Date getQlfyStartDate() {
+    public Date getQlfyStartDate() {
         return this.qlfyStartDate;
     }
 
@@ -292,7 +317,7 @@ public class CustomerTier {
         return this.qlfyInd;
     }
 
-    public java.util.Date getQlfyEndDate() {
+    public Date getQlfyEndDate() {
         return this.qlfyEndDate;
     }
 
@@ -308,11 +333,11 @@ public class CustomerTier {
         return this.noYearsQlfd;
     }
 
-    public java.util.Date getForceQlfyDate() {
+    public Date getForceQlfyDate() {
         return this.forceQlfyDate;
     }
 
-    public java.util.Date getForceQlfyExtendedDate() {
+    public Date getForceQlfyExtendedDate() {
         return this.forceQlfyExtendedDate;
     }
 
@@ -320,23 +345,23 @@ public class CustomerTier {
         return this.noOfExtendedMonth;
     }
 
-    public java.util.Date getOrigExp() {
+    public Date getOrigExp() {
         return this.origExp;
     }
 
-    public java.util.Date getQlfyDate() {
+    public Date getQlfyDate() {
         return this.qlfyDate;
     }
 
-    public java.util.Date getTierExp() {
+    public Date getTierExp() {
         return this.tierExp;
     }
 
-    public java.util.Date getTierBonusStartDate() {
+    public Date getTierBonusStartDate() {
         return this.tierBonusStartDate;
     }
 
-    public java.util.Date getTierBonusEndDate() {
+    public Date getTierBonusEndDate() {
         return this.tierBonusEndDate;
     }
 
@@ -344,7 +369,7 @@ public class CustomerTier {
         return this.disctryTierFlag;
     }
 
-    public java.util.Date getRundate() {
+    public Date getRundate() {
         return this.rundate;
     }
 
@@ -370,12 +395,12 @@ public class CustomerTier {
         this.tierStatus = sTierStatus;
     }
 
-    public void setCurrentTierStatus(String s_CurrentTierStatus) {
-        this.currentTierStatus = s_CurrentTierStatus;
+    public void setCurrentTierStatus(String currentTierStatus) {
+        this.currentTierStatus = currentTierStatus;
     }
 
-    public void setPreviousTierStatus(String s_PreviousTierStatus) {
-        this.previousTierStatus = s_PreviousTierStatus;
+    public void setPreviousTierStatus(String previousTierStatus) {
+        this.previousTierStatus = previousTierStatus;
     }
 
     public void setNewTierStatus(String snewTierStatus) {
@@ -386,96 +411,100 @@ public class CustomerTier {
         this.userID = sUserid;
     }
 
-    public void setQlfyInd(String sQlfy_ind) {
-        this.qlfyInd = sQlfy_ind;
+    public void setQlfyInd(String qlfyInd) {
+        this.qlfyInd = qlfyInd;
     }
 
-    public void setQlfyStartDate(java.util.Date dQlfy_start_dt) {
-        this.qlfyStartDate = dQlfy_start_dt;
+    public void setQlfyStartDate(Date qlfyStartDate) {
+        this.qlfyStartDate = qlfyStartDate;
     }
 
-    public void setQlfyEndDate(java.util.Date dQlfy_end_dt) {
-        this.qlfyEndDate = dQlfy_end_dt;
+    public void setQlfyEndDate(Date qlfyEndDate) {
+        this.qlfyEndDate = qlfyEndDate;
     }
 
-    public void setCurMileage(long lCur_mileage) {
-        this.curMileage = lCur_mileage;
+    public void setCurMileage(long curMileage) {
+        this.curMileage = curMileage;
     }
 
-    public void setCurSectCount(float fCur_sect_cnt) {
-        this.curSectCount = fCur_sect_cnt;
+    public void setCurSectCount(float curSectCount) {
+        this.curSectCount = curSectCount;
     }
 
-    public void setNoYearsQlfd(int iNo_yrs_qlfd) {
-        this.noYearsQlfd = iNo_yrs_qlfd;
+    public void setNoYearsQlfd(int noYearsQlfd) {
+        this.noYearsQlfd = noYearsQlfd;
     }
 
-    public void setForceQlfyDate(java.util.Date dForce_qlfy_dt) {
-        this.forceQlfyDate = dForce_qlfy_dt;
+    public void setForceQlfyDate(Date forceQlfyDate) {
+        this.forceQlfyDate = forceQlfyDate;
     }
 
-    public void setForceQlfyExtendedDate(java.util.Date dForce_qlfy_extended_dt) {
-        this.forceQlfyExtendedDate = dForce_qlfy_extended_dt;
+    public void setForceQlfyExtendedDate(Date forceQlfyExtendedDate) {
+        this.forceQlfyExtendedDate = forceQlfyExtendedDate;
     }
 
-    public void setNoOfExtendedMonth(int iNo_of_extended_mth) {
-        this.noOfExtendedMonth = iNo_of_extended_mth;
+    public void setNoOfExtendedMonth(int noOfExtendedMonth) {
+        this.noOfExtendedMonth = noOfExtendedMonth;
     }
 
-    public void setOrigExp(java.util.Date dOrig_exp) {
-        this.origExp = dOrig_exp;
+    public void setOrigExp(Date origExp) {
+        this.origExp = origExp;
     }
 
-    public void setQlfyDate(java.util.Date dQlfd_dt) {
-        this.qlfyDate = dQlfd_dt;
+    public void setQlfyDate(Date qlfyDate) {
+        this.qlfyDate = qlfyDate;
     }
 
-    public void setTierExp(java.util.Date d_Tier_exp) {
-        this.tierExp = d_Tier_exp;
+    public void setTierExp(Date tierExp) {
+        this.tierExp = tierExp;
     }
 
-    public void setTierBonusStartDate(java.util.Date d_Tier_bonus_award_start_dt) {
-        this.tierBonusStartDate = d_Tier_bonus_award_start_dt;
+    public void setTierBonusStartDate(Date tierBonusStartDate) {
+        this.tierBonusStartDate = tierBonusStartDate;
     }
 
-    public void setTierBonusEndDate(java.util.Date d_Tier_bonus_award_end_dt) {
-        this.tierBonusEndDate = d_Tier_bonus_award_end_dt;
+    public void setTierBonusEndDate(Date tierBonusEndDate) {
+        this.tierBonusEndDate = tierBonusEndDate;
     }
 
-    public void setDisctryTierFlag(String s_Disctry_tier_flg) {
-        this.disctryTierFlag = s_Disctry_tier_flg;
+    public void setDisctryTierFlag(String disctryTierFlag) {
+        this.disctryTierFlag = disctryTierFlag;
     }
 
-    public void setRundate(java.util.Date d_Rundate) {
-        this.rundate = d_Rundate;
+    public void setRundate(Date rundate) {
+        this.rundate = rundate;
     }
 
-    public void setFirstTimer(boolean Firsttimer) {
-        this.firstTimer = Firsttimer;
+    public void setFirstTimer(boolean firstTimer) {
+        this.firstTimer = firstTimer;
     }
 
-    public void setInsertToHistory(boolean b_Inserthemq) {
-        this.insertToHistory = b_Inserthemq;
+    public void setInsertToHistory(boolean insertToHistory) {
+        this.insertToHistory = insertToHistory;
     }
 
-    public void setUpdateAccount(boolean b_UpdateAccount) {
-        this.updateAccount = b_UpdateAccount;
+    public void setUpdateAccount(boolean updateAccount) {
+        this.updateAccount = updateAccount;
     }
 
 
-    public java.util.List getPPSParticipantList() {
+    public List<PPSParticipant> getPPSParticipantList() {
         return this.ppsParticipantList;
     }
 
-    public void setPPSParticipantList(java.util.List qualPrtList) {
+    public void setTierQual(TierQual cTierQual) {
+        this.tierQual = cTierQual;
+    }
+
+    public void setPPSParticipantList(List<PPSParticipant> qualPrtList) {
         this.ppsParticipantList = qualPrtList;
     }
 
-    public java.util.Date getPromoCardExpDt() {
+    public Date getPromoCardExpDt() {
         return promoCardExpDt;
     }
 
-    public void setPromoCardExpDt(java.util.Date promoCardExpDt) {
+    public void setPromoCardExpDt(Date promoCardExpDt) {
         this.promoCardExpDt = promoCardExpDt;
     }
 
@@ -510,7 +539,7 @@ public class CustomerTier {
      *
      * @author sachin_datar
      */
-    public boolean isInQualificationRange(java.util.Date d) {
+    public boolean isInQualificationRange(Date d) {
         boolean retVal = false;
         if (qlfyStartDate != null && qlfyEndDate != null && d != null) {
             if (d.after(qlfyStartDate) && d.before(qlfyEndDate)) {
@@ -550,7 +579,7 @@ public class CustomerTier {
      *
      * @author sachin_datar
      */
-    public boolean isInBonusAwardRange(java.util.Date d) {
+    public boolean isInBonusAwardRange(Date d) {
         boolean retVal = false;
         if (tierBonusStartDate != null && tierBonusEndDate != null && d != null) {
             if (d.after(tierBonusStartDate) && d.before(tierBonusEndDate)) {
@@ -589,9 +618,20 @@ public class CustomerTier {
      * Check if the passed tier staus is same as current tier of
      * current bucket.
      */
+    public boolean isHoldingTierStatus(String checkTierStatus) {
+        boolean retVal = false;
+        if (checkTierStatus != null &&
+                this.tierStatus != null &&
+                checkTierStatus.equals(this.tierStatus) &&
+                (this.qlfyInd != null &&
+                        !this.qlfyInd.equals("EP") &&
+                        !this.qlfyInd.equals("PP"))) {
+            retVal = true;
+        }
+        return retVal;
+    }
 
-
-    public java.util.Date getTierBonusEndDateInHistory() {
+    public Date getTierBonusEndDateInHistory() {
         return tierBonusEndDateInHistory;
     }
 
@@ -600,7 +640,7 @@ public class CustomerTier {
      *
      * @param tierBonusEndDateInHistory The tierBonusEndDateInHistory to set
      */
-    public void setTierBonusEndDateInHistory(java.util.Date tierBonusEndDateInHistory) {
+    public void setTierBonusEndDateInHistory(Date tierBonusEndDateInHistory) {
         this.tierBonusEndDateInHistory = tierBonusEndDateInHistory;
     }
 
@@ -625,17 +665,24 @@ public class CustomerTier {
     /**
      * @return
      */
-    public java.util.List getEliteParticipantList() {
+    public List<EliteParticipant> getEliteParticipantList() {
         return eliteParticipantList;
     }
 
     /**
      * @param list
      */
-    public void setEliteParticipantList(java.util.List list) {
+    public void setEliteParticipantList(List<EliteParticipant> list) {
         eliteParticipantList = list;
     }
 
+    public PPSYearQual getPpsYearQual() {
+        return ppsYearQual;
+    }
+
+    public void setPpsYearQual(PPSYearQual ppsYearQual) {
+        this.ppsYearQual = ppsYearQual;
+    }
 
     public String getAutoRequalInd() {
         return autoRequalInd;
@@ -686,6 +733,21 @@ public class CustomerTier {
         this.reinstateCumVal = reinstateCumVal;
     }
 
+    public PPSReserveVal getPpsReserveVal() {
+        return ppsReserveVal;
+    }
+
+    public void setPpsReserveVal(PPSReserveVal ppsReserveVal) {
+        this.ppsReserveVal = ppsReserveVal;
+    }
+
+    public TransReserveVal getTransReserveVal() {
+        return transReserveVal;
+    }
+
+    public void setTransReserveVal(TransReserveVal transReserveVal) {
+        this.transReserveVal = transReserveVal;
+    }
 
     public int getReserveValPeriod() {
         return reserveValPeriod;
@@ -807,16 +869,16 @@ public class CustomerTier {
         return this.rvForRI;
     }
 
-    public void setQlfyExpDate(java.util.Date qlfyExpDate) {
+    public void setQlfyExpDate(Date qlfyExpDate) {
         this.qlfyExpDate = qlfyExpDate;
     }
 
-    public java.util.Date getQlfyExpDate() {
+    public Date getQlfyExpDate() {
         return this.qlfyExpDate;
     }
 
 
-    public void setQlfyEndDateRI(java.util.Date qlfyEndDateRI) {
+    public void setQlfyEndDateRI(Date qlfyEndDateRI) {
         this.qlfyEndDateRI = qlfyEndDateRI;
     }
 
@@ -930,8 +992,8 @@ public class CustomerTier {
     public void setProgramCD(String programCD) {
         this.programCD = programCD;
     }
-    @java.lang.Override
-    public java.lang.String toString() {
+    @Override
+    public String toString() {
         return "CustomerTier{" +
                 "intID='" + intID + '\'' +
                 ", userID='" + userID + '\'' +
@@ -961,6 +1023,7 @@ public class CustomerTier {
                 ", insertToHistory=" + insertToHistory +
                 ", updateAccount=" + updateAccount +
                 ", tierBonusEndDateInHistory=" + tierBonusEndDateInHistory +
+                ", theTier_Qual=" + tierQual +
                 ", ppsParticipantList=" + ppsParticipantList +
                 ", eliteParticipantList=" + eliteParticipantList +
                 ", yearsToIncrement=" + yearsToIncrement +
@@ -968,11 +1031,14 @@ public class CustomerTier {
                 ", yearsInQPP=" + yearsInQPP +
                 ", curValue=" + curValue +
                 ", cumulativeValue=" + cumulativeValue +
+                ", ppsYearQual=" + ppsYearQual +
                 ", autoRequalInd='" + autoRequalInd + '\'' +
                 ", incrementYrsInQpp=" + incrementYrsInQpp +
                 ", isOnlineForceQualify=" + isOnlineForceQualify +
                 ", hisCurValue=" + hisCurValue +
                 ", reinstateCumVal=" + reinstateCumVal +
+                ", ppsReserveVal=" + ppsReserveVal +
+                ", transReserveVal=" + transReserveVal +
                 ", reserveValToTrack=" + reserveValToTrack +
                 ", reserveValPeriod=" + reserveValPeriod +
                 ", qlfyWthRsrvVal=" + qlfyWthRsrvVal +

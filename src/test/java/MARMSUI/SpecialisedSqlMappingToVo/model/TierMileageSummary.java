@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 
  * @author sachin_datar
  */
-public class TierMileageSummary 
+public class TierMileageSummary extends QualificationValueObject
         implements Serializable {
     
     private String intID;

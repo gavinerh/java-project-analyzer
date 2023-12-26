@@ -1,5 +1,7 @@
 package MARMSUI.SpecialisedSqlMappingToVo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,6 +25,8 @@ public class TierQual implements Serializable
 	private Date prevFailDate;
 	private String highestTierStatus;
 	private Date rcreDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Singapore")
+	private Date cardExpDate;
 
 	public void setIntID(String intID)
 	{
@@ -131,4 +135,11 @@ public class TierQual implements Serializable
 
 	}
 
+	public Date getCardExpDate() {
+		return cardExpDate;
+	}
+
+	public void setCardExpDate(Date cardExpDate) {
+		this.cardExpDate = cardExpDate;
+	}
 }
