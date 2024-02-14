@@ -9,8 +9,8 @@ public class StringComparator {
     public static void main(String[] args) {
         List<String> file1 = new ArrayList<>();
         List<String> file2 = new ArrayList<>();
-        String filename1 = "/Users/macuser/Downloads/response.json";
-        String filename2 = "/Users/macuser/Documents/response2.json";
+        String filename1 = "/Users/macuser/Downloads/postNonEmptyString";
+        String filename2 = "/Users/macuser/Downloads/postEmptyString";
 
         try{
             FileInputStream inputStream = new FileInputStream(filename1);

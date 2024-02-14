@@ -2,7 +2,15 @@ package MARMSUI;
 
 public class AddColumnNumberToSQLSelect {
     public static void main(String[] args) {
-        String selectColumns = "TRANS_CD, A.RCRE_DT,A.APPROVAL_CD,  A.ADJ_APPROVAL_CD, NET_PTS_REQ ,  ACTION_CD,  TKT_MCO_NO,  RDPN_TYPE ,  AWD_ZONE, B.PROMO_SAVINGS  ,  BILLING_PRT, A.RCRE_PCC, A.RCRE_SALES_OFF, A.RCRE_AGENT_ID, TKT_STOCK1,  C.ITIN_XREF_ID   ,  PNR_NAME, ACTION_CD2, PNR_REF, TURNPTS_BOARD, A.INT_ID, TKT_SRC_IND, AWD_TYPE,TKT_VALIDITY_DT , B.RDPN_NET_PTS_REQ, FORFEIT_PTS, B.TRANS_PTS , REVERSED_FLG, D.PROMO_CD , PROMO_NAME, BATCH_ID , BATCH_DT,TOT_STOPOVER_PTS,C.CERTIFICATE_NUMBER   ,A.MMK_IND, A.PYMT_RFND_LC, A.TOTAL_FARE_IN_LC, A.FARE_WO_TAX_IN_LC, A.TAX_IN_LC, A.NET_FARE_PAID_IN_LC, A.NET_KF_MILES_VAL_IN_LC,   A.TRANS_FARE_PAID_IN_LC, A.TRANS_KF_MILES_VAL_IN_LC, A.TOTAL_FARE_IN_SGD, A.FARE_WO_TAX_IN_SGD, A.TAX_IN_SGD, A.NET_FARE_PAID_IN_SGD,  A.NET_KF_MILES_VAL_IN_SGD, A.TRANS_FARE_PAID_IN_SGD, A.TRANS_KF_MILES_VAL_IN_SGD ,A.NET_TAX_PAID_IN_LC, A.NET_TAX_PAID_IN_SGD , A.ORIG_CURRENCY_CD , A.initial_action_cd , A.rfic_cd , A.rfic_desc";
+        String selectColumns = "PROMO_TRANS.BATCH_DT, PROMO_TRANS.TRANS_CD, PROMO_TRANS.PRT_CD, PROMO_TRANS.PROMO_AWD_DT,\n" +
+                "        PROMO_TRANS.BONUS_AWDED , NVL(PROMO_TRANS.PROMO_AWD_DESC,''), 0, '', '', '', 0, '', '', '', 'Y', 'N',\n" +
+                "        'N', 0, NVL(PROMO_TRANS.AMDMNT_RSN_CD,''), '', '', NVL(PROMO_TRANS.PROMO_CD,''),\n" +
+                "        NVL(PROMO_TRANS.PROMO_AWD_DESC,''), PROMO_TRANS.ELITE_BONUS_MILES_AWDED, NVL(PRT.ANA_IND, 'A') ANA_IND,\n" +
+                "        NVL(PROMO_TRANS.PROMO_XREF_ID, '') as promo_xref_id ,0, '', '' ,0 ,'' , NVL(OD_XREF_LINK.TRANS_XREF_ID, ''),\n" +
+                "        NVL(BILL_TO_PRT, ''), NVL(CD_SHARE_PRT, ''), 0, NVL(TKT_NO, ''), NVL(FAMILY_NAME, ''), NVL(GIVEN_NAME, ''),\n" +
+                "        null, '', '', 0, '', NVL(PRT_REF_CD, ''), NVL(BATCH_ID, ''), NVL(REVERSED_FLG, ''), NVL(NAME_MISMATCH_FLG,\n" +
+                "        ''), '' , '' , 0 ,PROMO_TRANS.PPS_BONUS_VALUE_AWDED , '' ,PROMO_TRANS.PPS_PROMO_FLG , '' , '' ,0 ,0 ,0 , '', ''\n" +
+                "        ,'', '', '', 0, 0, '', 0, '', ''";
         String toPrint = addColumnNumberToSelect(selectColumns);
         System.out.println(toPrint);
     }

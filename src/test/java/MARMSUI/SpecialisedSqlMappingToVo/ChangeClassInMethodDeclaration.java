@@ -84,68 +84,75 @@ public class ChangeClassInMethodDeclaration {
                 "\n";
                 String secondStringToAppend ="private static void printSetterMethods(List dataFromDb, TestModel testModel) throws ParseException, InvocationTargetException, IllegalAccessException {\n" +
                         "        List<Object> generatedList = new ArrayList<>();\n" +
-                        "        // print setter code\n" +
-                        "            for (int i=0; i<dataFromDb.size(); i++) {\n" +
-                        "            Object tierstat1 = dataFromDb.get(i);\n" +
-                        "            if(i == 0) {\n" +
-                        "printMethodDeclaration(testModel);\n" +
-                        "System.out.println(\"List generatedList = null;\");\n" +
-                        "                System.out.println(\"try{\");\n" +
-                        "            }\n" +
-                        "            generatedList.add(bridgingMethod(tierstat1, i));\n" +
+                        "        if(dataFromDb.isEmpty()) {\n" +
+                        "            printMethodDeclaration(testModel);\n" +
+                        "            System.out.println(String.format(\"%s generatedList = new ArrayList<>();\", testModel.returnTypeOfDataMethod));\n" +
+                        "            System.out.println(\"return generatedList;\\n}\");\n" +
+                        "        } else {\n" +
+                        "            for (int i = 0; i < dataFromDb.size(); i++) {\n" +
+                        "                Object tierstat1 = dataFromDb.get(i);\n" +
+                        "                if (i == 0) {\n" +
+                        "                    printMethodDeclaration(testModel);\n" +
+                        "                    System.out.println(\"List generatedList = null;\");\n" +
+                        "                    System.out.println(\"try{\");\n" +
+                        "                }\n" +
+                        "                generatedList.add(bridgingMethod(tierstat1, i));\n" +
                         "//            System.out.println(\"generatedList.add(tierstat);\");\n" +
+                        "            }\n" +
+                        "            System.out.println(\"return generatedList;\");\n" +
+                        "            System.out.println(\"} catch(Exception e) {\");\n" +
+                        "            System.out.println(\"e.printStackTrace();\\n}\\nreturn null;\\n}\");\n" +
                         "        }\n" +
-                        "        System.out.println(\"return generatedList;\");\n" +
-                        "        System.out.println(\"} catch(Exception e) {\");\n" +
-                        "        System.out.println(\"e.printStackTrace();\\n}\\nreturn null;\\n}\");\n" +
-                        "    }\n " +
-                        "   private static String generateSetterName(String getter) {\n" +
-                "        return \"set\" + getter.substring(3);\n" +
-                "    }\n" +
-                "\n" +
-                "    private static Map<String, String> monthMapper = new HashMap<>();\n" +
-                "\n" +
-                "    private static String generateDateString(String dateStr) throws ParseException {\n" +
-                "        String[] dateArr = dateStr.split(\" \");\n" +
-                "        String s = String.format(String.format(\"%s-%s-%s\", dateArr[5], monthMapper.get(dateArr[1]), dateArr[2]));\n" +
-                "        return s;\n" +
-                "    }\n" +
-                "\n" +
-                "    private static String generateTimestamp(Timestamp timestamp) {\n" +
-                "        SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");\n" +
-                "        String dateString = dateFormat.format(timestamp);\n" +
-                "        return dateString;\n" +
-                "    }\n" +
-                "\n" +
-                "\n" +
-                "    private static void initializeMonthMapping() {\n" +
-                "        monthMapper.put(\"Jan\", \"01\");\n" +
-                "        monthMapper.put(\"Feb\", \"02\");\n" +
-                "        monthMapper.put(\"Mar\", \"03\");\n" +
-                "        monthMapper.put(\"Apr\", \"04\");\n" +
-                "        monthMapper.put(\"May\", \"05\");\n" +
-                "        monthMapper.put(\"Jun\", \"06\");\n" +
-                "        monthMapper.put(\"Jul\", \"07\");\n" +
-                "        monthMapper.put(\"Aug\", \"08\");\n" +
-                "        monthMapper.put(\"Sep\", \"09\");\n" +
-                "        monthMapper.put(\"Oct\", \"10\");\n" +
-                "        monthMapper.put(\"Nov\", \"11\");\n" +
-                "        monthMapper.put(\"Dec\", \"12\");\n" +
-                "    }\n" +
-                        "private static void printMethodDeclaration(TestModel testModel) {\n" +
-                        "        String methodName = \"dataFor\" + testModel.methodName;\n" +
-                        "methodName = generateUniqueMethodName(methodName, testModel);\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    private static String generateSetterName(String getter) {\n" +
+                        "        return \"set\" + getter.substring(3);\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    private static Map<String, String> monthMapper = new HashMap<>();\n" +
+                        "\n" +
+                        "    private static String generateDateString(String dateStr) throws ParseException {\n" +
+                        "        String[] dateArr = dateStr.split(\" \");\n" +
+                        "        String s = String.format(String.format(\"%s-%s-%s\", dateArr[5], monthMapper.get(dateArr[1]), dateArr[2]));\n" +
+                        "        return s;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    private static String generateTimestamp(Timestamp timestamp) {\n" +
+                        "        SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");\n" +
+                        "        String dateString = dateFormat.format(timestamp);\n" +
+                        "        return dateString;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "\n" +
+                        "    private static void initializeMonthMapping() {\n" +
+                        "        monthMapper.put(\"Jan\", \"01\");\n" +
+                        "        monthMapper.put(\"Feb\", \"02\");\n" +
+                        "        monthMapper.put(\"Mar\", \"03\");\n" +
+                        "        monthMapper.put(\"Apr\", \"04\");\n" +
+                        "        monthMapper.put(\"May\", \"05\");\n" +
+                        "        monthMapper.put(\"Jun\", \"06\");\n" +
+                        "        monthMapper.put(\"Jul\", \"07\");\n" +
+                        "        monthMapper.put(\"Aug\", \"08\");\n" +
+                        "        monthMapper.put(\"Sep\", \"09\");\n" +
+                        "        monthMapper.put(\"Oct\", \"10\");\n" +
+                        "        monthMapper.put(\"Nov\", \"11\");\n" +
+                        "        monthMapper.put(\"Dec\", \"12\");\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    private static void printMethodDeclaration(TestModel testModel) {\n" +
+                        "        String methodName = testModel.mapperName + testModel.methodName;\n" +
+                        "        methodName = generateUniqueMethodName(methodName, testModel);\n" +
                         "        String declaration = String.format(\"public static %s %s() {\\n\", testModel.returnTypeOfDataMethod, methodName);\n" +
                         "        System.out.println(declaration);\n" +
-                        "String paramsDetails = \"\";\n" +
+                        "        String paramsDetails = \"\";\n" +
                         "        String typeDetails = \"\";\n" +
-                        "        for(int i=0; i<testModel.paramsTypeList.size(); i++){\n" +
-                        "            paramsDetails += i>=testModel.paramsList.size() ? \"\" : testModel.paramsList.get(i) + \",\";\n" +
+                        "        for (int i = 0; i < testModel.paramsTypeList.size(); i++) {\n" +
+                        "            paramsDetails += i >= testModel.paramsList.size() ? \"\" : testModel.paramsList.get(i) + \",\";\n" +
                         "            typeDetails += testModel.paramsTypeList.get(i) + \",\";\n" +
                         "        }\n" +
-                        "        if(!paramsDetails.isEmpty() && !typeDetails.isEmpty()) {\n" +
-                        "            paramsDetails = paramsDetails.substring(0,paramsDetails.length()-1);\n" +
-                        "            typeDetails = typeDetails.substring(0,typeDetails.length()-1);\n" +
+                        "        if (!paramsDetails.isEmpty() && !typeDetails.isEmpty()) {\n" +
+                        "            paramsDetails = paramsDetails.substring(0, paramsDetails.length() - 1);\n" +
+                        "            typeDetails = typeDetails.substring(0, typeDetails.length() - 1);\n" +
                         "        } else {\n" +
                         "            paramsDetails = \"empty\";\n" +
                         "            typeDetails = \"empty\";\n" +
@@ -153,12 +160,14 @@ public class ChangeClassInMethodDeclaration {
                         "        System.out.println(String.format(\"// params: %s\", paramsDetails));\n" +
                         "        System.out.println(String.format(\"// types: %s\", typeDetails));\n" +
                         "    }\n" +
-                        "private static Map<String,TestModel> methodMap = new HashMap<>();\n" +
+                        "\n" +
+                        "    private static Map<String, TestModel> methodMap = new HashMap<>();\n" +
+                        "\n" +
                         "    private static String generateUniqueMethodName(String name, TestModel testModel) {\n" +
                         "        int num = 1;\n" +
                         "        String uniqueName = name;\n" +
-                        "        while(true) {\n" +
-                        "            if(methodMap.containsKey(uniqueName)) {\n" +
+                        "        while (true) {\n" +
+                        "            if (methodMap.containsKey(uniqueName)) {\n" +
                         "                uniqueName = name + num;\n" +
                         "            } else {\n" +
                         "                methodMap.put(uniqueName, testModel);\n" +
@@ -171,21 +180,34 @@ public class ChangeClassInMethodDeclaration {
         String[] strArr = s.split("\n");
         for(String replacement : replacementString) {
             String[] dup = new String[strArr.length];
-            for(int i=0; i<strArr.length; i++) {
+            if(replacement.equalsIgnoreCase("long") || replacement.equalsIgnoreCase("string")) {
+                // print reflectionOnDataFromDb for basic types
+                System.out.println(String.format("private static %s reflectionOnDataFromDb(%s tierstat, int counter) {", replacement, replacement));
+                System.out.println(String.format("if(counter == 0) {\n" +
+                        "            System.out.println(\"Long tierstat = null;\");\n" +
+                        "            System.out.println(\"generatedList = new ArrayList<%s>();\");\n" +
+                        "        }", replacement));
+                System.out.println("System.out.println(String.format(\"generatedList.add(%s);\", tierstat));\n" +
+                        "        return tierstat;\n}");
+            } else {
+                // print reflectionOnDataFromDb for non basic types
+                for(int i=0; i<strArr.length; i++) {
 //                if(strArr[i].contains("printSetterMethods")) {
 //                    dup[i] = strArr[i].replace("printSetterMethods", "printSetterMethods1");
 //                }
-                if(strArr[i].contains(toReplace)) {
-                    dup[i] = strArr[i].replace(toReplace,replacement);
-                } else {
-                    dup[i] = strArr[i];
+                    if(strArr[i].contains(toReplace)) {
+                        dup[i] = strArr[i].replace(toReplace,replacement);
+                    } else {
+                        dup[i] = strArr[i];
+                    }
                 }
+                StringBuilder stringBuilder = new StringBuilder();
+                for(String row : dup) {
+                    stringBuilder.append(row + "\n");
+                }
+                System.out.println(stringBuilder.toString());
             }
-            StringBuilder stringBuilder = new StringBuilder();
-            for(String row : dup) {
-                stringBuilder.append(row + "\n");
-            }
-            System.out.println(stringBuilder.toString());
+
         }
 
         // print bridging method
@@ -210,12 +232,12 @@ public class ChangeClassInMethodDeclaration {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("private static List mtd(String response, String returnType) throws JsonProcessingException {\n" +
                 "        ObjectMapper mapper = new ObjectMapper();\n" +
-                "        mapper.setDateFormat(new SimpleDateFormat(\"yyyy-MM-dd\"));\n");
+                "        mapper.setDateFormat(new CustomDateFormat());\n");
         for(int i=0; i<types.length; i++) {
             if(i==0) {
-                stringBuilder.append(String.format("if(returnType.contains(\"%s\"))\n", types[i]));
+                stringBuilder.append(String.format("if(returnType.contains(\"List<%s>\"))\n", types[i]));
             } else {
-                stringBuilder.append(String.format("else if (returnType.contains(\"%s\"))\n", types[i]));
+                stringBuilder.append(String.format("else if (returnType.contains(\"List<%s>\"))\n", types[i]));
             }
             stringBuilder.append(String.format("return mapper.readValue(response, new TypeReference<List<%s>>(){});\n", types[i]));
         }

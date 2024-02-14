@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestModel {
+    public String mapperName;
     public String packageName;
     public String returnTypeOfDataMethod;
     public String methodName;

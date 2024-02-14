@@ -1,4 +1,4 @@
-package MARMSUI;
+package MARMSUI.JsonfieldResponse;
 
 import java.util.*;
 
@@ -6,19 +6,35 @@ public class MappingJavaFieldToJsonField {
     public static void main(String[] args) {
         Set<String> setOfFieldsMarkedIgnored = new HashSet<>();
         Map<String, String> mapOfKeyJavaValueJson = new HashMap<>();
-        String resultMap = "<result column=\"TRANS_CD\" jdbcType=\"VARCHAR\" property=\"transCd\"/>\n" +
+        String resultMap = "<result column=\"TRANSACTION_TYPE\" jdbcType=\"VARCHAR\" property=\"transactionType\"/>\n" +
                 "        <result column=\"BATCH_DATE\" jdbcType=\"TIMESTAMP\" property=\"batchDate\"/>\n" +
-                "        <result column=\"PTS_AWDED\" jdbcType=\"NUMERIC\" property=\"ptsAwded\"/>\n" +
-                "        <result column=\"TRANS_XREF_ID\" jdbcType=\"VARCHAR\" property=\"transXrefId\"/>\n" +
+                "        <result column=\"TRANS_CD\" jdbcType=\"VARCHAR\" property=\"transCd\"/>\n" +
                 "        <result column=\"PRT_CD\" jdbcType=\"VARCHAR\" property=\"prtCd\"/>\n" +
                 "        <result column=\"TRANS_DATE\" jdbcType=\"TIMESTAMP\" property=\"transDate\"/>\n" +
-                "        <result column=\"FRM_BUCKET_DT\" jdbcType=\"TIMESTAMP\" property=\"frmBucketDt\"/>\n" +
-                "        <result column=\"REMARKS\" jdbcType=\"VARCHAR\" property=\"remarks\"/>\n" +
+                "        <result column=\"PTS_AWARDED\" jdbcType=\"NUMERIC\" property=\"ptsAwarded\"/>\n" +
+                "        <result column=\"AWD_DESC\" jdbcType=\"VARCHAR\" property=\"awdDesc\"/>\n" +
+                "        <result column=\"FFP_BUCKET_FLG\" jdbcType=\"VARCHAR\" property=\"ffpBucketFlg\"/>\n" +
+                "        <result column=\"ELITE_BUCKET_FLG\" jdbcType=\"VARCHAR\" property=\"eliteBucketFlg\"/>\n" +
+                "        <result column=\"PPS_BUCKET_FLG\" jdbcType=\"VARCHAR\" property=\"ppsBucketFlg\"/>\n" +
+                "        <result column=\"AMDMNT_RSN_CD\" jdbcType=\"VARCHAR\" property=\"amdmntRsnCd\"/>\n" +
+                "        <result column=\"PROMO_CD\" jdbcType=\"VARCHAR\" property=\"promoCd\"/>\n" +
+                "        <result column=\"PROMO_AWD_DESC\" jdbcType=\"VARCHAR\" property=\"promoAwdDesc\"/>\n" +
+                "        <result column=\"ELITE_BONUS_MILES_AWDED\" jdbcType=\"NUMERIC\" property=\"eliteBonusMilesAwded\"/>\n" +
+                "        <result column=\"ANA_IND\" jdbcType=\"VARCHAR\" property=\"anaInd\"/>\n" +
+                "        <result column=\"PROMO_XREF_ID\" jdbcType=\"VARCHAR\" property=\"promoXrefId\"/>\n" +
+                "        <result column=\"TRANS_XREF_ID\" jdbcType=\"VARCHAR\" property=\"transXrefId\"/>\n" +
+                "        <result column=\"BILL_TO_PRT\" jdbcType=\"VARCHAR\" property=\"billToPrt\"/>\n" +
+                "        <result column=\"CD_SHARE_PRT\" jdbcType=\"VARCHAR\" property=\"cdSharePrt\"/>\n" +
+                "        <result column=\"TKT_NO\" jdbcType=\"VARCHAR\" property=\"tktNo\"/>\n" +
+                "        <result column=\"FAMILY_NAME\" jdbcType=\"VARCHAR\" property=\"familyName\"/>\n" +
+                "        <result column=\"GIVEN_NAME\" jdbcType=\"VARCHAR\" property=\"givenName\"/>\n" +
+                "        <result column=\"PRT_REF_CD\" jdbcType=\"VARCHAR\" property=\"prtRefCd\"/>\n" +
                 "        <result column=\"BATCH_ID\" jdbcType=\"VARCHAR\" property=\"batchId\"/>\n" +
-                "        <result column=\"SUPERVISOR_ID\" jdbcType=\"VARCHAR\" property=\"supervisorId\"/>\n" +
-                "        <result column=\"PTS_EXTENDED\" jdbcType=\"NUMERIC\" property=\"ptsExtended\"/>\n" +
-                "        <result column=\"TRANSACTION_TYPE\" jdbcType=\"VARCHAR\" property=\"transactionType\"/>\n" +
-                "        <result column=\"AWD_DESC\" jdbcType=\"VARCHAR\" property=\"awdDesc\"/>";
+                "        <result column=\"REVERSED_FLG\" jdbcType=\"VARCHAR\" property=\"reversedFlg\"/>\n" +
+                "        <result column=\"NAME_MISMATCH_FLG\" jdbcType=\"VARCHAR\" property=\"nameMismatchFlg\"/>\n" +
+                "        <result column=\"PPS_BONUS_VALUE_AWDED\" jdbcType=\"NUMERIC\" property=\"ppsBonusValueAwded\"/>\n" +
+                "        <result column=\"PPS_PROMO_FLG\" jdbcType=\"VARCHAR\" property=\"ppsPromoFlg\"/>\n" +
+                "        <result column=\"BKTN_PRESENT\" jdbcType=\"VARCHAR\" property=\"bktnPresent\"/>";
 
 
 

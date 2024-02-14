@@ -25,13 +25,21 @@ public class TierMileageSummary extends QualificationValueObject
     private long currentValues;
     private long accumulatedValues;
     private long accumulatedLifetimeValues;
+	private String auditId;
     
     public TierMileageSummary(){
         super();
     }
-    
 
-    
+
+	public String getAuditId() {
+		return auditId;
+	}
+
+	public void setAuditId(String auditId) {
+		this.auditId = auditId;
+	}
+
 	/**
 	 * Returns the intID.
 	 * @return String
