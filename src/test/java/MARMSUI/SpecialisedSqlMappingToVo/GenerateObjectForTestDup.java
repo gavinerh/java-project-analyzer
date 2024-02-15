@@ -1010,7 +1010,7 @@ public class GenerateObjectForTestDup {
     }
 
     private static void printMethodDeclaration(TestModel testModel) {
-        String methodName = "dataFor" + testModel.methodName;
+        String methodName = testModel.methodName;
         methodName = generateUniqueMethodName(methodName, testModel);
         String declaration = String.format("public static %s %s() {\n", testModel.returnTypeOfDataMethod, methodName);
         System.out.println(declaration);

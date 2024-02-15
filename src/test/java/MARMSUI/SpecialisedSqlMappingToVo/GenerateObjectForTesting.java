@@ -13,8 +13,11 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GenerateObjectForTesting {
+    static List<String> initializationList = new ArrayList<>();
+
     public static void main(String[] args) throws InvocationTargetException, IllegalAccessException, ParseException {
         try {
             String fileName = "/Users/macuser/Desktop/response_content";
@@ -25,9 +28,10 @@ public class GenerateObjectForTesting {
             int counter = 0;
             int counterForNonList = 0;
             for (TestModel testModel : testModelList) {
-                if (testModel.methodName.equalsIgnoreCase("getTierStatGivenCondition")) {
+                if (testModel.methodName.equalsIgnoreCase("getClubInfo")) {
                     System.out.println("");
                 }
+
                 List list = mtd(testModel.responseString, testModel.returnTypeOfDataMethod);
                 if (list != null) {
                     printSetterMethods(list, testModel);
@@ -36,11 +40,44 @@ public class GenerateObjectForTesting {
                     printForNonList(testModel);
                     counterForNonList++;
                 }
+                printMockMapperMethodCaller(testModel);
             }
-
+            System.out.println();
+            for (String s : initializationList) {
+                System.out.println(s);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void printMockMapperMethodCaller(TestModel testModel) {
+//        String mapperName = extractMapperName(testModel.mapperName);
+//        if(testModel.methodName.equalsIgnoreCase("getTransReserveVal")){
+//            System.out.println("");
+//        }
+        String mapperMethodName = testModel.methodName;
+        String paramList = generateParamList(testModel);
+        String mockDataMethod = testModel.combinedName;
+        String val = String.format("when(%s.%s(%s)).thenReturn(%s());", testModel.mapperName, mapperMethodName, paramList == null ? "" : paramList, mockDataMethod);
+        initializationList.add(val);
+    }
+
+    private static String generateParamList(TestModel testModel) {
+        List<String> paramsList = testModel.paramsList;
+        List<String> paramTypeList = testModel.paramsTypeList;
+        String toReturn = "";
+        for (int i = 0; i < paramTypeList.size(); i++) {
+            if (paramTypeList.get(i).contains("Date")) {
+                toReturn += String.format("customDateFormat.parse(%s),", paramsList.get(i));
+            } else if (paramTypeList.get(i).contains("Long") || paramTypeList.get(i).contains("long")) {
+                toReturn += String.format("%sl,", paramsList.get(i));
+            } else {
+                toReturn += String.format("%s,", paramsList.get(i));
+            }
+        }
+        toReturn = toReturn.length() != 0 ? toReturn.substring(0, toReturn.length() - 1) : null;
+        return toReturn;
     }
 
     private static void printForNonList(TestModel testModel) {
@@ -57,6 +94,7 @@ public class GenerateObjectForTesting {
             paramsDetails = "empty";
             typeDetails = "empty";
         }
+        testModel.combinedName = testModel.mapperName + testModel.methodName;
         System.out.println(String.format("private %s %s(){\n//params: %s\n//types: %s", testModel.returnTypeOfDataMethod, testModel.mapperName + testModel.methodName, paramsDetails, typeDetails));
 
         if (testModel.returnTypeOfDataMethod.equalsIgnoreCase("date")) {
@@ -74,7 +112,8 @@ public class GenerateObjectForTesting {
     private static String extractMapperName(String line) {
         String key = "mappers.";
         int start = line.indexOf(key) + key.length();
-        return line.substring(start).trim();
+        String name = line.substring(start).trim();
+        return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
     private static List<TestModel> populateListOfTestModel(FileInputStream fileInputStream) throws IOException {
@@ -135,11 +174,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new Tierstat();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         Tierstat generated = new Tierstat();
         Method[] methodsToInvoke = Tierstat.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -170,7 +210,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -207,11 +247,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new TierMileageSummary();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         TierMileageSummary generated = new TierMileageSummary();
         Method[] methodsToInvoke = TierMileageSummary.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -242,7 +283,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -279,11 +320,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new HisCusEliteQual();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         HisCusEliteQual generated = new HisCusEliteQual();
         Method[] methodsToInvoke = HisCusEliteQual.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -314,7 +356,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -351,11 +393,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new CusPpsQual();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         CusPpsQual generated = new CusPpsQual();
         Method[] methodsToInvoke = CusPpsQual.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -386,7 +429,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -423,11 +466,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new CustomerTier();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         CustomerTier generated = new CustomerTier();
         Method[] methodsToInvoke = CustomerTier.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -458,7 +502,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -495,11 +539,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new TierQual();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         TierQual generated = new TierQual();
         Method[] methodsToInvoke = TierQual.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -530,7 +575,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -564,7 +609,7 @@ public class GenerateObjectForTesting {
             System.out.println("Long tierstat = null;");
             System.out.println("generatedList = new ArrayList<Long>();");
         }
-        System.out.println(String.format("generatedList.add(%s);", tierstat));
+        System.out.println(String.format("generatedList.add(%sl);", tierstat));
         return tierstat;
     }
 
@@ -576,11 +621,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new AccountStatusFunc();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         AccountStatusFunc generated = new AccountStatusFunc();
         Method[] methodsToInvoke = AccountStatusFunc.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -611,7 +657,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -648,11 +694,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new GeneralSqlObject();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         GeneralSqlObject generated = new GeneralSqlObject();
         Method[] methodsToInvoke = GeneralSqlObject.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -683,7 +730,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -720,11 +767,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new QualDetailsMonthly();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         QualDetailsMonthly generated = new QualDetailsMonthly();
         Method[] methodsToInvoke = QualDetailsMonthly.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -755,7 +803,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -792,11 +840,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new CusClubQual();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         CusClubQual generated = new CusClubQual();
         Method[] methodsToInvoke = CusClubQual.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -827,7 +876,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -864,11 +913,12 @@ public class GenerateObjectForTesting {
         }
         System.out.println("tierstat = new TransReserveVal();");
         initializeMonthMapping();
-        Method[] methods = tierstat.getClass().getDeclaredMethods();
         TransReserveVal generated = new TransReserveVal();
         Method[] methodsToInvoke = TransReserveVal.class.getDeclaredMethods();
+        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
+        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : methods) {
+        for (Method method : listOfMethods) {
 
             if (method.getName().startsWith("get")) {
                 Object val = method.invoke(tierstat);
@@ -899,7 +949,7 @@ public class GenerateObjectForTesting {
             }
 
         }
-        for (Method method : methodsToInvoke) {
+        for (Method method : listOfMethods) {
             String name = method.getName();
             if (name.startsWith("set")) {
                 Object val = mapOfFieldNameAndValue.get(name);
@@ -949,6 +999,7 @@ public class GenerateObjectForTesting {
             System.out.println("return generatedList;");
             System.out.println("} catch(Exception e) {");
             System.out.println("e.printStackTrace();\n}\nreturn null;\n}");
+            printMockMapperMethodCaller(testModel);
         }
     }
 
@@ -989,6 +1040,7 @@ public class GenerateObjectForTesting {
     private static void printMethodDeclaration(TestModel testModel) {
         String methodName = testModel.mapperName + testModel.methodName;
         methodName = generateUniqueMethodName(methodName, testModel);
+        testModel.combinedName = methodName;
         String declaration = String.format("public static %s %s() {\n", testModel.returnTypeOfDataMethod, methodName);
         System.out.println(declaration);
         String paramsDetails = "";
@@ -1095,6 +1147,4 @@ public class GenerateObjectForTesting {
             });
         return null;
     }
-
 }
-

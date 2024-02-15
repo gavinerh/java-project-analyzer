@@ -13,6 +13,7 @@ public class TestModel {
     public String packageName;
     public String returnTypeOfDataMethod;
     public String methodName;
+    public String combinedName;
     public String responseString;
     public List<String> paramsList;
     public List<String> paramsTypeList;
@@ -31,7 +32,8 @@ public class TestModel {
         paramsList = new ArrayList<>();
         if(!args.isEmpty()){
             // need to check the string to separate into individual obj
-            paramsList.add(args);
+//            paramsList.add(args);
+            populateList(args,paramsList);
         }
     }
     private static List<String> extractString(String val) {

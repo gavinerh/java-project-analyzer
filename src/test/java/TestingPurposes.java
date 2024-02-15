@@ -12,12 +12,16 @@ public class TestingPurposes {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setDateFormat(new CustomDateFormat());
         String obj1 = "{\"name\":\"obj1\",\"date\":\"31-12-2099\"}";
-        String obj2 = "{\"name\":\"obj2\",\"date\":\"2023-08-01 00:00:00\"}";
-        Mod mod1 = objectMapper.readValue(obj1,new TypeReference<Mod>() {});
-        Mod mod2 = objectMapper.readValue(obj2,new TypeReference<Mod>() {});
+        String obj2 = "{\"date\":\"31-12-2099\",\"name\":\"obj1\"}";
+        int val = obj1.hashCode();
+        int val2 = obj2.hashCode();
+        System.out.println(val);
+        Mod mod1 = objectMapper.readValue(obj1, new TypeReference<Mod>() {
+        });
+        Mod mod2 = objectMapper.readValue(obj2, new TypeReference<Mod>() {
+        });
         System.out.println(mod2);
     }
-
 
 
 }
