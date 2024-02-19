@@ -4,12 +4,12 @@ public class ChangeClassInMethodDeclaration {
     public static void main(String[] args) {
         String duplicateNum = "";
         String toReplace = "UserProfileDetail";
-        String[] replacementString = {"Tierstat", "TierMileageSummary", "HisCusEliteQual", "CusPpsQual", "CustomerTier", "TierQual", "Long", "AccountStatusFunc", "GeneralSqlObject", "QualDetailsMonthly", "CusClubQual", "TransReserveVal" };
+        String[] replacementString = {"MergeTransactions","MiscTransactions","AirRedemptionTransactions","NonAirRedemptionTransactions","AccrualTransactions"};
         String s = "    private static UserProfileDetail reflectionOnDataFromDb" + duplicateNum + "(UserProfileDetail tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {\n" +
                 "if(counter == 0) {\n" +
                 "System.out.println(\"UserProfileDetail tierstat = null;\");\n" +
-                "System.out.println(\"SimpleDateFormat dateFormat = new SimpleDateFormat(\\\"yyyy-MM-dd\\\");\");\n" +
-                "System.out.println(\"generatedList = new ArrayList<Tierstat>();\");\n" +
+                "System.out.println(\"SimpleDateFormat dateFormat = new SimpleDateFormat(\\\"yyyy-MM-dd HH:mm:ss\\\");\");\n" +
+                "System.out.println(\"generatedList = new ArrayList<UserProfileDetail>();\");\n" +
                 "        } \n" +
                 "System.out.println(\"tierstat = new UserProfileDetail();\");\n" +
                 "        initializeMonthMapping();\n" +
@@ -58,7 +58,7 @@ public class ChangeClassInMethodDeclaration {
                 "                if (val.getClass().getTypeName().equals(\"java.lang.String\")) {\n" +
                 "                    toPrint = String.format(\"tierstat.%s(\\\"%s\\\");\", name, val);\n" +
                 "                } else if (val.getClass().getTypeName().equals(\"java.util.Date\")) {\n" +
-                "                    String date = generateDateString(val.toString());\n" +
+                "                    String date = generateDateString((Date) val);\n" +
                 "                    toPrint = String.format(\"tierstat.%s(dateFormat.parse(\\\"%s\\\"));\", name, date);\n" +
                 "                } else if (val.getClass().getTypeName().equals(\"float\") || val.getClass().getTypeName().equals(\"java.lang.Float\")) {\n" +
                 "                    toPrint = String.format(\"tierstat.%s(%sf);\", name, val);\n" +
@@ -108,14 +108,13 @@ public class ChangeClassInMethodDeclaration {
                 "\n" +
                 "    private static Map<String, String> monthMapper = new HashMap<>();\n" +
                 "\n" +
-                "    private static String generateDateString(String dateStr) throws ParseException {\n" +
-                "        String[] dateArr = dateStr.split(\" \");\n" +
-                "        String s = String.format(String.format(\"%s-%s-%s\", dateArr[5], monthMapper.get(dateArr[1]), dateArr[2]));\n" +
-                "        return s;\n" +
+                "    private static String generateDateString(Date dateStr) throws ParseException {\n" +
+                "        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\n" +
+                "        return simpleDateFormat.format(dateStr);\n" +
                 "    }\n" +
                 "\n" +
                 "    private static String generateTimestamp(Timestamp timestamp) {\n" +
-                "        SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");\n" +
+                "        SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\n" +
                 "        String dateString = dateFormat.format(timestamp);\n" +
                 "        return dateString;\n" +
                 "    }\n" +

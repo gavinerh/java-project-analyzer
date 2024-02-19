@@ -28,9 +28,9 @@ public class GenerateObjectForTesting {
             int counter = 0;
             int counterForNonList = 0;
             for (TestModel testModel : testModelList) {
-                if (testModel.methodName.equalsIgnoreCase("getClubInfo")) {
-                    System.out.println("");
-                }
+//                if (testModel.methodName.equalsIgnoreCase("getClubInfo")) {
+//                    System.out.println("");
+//                }
 
                 List list = mtd(testModel.responseString, testModel.returnTypeOfDataMethod);
                 if (list != null) {
@@ -166,16 +166,16 @@ public class GenerateObjectForTesting {
 
     // PASTE FROM THIS LINE ONWARDS
 
-    private static Tierstat reflectionOnDataFromDb(Tierstat tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("Tierstat tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
+    private static MergeTransactions reflectionOnDataFromDb(MergeTransactions tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
+        if(counter == 0) {
+            System.out.println("MergeTransactions tierstat = null;");
+            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
+            System.out.println("generatedList = new ArrayList<MergeTransactions>();");
         }
-        System.out.println("tierstat = new Tierstat();");
+        System.out.println("tierstat = new MergeTransactions();");
         initializeMonthMapping();
-        Tierstat generated = new Tierstat();
-        Method[] methodsToInvoke = Tierstat.class.getDeclaredMethods();
+        MergeTransactions generated = new MergeTransactions();
+        Method[] methodsToInvoke = MergeTransactions.class.getDeclaredMethods();
         List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
         listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
@@ -219,7 +219,7 @@ public class GenerateObjectForTesting {
                 if (val.getClass().getTypeName().equals("java.lang.String")) {
                     toPrint = String.format("tierstat.%s(\"%s\");", name, val);
                 } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
+                    String date = generateDateString((Date) val);
                     toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
                 } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
                     toPrint = String.format("tierstat.%s(%sf);", name, val);
@@ -239,16 +239,16 @@ public class GenerateObjectForTesting {
         return generated;
     }
 
-    private static TierMileageSummary reflectionOnDataFromDb(TierMileageSummary tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("TierMileageSummary tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
+    private static MiscTransactions reflectionOnDataFromDb(MiscTransactions tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
+        if(counter == 0) {
+            System.out.println("MiscTransactions tierstat = null;");
+            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
+            System.out.println("generatedList = new ArrayList<MiscTransactions>();");
         }
-        System.out.println("tierstat = new TierMileageSummary();");
+        System.out.println("tierstat = new MiscTransactions();");
         initializeMonthMapping();
-        TierMileageSummary generated = new TierMileageSummary();
-        Method[] methodsToInvoke = TierMileageSummary.class.getDeclaredMethods();
+        MiscTransactions generated = new MiscTransactions();
+        Method[] methodsToInvoke = MiscTransactions.class.getDeclaredMethods();
         List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
         listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
@@ -292,7 +292,7 @@ public class GenerateObjectForTesting {
                 if (val.getClass().getTypeName().equals("java.lang.String")) {
                     toPrint = String.format("tierstat.%s(\"%s\");", name, val);
                 } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
+                    String date = generateDateString((Date) val);
                     toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
                 } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
                     toPrint = String.format("tierstat.%s(%sf);", name, val);
@@ -312,16 +312,16 @@ public class GenerateObjectForTesting {
         return generated;
     }
 
-    private static HisCusEliteQual reflectionOnDataFromDb(HisCusEliteQual tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("HisCusEliteQual tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
+    private static AirRedemptionTransactions reflectionOnDataFromDb(AirRedemptionTransactions tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
+        if(counter == 0) {
+            System.out.println("AirRedemptionTransactions tierstat = null;");
+            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
+            System.out.println("generatedList = new ArrayList<AirRedemptionTransactions>();");
         }
-        System.out.println("tierstat = new HisCusEliteQual();");
+        System.out.println("tierstat = new AirRedemptionTransactions();");
         initializeMonthMapping();
-        HisCusEliteQual generated = new HisCusEliteQual();
-        Method[] methodsToInvoke = HisCusEliteQual.class.getDeclaredMethods();
+        AirRedemptionTransactions generated = new AirRedemptionTransactions();
+        Method[] methodsToInvoke = AirRedemptionTransactions.class.getDeclaredMethods();
         List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
         listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
@@ -365,7 +365,7 @@ public class GenerateObjectForTesting {
                 if (val.getClass().getTypeName().equals("java.lang.String")) {
                     toPrint = String.format("tierstat.%s(\"%s\");", name, val);
                 } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
+                    String date = generateDateString((Date) val);
                     toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
                 } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
                     toPrint = String.format("tierstat.%s(%sf);", name, val);
@@ -385,16 +385,16 @@ public class GenerateObjectForTesting {
         return generated;
     }
 
-    private static CusPpsQual reflectionOnDataFromDb(CusPpsQual tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("CusPpsQual tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
+    private static NonAirRedemptionTransactions reflectionOnDataFromDb(NonAirRedemptionTransactions tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
+        if(counter == 0) {
+            System.out.println("NonAirRedemptionTransactions tierstat = null;");
+            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
+            System.out.println("generatedList = new ArrayList<NonAirRedemptionTransactions>();");
         }
-        System.out.println("tierstat = new CusPpsQual();");
+        System.out.println("tierstat = new NonAirRedemptionTransactions();");
         initializeMonthMapping();
-        CusPpsQual generated = new CusPpsQual();
-        Method[] methodsToInvoke = CusPpsQual.class.getDeclaredMethods();
+        NonAirRedemptionTransactions generated = new NonAirRedemptionTransactions();
+        Method[] methodsToInvoke = NonAirRedemptionTransactions.class.getDeclaredMethods();
         List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
         listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
@@ -438,7 +438,7 @@ public class GenerateObjectForTesting {
                 if (val.getClass().getTypeName().equals("java.lang.String")) {
                     toPrint = String.format("tierstat.%s(\"%s\");", name, val);
                 } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
+                    String date = generateDateString((Date) val);
                     toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
                 } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
                     toPrint = String.format("tierstat.%s(%sf);", name, val);
@@ -458,16 +458,16 @@ public class GenerateObjectForTesting {
         return generated;
     }
 
-    private static CustomerTier reflectionOnDataFromDb(CustomerTier tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("CustomerTier tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
+    private static AccrualTransactions reflectionOnDataFromDb(AccrualTransactions tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
+        if(counter == 0) {
+            System.out.println("AccrualTransactions tierstat = null;");
+            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");");
+            System.out.println("generatedList = new ArrayList<AccrualTransactions>();");
         }
-        System.out.println("tierstat = new CustomerTier();");
+        System.out.println("tierstat = new AccrualTransactions();");
         initializeMonthMapping();
-        CustomerTier generated = new CustomerTier();
-        Method[] methodsToInvoke = CustomerTier.class.getDeclaredMethods();
+        AccrualTransactions generated = new AccrualTransactions();
+        Method[] methodsToInvoke = AccrualTransactions.class.getDeclaredMethods();
         List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
         listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
         Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
@@ -511,454 +511,7 @@ public class GenerateObjectForTesting {
                 if (val.getClass().getTypeName().equals("java.lang.String")) {
                     toPrint = String.format("tierstat.%s(\"%s\");", name, val);
                 } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
-                    toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
-                } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
-                    toPrint = String.format("tierstat.%s(%sf);", name, val);
-                } else if (val.getClass().getTypeName().equals("long") || val.getClass().getTypeName().equals("java.lang.Long")) {
-                    toPrint = String.format("tierstat.%s(%sl);", name, val);
-                } else if (val.getClass().getTypeName().equals("java.sql.Timestamp")) {
-                    String date = generateTimestamp((Timestamp) val);
-                    toPrint = String.format("tierstat.%s(new Timestamp(dateFormat.parse(\"%s\").getTime()));", name, date);
-                } else {
-                    toPrint = String.format("tierstat.%s(%s);", name, val);
-                }
-                method.invoke(generated, val);
-                System.out.println(toPrint);
-            }
-        }
-        System.out.println("generatedList.add(tierstat);");
-        return generated;
-    }
-
-    private static TierQual reflectionOnDataFromDb(TierQual tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("TierQual tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
-        }
-        System.out.println("tierstat = new TierQual();");
-        initializeMonthMapping();
-        TierQual generated = new TierQual();
-        Method[] methodsToInvoke = TierQual.class.getDeclaredMethods();
-        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
-        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
-        Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : listOfMethods) {
-
-            if (method.getName().startsWith("get")) {
-                Object val = method.invoke(tierstat);
-                String type = method.getReturnType().getTypeName();
-                try {
-                    if (type.equals("java.util.Date")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.lang.String") || type.equals("java.lang.Double") || type.equals("java.lang.Integer") || type.equals("java.lang.Long")) {
-                        if (val == null) continue;
-                    } else if (type.equals("double")) {
-                        if ((double) val == 0.0) continue;
-                    } else if (type.equals("float")) {
-                        if ((float) val == 0.0f) continue;
-                    } else if (type.equals("int") || type.equals("java.lang.Integer")) {
-                        if ((int) val == 0) continue;
-                    } else if (type.equals("java.lang.Long") || type.equals("long")) {
-                        if ((long) val == 0) continue;
-                    } else if (type.equals("java.sql.Timestamp")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.util.List")) {
-                        continue;
-                    }
-                    mapOfFieldNameAndValue.put(generateSetterName(method.getName()), val);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-
-            }
-
-        }
-        for (Method method : listOfMethods) {
-            String name = method.getName();
-            if (name.startsWith("set")) {
-                Object val = mapOfFieldNameAndValue.get(name);
-                if (val == null) continue;
-                String toPrint = "";
-                if (val.getClass().getTypeName().equals("java.lang.String")) {
-                    toPrint = String.format("tierstat.%s(\"%s\");", name, val);
-                } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
-                    toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
-                } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
-                    toPrint = String.format("tierstat.%s(%sf);", name, val);
-                } else if (val.getClass().getTypeName().equals("long") || val.getClass().getTypeName().equals("java.lang.Long")) {
-                    toPrint = String.format("tierstat.%s(%sl);", name, val);
-                } else if (val.getClass().getTypeName().equals("java.sql.Timestamp")) {
-                    String date = generateTimestamp((Timestamp) val);
-                    toPrint = String.format("tierstat.%s(new Timestamp(dateFormat.parse(\"%s\").getTime()));", name, date);
-                } else {
-                    toPrint = String.format("tierstat.%s(%s);", name, val);
-                }
-                method.invoke(generated, val);
-                System.out.println(toPrint);
-            }
-        }
-        System.out.println("generatedList.add(tierstat);");
-        return generated;
-    }
-
-    private static Long reflectionOnDataFromDb(Long tierstat, int counter) {
-        if (counter == 0) {
-            System.out.println("Long tierstat = null;");
-            System.out.println("generatedList = new ArrayList<Long>();");
-        }
-        System.out.println(String.format("generatedList.add(%sl);", tierstat));
-        return tierstat;
-    }
-
-    private static AccountStatusFunc reflectionOnDataFromDb(AccountStatusFunc tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("AccountStatusFunc tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
-        }
-        System.out.println("tierstat = new AccountStatusFunc();");
-        initializeMonthMapping();
-        AccountStatusFunc generated = new AccountStatusFunc();
-        Method[] methodsToInvoke = AccountStatusFunc.class.getDeclaredMethods();
-        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
-        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
-        Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : listOfMethods) {
-
-            if (method.getName().startsWith("get")) {
-                Object val = method.invoke(tierstat);
-                String type = method.getReturnType().getTypeName();
-                try {
-                    if (type.equals("java.util.Date")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.lang.String") || type.equals("java.lang.Double") || type.equals("java.lang.Integer") || type.equals("java.lang.Long")) {
-                        if (val == null) continue;
-                    } else if (type.equals("double")) {
-                        if ((double) val == 0.0) continue;
-                    } else if (type.equals("float")) {
-                        if ((float) val == 0.0f) continue;
-                    } else if (type.equals("int") || type.equals("java.lang.Integer")) {
-                        if ((int) val == 0) continue;
-                    } else if (type.equals("java.lang.Long") || type.equals("long")) {
-                        if ((long) val == 0) continue;
-                    } else if (type.equals("java.sql.Timestamp")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.util.List")) {
-                        continue;
-                    }
-                    mapOfFieldNameAndValue.put(generateSetterName(method.getName()), val);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-
-            }
-
-        }
-        for (Method method : listOfMethods) {
-            String name = method.getName();
-            if (name.startsWith("set")) {
-                Object val = mapOfFieldNameAndValue.get(name);
-                if (val == null) continue;
-                String toPrint = "";
-                if (val.getClass().getTypeName().equals("java.lang.String")) {
-                    toPrint = String.format("tierstat.%s(\"%s\");", name, val);
-                } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
-                    toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
-                } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
-                    toPrint = String.format("tierstat.%s(%sf);", name, val);
-                } else if (val.getClass().getTypeName().equals("long") || val.getClass().getTypeName().equals("java.lang.Long")) {
-                    toPrint = String.format("tierstat.%s(%sl);", name, val);
-                } else if (val.getClass().getTypeName().equals("java.sql.Timestamp")) {
-                    String date = generateTimestamp((Timestamp) val);
-                    toPrint = String.format("tierstat.%s(new Timestamp(dateFormat.parse(\"%s\").getTime()));", name, date);
-                } else {
-                    toPrint = String.format("tierstat.%s(%s);", name, val);
-                }
-                method.invoke(generated, val);
-                System.out.println(toPrint);
-            }
-        }
-        System.out.println("generatedList.add(tierstat);");
-        return generated;
-    }
-
-    private static GeneralSqlObject reflectionOnDataFromDb(GeneralSqlObject tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("GeneralSqlObject tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
-        }
-        System.out.println("tierstat = new GeneralSqlObject();");
-        initializeMonthMapping();
-        GeneralSqlObject generated = new GeneralSqlObject();
-        Method[] methodsToInvoke = GeneralSqlObject.class.getDeclaredMethods();
-        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
-        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
-        Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : listOfMethods) {
-
-            if (method.getName().startsWith("get")) {
-                Object val = method.invoke(tierstat);
-                String type = method.getReturnType().getTypeName();
-                try {
-                    if (type.equals("java.util.Date")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.lang.String") || type.equals("java.lang.Double") || type.equals("java.lang.Integer") || type.equals("java.lang.Long")) {
-                        if (val == null) continue;
-                    } else if (type.equals("double")) {
-                        if ((double) val == 0.0) continue;
-                    } else if (type.equals("float")) {
-                        if ((float) val == 0.0f) continue;
-                    } else if (type.equals("int") || type.equals("java.lang.Integer")) {
-                        if ((int) val == 0) continue;
-                    } else if (type.equals("java.lang.Long") || type.equals("long")) {
-                        if ((long) val == 0) continue;
-                    } else if (type.equals("java.sql.Timestamp")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.util.List")) {
-                        continue;
-                    }
-                    mapOfFieldNameAndValue.put(generateSetterName(method.getName()), val);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-
-            }
-
-        }
-        for (Method method : listOfMethods) {
-            String name = method.getName();
-            if (name.startsWith("set")) {
-                Object val = mapOfFieldNameAndValue.get(name);
-                if (val == null) continue;
-                String toPrint = "";
-                if (val.getClass().getTypeName().equals("java.lang.String")) {
-                    toPrint = String.format("tierstat.%s(\"%s\");", name, val);
-                } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
-                    toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
-                } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
-                    toPrint = String.format("tierstat.%s(%sf);", name, val);
-                } else if (val.getClass().getTypeName().equals("long") || val.getClass().getTypeName().equals("java.lang.Long")) {
-                    toPrint = String.format("tierstat.%s(%sl);", name, val);
-                } else if (val.getClass().getTypeName().equals("java.sql.Timestamp")) {
-                    String date = generateTimestamp((Timestamp) val);
-                    toPrint = String.format("tierstat.%s(new Timestamp(dateFormat.parse(\"%s\").getTime()));", name, date);
-                } else {
-                    toPrint = String.format("tierstat.%s(%s);", name, val);
-                }
-                method.invoke(generated, val);
-                System.out.println(toPrint);
-            }
-        }
-        System.out.println("generatedList.add(tierstat);");
-        return generated;
-    }
-
-    private static QualDetailsMonthly reflectionOnDataFromDb(QualDetailsMonthly tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("QualDetailsMonthly tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
-        }
-        System.out.println("tierstat = new QualDetailsMonthly();");
-        initializeMonthMapping();
-        QualDetailsMonthly generated = new QualDetailsMonthly();
-        Method[] methodsToInvoke = QualDetailsMonthly.class.getDeclaredMethods();
-        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
-        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
-        Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : listOfMethods) {
-
-            if (method.getName().startsWith("get")) {
-                Object val = method.invoke(tierstat);
-                String type = method.getReturnType().getTypeName();
-                try {
-                    if (type.equals("java.util.Date")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.lang.String") || type.equals("java.lang.Double") || type.equals("java.lang.Integer") || type.equals("java.lang.Long")) {
-                        if (val == null) continue;
-                    } else if (type.equals("double")) {
-                        if ((double) val == 0.0) continue;
-                    } else if (type.equals("float")) {
-                        if ((float) val == 0.0f) continue;
-                    } else if (type.equals("int") || type.equals("java.lang.Integer")) {
-                        if ((int) val == 0) continue;
-                    } else if (type.equals("java.lang.Long") || type.equals("long")) {
-                        if ((long) val == 0) continue;
-                    } else if (type.equals("java.sql.Timestamp")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.util.List")) {
-                        continue;
-                    }
-                    mapOfFieldNameAndValue.put(generateSetterName(method.getName()), val);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-
-            }
-
-        }
-        for (Method method : listOfMethods) {
-            String name = method.getName();
-            if (name.startsWith("set")) {
-                Object val = mapOfFieldNameAndValue.get(name);
-                if (val == null) continue;
-                String toPrint = "";
-                if (val.getClass().getTypeName().equals("java.lang.String")) {
-                    toPrint = String.format("tierstat.%s(\"%s\");", name, val);
-                } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
-                    toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
-                } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
-                    toPrint = String.format("tierstat.%s(%sf);", name, val);
-                } else if (val.getClass().getTypeName().equals("long") || val.getClass().getTypeName().equals("java.lang.Long")) {
-                    toPrint = String.format("tierstat.%s(%sl);", name, val);
-                } else if (val.getClass().getTypeName().equals("java.sql.Timestamp")) {
-                    String date = generateTimestamp((Timestamp) val);
-                    toPrint = String.format("tierstat.%s(new Timestamp(dateFormat.parse(\"%s\").getTime()));", name, date);
-                } else {
-                    toPrint = String.format("tierstat.%s(%s);", name, val);
-                }
-                method.invoke(generated, val);
-                System.out.println(toPrint);
-            }
-        }
-        System.out.println("generatedList.add(tierstat);");
-        return generated;
-    }
-
-    private static CusClubQual reflectionOnDataFromDb(CusClubQual tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("CusClubQual tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
-        }
-        System.out.println("tierstat = new CusClubQual();");
-        initializeMonthMapping();
-        CusClubQual generated = new CusClubQual();
-        Method[] methodsToInvoke = CusClubQual.class.getDeclaredMethods();
-        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
-        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
-        Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : listOfMethods) {
-
-            if (method.getName().startsWith("get")) {
-                Object val = method.invoke(tierstat);
-                String type = method.getReturnType().getTypeName();
-                try {
-                    if (type.equals("java.util.Date")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.lang.String") || type.equals("java.lang.Double") || type.equals("java.lang.Integer") || type.equals("java.lang.Long")) {
-                        if (val == null) continue;
-                    } else if (type.equals("double")) {
-                        if ((double) val == 0.0) continue;
-                    } else if (type.equals("float")) {
-                        if ((float) val == 0.0f) continue;
-                    } else if (type.equals("int") || type.equals("java.lang.Integer")) {
-                        if ((int) val == 0) continue;
-                    } else if (type.equals("java.lang.Long") || type.equals("long")) {
-                        if ((long) val == 0) continue;
-                    } else if (type.equals("java.sql.Timestamp")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.util.List")) {
-                        continue;
-                    }
-                    mapOfFieldNameAndValue.put(generateSetterName(method.getName()), val);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-
-            }
-
-        }
-        for (Method method : listOfMethods) {
-            String name = method.getName();
-            if (name.startsWith("set")) {
-                Object val = mapOfFieldNameAndValue.get(name);
-                if (val == null) continue;
-                String toPrint = "";
-                if (val.getClass().getTypeName().equals("java.lang.String")) {
-                    toPrint = String.format("tierstat.%s(\"%s\");", name, val);
-                } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
-                    toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
-                } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
-                    toPrint = String.format("tierstat.%s(%sf);", name, val);
-                } else if (val.getClass().getTypeName().equals("long") || val.getClass().getTypeName().equals("java.lang.Long")) {
-                    toPrint = String.format("tierstat.%s(%sl);", name, val);
-                } else if (val.getClass().getTypeName().equals("java.sql.Timestamp")) {
-                    String date = generateTimestamp((Timestamp) val);
-                    toPrint = String.format("tierstat.%s(new Timestamp(dateFormat.parse(\"%s\").getTime()));", name, date);
-                } else {
-                    toPrint = String.format("tierstat.%s(%s);", name, val);
-                }
-                method.invoke(generated, val);
-                System.out.println(toPrint);
-            }
-        }
-        System.out.println("generatedList.add(tierstat);");
-        return generated;
-    }
-
-    private static TransReserveVal reflectionOnDataFromDb(TransReserveVal tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {
-        if (counter == 0) {
-            System.out.println("TransReserveVal tierstat = null;");
-            System.out.println("SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd\");");
-            System.out.println("generatedList = new ArrayList<Tierstat>();");
-        }
-        System.out.println("tierstat = new TransReserveVal();");
-        initializeMonthMapping();
-        TransReserveVal generated = new TransReserveVal();
-        Method[] methodsToInvoke = TransReserveVal.class.getDeclaredMethods();
-        List<Method> listOfMethods = Arrays.stream(methodsToInvoke).collect(Collectors.toList());
-        listOfMethods.addAll(Arrays.stream(tierstat.getClass().getSuperclass().getDeclaredMethods()).collect(Collectors.toList()));
-        Map<String, Object> mapOfFieldNameAndValue = new HashMap<>();
-        for (Method method : listOfMethods) {
-
-            if (method.getName().startsWith("get")) {
-                Object val = method.invoke(tierstat);
-                String type = method.getReturnType().getTypeName();
-                try {
-                    if (type.equals("java.util.Date")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.lang.String") || type.equals("java.lang.Double") || type.equals("java.lang.Integer") || type.equals("java.lang.Long")) {
-                        if (val == null) continue;
-                    } else if (type.equals("double")) {
-                        if ((double) val == 0.0) continue;
-                    } else if (type.equals("float")) {
-                        if ((float) val == 0.0f) continue;
-                    } else if (type.equals("int") || type.equals("java.lang.Integer")) {
-                        if ((int) val == 0) continue;
-                    } else if (type.equals("java.lang.Long") || type.equals("long")) {
-                        if ((long) val == 0) continue;
-                    } else if (type.equals("java.sql.Timestamp")) {
-                        if (val == null) continue;
-                    } else if (type.equals("java.util.List")) {
-                        continue;
-                    }
-                    mapOfFieldNameAndValue.put(generateSetterName(method.getName()), val);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-
-            }
-
-        }
-        for (Method method : listOfMethods) {
-            String name = method.getName();
-            if (name.startsWith("set")) {
-                Object val = mapOfFieldNameAndValue.get(name);
-                if (val == null) continue;
-                String toPrint = "";
-                if (val.getClass().getTypeName().equals("java.lang.String")) {
-                    toPrint = String.format("tierstat.%s(\"%s\");", name, val);
-                } else if (val.getClass().getTypeName().equals("java.util.Date")) {
-                    String date = generateDateString(val.toString());
+                    String date = generateDateString((Date) val);
                     toPrint = String.format("tierstat.%s(dateFormat.parse(\"%s\"));", name, date);
                 } else if (val.getClass().getTypeName().equals("float") || val.getClass().getTypeName().equals("java.lang.Float")) {
                     toPrint = String.format("tierstat.%s(%sf);", name, val);
@@ -981,7 +534,7 @@ public class GenerateObjectForTesting {
 
     private static void printSetterMethods(List dataFromDb, TestModel testModel) throws ParseException, InvocationTargetException, IllegalAccessException {
         List<Object> generatedList = new ArrayList<>();
-        if (dataFromDb.isEmpty()) {
+        if(dataFromDb.isEmpty()) {
             printMethodDeclaration(testModel);
             System.out.println(String.format("%s generatedList = new ArrayList<>();", testModel.returnTypeOfDataMethod));
             System.out.println("return generatedList;\n}");
@@ -1009,14 +562,13 @@ public class GenerateObjectForTesting {
 
     private static Map<String, String> monthMapper = new HashMap<>();
 
-    private static String generateDateString(String dateStr) throws ParseException {
-        String[] dateArr = dateStr.split(" ");
-        String s = String.format(String.format("%s-%s-%s", dateArr[5], monthMapper.get(dateArr[1]), dateArr[2]));
-        return s;
+    private static String generateDateString(Date dateStr) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(dateStr);
     }
 
     private static String generateTimestamp(Timestamp timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = dateFormat.format(timestamp);
         return dateString;
     }
@@ -1076,75 +628,37 @@ public class GenerateObjectForTesting {
         }
         return uniqueName;
     }
-
-    private static Object bridgingMethod(Object o, int counter) throws ParseException, InvocationTargetException, IllegalAccessException {
-        if (Tierstat.class.isInstance(o)) {
-            return reflectionOnDataFromDb((Tierstat) o, counter);
-        } else if (TierMileageSummary.class.isInstance(o)) {
-            return reflectionOnDataFromDb((TierMileageSummary) o, counter);
-        } else if (HisCusEliteQual.class.isInstance(o)) {
-            return reflectionOnDataFromDb((HisCusEliteQual) o, counter);
-        } else if (CusPpsQual.class.isInstance(o)) {
-            return reflectionOnDataFromDb((CusPpsQual) o, counter);
-        } else if (CustomerTier.class.isInstance(o)) {
-            return reflectionOnDataFromDb((CustomerTier) o, counter);
-        } else if (TierQual.class.isInstance(o)) {
-            return reflectionOnDataFromDb((TierQual) o, counter);
-        } else if (Long.class.isInstance(o)) {
-            return reflectionOnDataFromDb((Long) o, counter);
-        } else if (AccountStatusFunc.class.isInstance(o)) {
-            return reflectionOnDataFromDb((AccountStatusFunc) o, counter);
-        } else if (GeneralSqlObject.class.isInstance(o)) {
-            return reflectionOnDataFromDb((GeneralSqlObject) o, counter);
-        } else if (QualDetailsMonthly.class.isInstance(o)) {
-            return reflectionOnDataFromDb((QualDetailsMonthly) o, counter);
-        } else if (CusClubQual.class.isInstance(o)) {
-            return reflectionOnDataFromDb((CusClubQual) o, counter);
-        } else if (TransReserveVal.class.isInstance(o)) {
-            return reflectionOnDataFromDb((TransReserveVal) o, counter);
+    private static Object bridgingMethod(Object o,int counter) throws ParseException, InvocationTargetException, IllegalAccessException {
+        if(MergeTransactions.class.isInstance(o)){
+            return reflectionOnDataFromDb((MergeTransactions) o, counter);
+        }
+        else if (MiscTransactions.class.isInstance(o)){
+            return reflectionOnDataFromDb((MiscTransactions) o, counter);
+        }
+        else if (AirRedemptionTransactions.class.isInstance(o)){
+            return reflectionOnDataFromDb((AirRedemptionTransactions) o, counter);
+        }
+        else if (NonAirRedemptionTransactions.class.isInstance(o)){
+            return reflectionOnDataFromDb((NonAirRedemptionTransactions) o, counter);
+        }
+        else if (AccrualTransactions.class.isInstance(o)){
+            return reflectionOnDataFromDb((AccrualTransactions) o, counter);
         }
         return null;
     }
-
     private static List mtd(String response, String returnType) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat(new CustomDateFormat());
-        if (returnType.contains("List<Tierstat>"))
-            return mapper.readValue(response, new TypeReference<List<Tierstat>>() {
-            });
-        else if (returnType.contains("List<TierMileageSummary>"))
-            return mapper.readValue(response, new TypeReference<List<TierMileageSummary>>() {
-            });
-        else if (returnType.contains("List<HisCusEliteQual>"))
-            return mapper.readValue(response, new TypeReference<List<HisCusEliteQual>>() {
-            });
-        else if (returnType.contains("List<CusPpsQual>"))
-            return mapper.readValue(response, new TypeReference<List<CusPpsQual>>() {
-            });
-        else if (returnType.contains("List<CustomerTier>"))
-            return mapper.readValue(response, new TypeReference<List<CustomerTier>>() {
-            });
-        else if (returnType.contains("List<TierQual>"))
-            return mapper.readValue(response, new TypeReference<List<TierQual>>() {
-            });
-        else if (returnType.contains("List<Long>"))
-            return mapper.readValue(response, new TypeReference<List<Long>>() {
-            });
-        else if (returnType.contains("List<AccountStatusFunc>"))
-            return mapper.readValue(response, new TypeReference<List<AccountStatusFunc>>() {
-            });
-        else if (returnType.contains("List<GeneralSqlObject>"))
-            return mapper.readValue(response, new TypeReference<List<GeneralSqlObject>>() {
-            });
-        else if (returnType.contains("List<QualDetailsMonthly>"))
-            return mapper.readValue(response, new TypeReference<List<QualDetailsMonthly>>() {
-            });
-        else if (returnType.contains("List<CusClubQual>"))
-            return mapper.readValue(response, new TypeReference<List<CusClubQual>>() {
-            });
-        else if (returnType.contains("List<TransReserveVal>"))
-            return mapper.readValue(response, new TypeReference<List<TransReserveVal>>() {
-            });
+        if(returnType.contains("List<MergeTransactions>"))
+            return mapper.readValue(response, new TypeReference<List<MergeTransactions>>(){});
+        else if (returnType.contains("List<MiscTransactions>"))
+            return mapper.readValue(response, new TypeReference<List<MiscTransactions>>(){});
+        else if (returnType.contains("List<AirRedemptionTransactions>"))
+            return mapper.readValue(response, new TypeReference<List<AirRedemptionTransactions>>(){});
+        else if (returnType.contains("List<NonAirRedemptionTransactions>"))
+            return mapper.readValue(response, new TypeReference<List<NonAirRedemptionTransactions>>(){});
+        else if (returnType.contains("List<AccrualTransactions>"))
+            return mapper.readValue(response, new TypeReference<List<AccrualTransactions>>(){});
         return null;
     }
 }
