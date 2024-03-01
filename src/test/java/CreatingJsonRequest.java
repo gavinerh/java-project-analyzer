@@ -1,4 +1,8 @@
-//public class Tes {
+//public class CreatingJsonRequest {
+//
+//    // used to generate json request body for the frontend when calling the backend
+//    // copy and paste in the test class in application, and change the CustomerSelectiveRequest.class
+//    // to the respective class that the frontend needs to give the backend
 //
 //    List<String> fieldsWithError = new ArrayList<>();
 //

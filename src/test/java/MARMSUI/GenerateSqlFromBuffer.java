@@ -7,6 +7,7 @@ public class GenerateSqlFromBuffer {
         StringBuffer sqlBuilder = new StringBuffer();
         StringBuffer SQL2 = new StringBuffer();
         StringBuffer sb = new StringBuffer();
+        StringBuffer sqlQuery = new StringBuffer();
         boolean isONL = true;
         boolean toIncludePrgCd = false;
         boolean toIncludeTransCd = false;
@@ -21,24 +22,25 @@ public class GenerateSqlFromBuffer {
         String airTransCode = "'RC','RD'";
         StringBuffer initial = new StringBuffer();
 
-        buffer.append("SELECT TRANS_CD, A.RCRE_DT,A.APPROVAL_CD,  A.ADJ_APPROVAL_CD, NET_PTS_REQ ,  ACTION_CD,  TKT_MCO_NO,  RDPN_TYPE ,  AWD_ZONE, ");
-        buffer.append("B.PROMO_SAVINGS  ,  BILLING_PRT, A.RCRE_PCC, A.RCRE_SALES_OFF, A.RCRE_AGENT_ID, TKT_STOCK1,  C.ITIN_XREF_ID   ,  PNR_NAME, ");
-        buffer.append("ACTION_CD2, PNR_REF, TURNPTS_BOARD, A.INT_ID, TKT_SRC_IND, AWD_TYPE,TKT_VALIDITY_DT , B.RDPN_NET_PTS_REQ, FORFEIT_PTS, B.TRANS_PTS , REVERSED_FLG, D.PROMO_CD , PROMO_NAME, BATCH_ID , BATCH_DT,TOT_STOPOVER_PTS,C.CERTIFICATE_NUMBER  ");
 
-        //SUMATHI Changes for - MKP91492 - KRISFLYER VALUE BASED REDEMPTION - START
-        buffer.append (" ,A.MMK_IND, A.PYMT_RFND_LC, A.TOTAL_FARE_IN_LC, A.FARE_WO_TAX_IN_LC, A.TAX_IN_LC, A.NET_FARE_PAID_IN_LC, A.NET_KF_MILES_VAL_IN_LC, ");
-        buffer.append("  A.TRANS_FARE_PAID_IN_LC, A.TRANS_KF_MILES_VAL_IN_LC, A.TOTAL_FARE_IN_SGD, A.FARE_WO_TAX_IN_SGD, A.TAX_IN_SGD, A.NET_FARE_PAID_IN_SGD, ");
-        buffer.append(" A.NET_KF_MILES_VAL_IN_SGD, A.TRANS_FARE_PAID_IN_SGD, A.TRANS_KF_MILES_VAL_IN_SGD");
-        //Added By Hari for MKP91775 - PwM Start
-        buffer.append(" ,A.NET_TAX_PAID_IN_LC, A.NET_TAX_PAID_IN_SGD");
-        //Added By Hari for MKP91775 - PwM End
-        buffer.append(" , A.ORIG_CURRENCY_CD"); // SUBHA - MKP91492 - Added for the Account Summary screen changes
-        buffer.append(" , A.initial_action_cd , A.rfic_cd , A.rfic_desc  ");
+        sqlQuery.append(" SELECT TIER_STATUS_IND, QLFY_IND, QLFY_START_DT, CUR_MILEAGE, " +
+                "		CUR_SECT_CNT, NO_YRS_QLYFIED, QLFY_END_DT, FORCE_QLFY_DT,  " +
+                "		FORCE_QLFY_EXTENDED_DT, NO_OF_EXTENDED_MTH, ORIG_EXP, " +
+                "		QLFD_DT, TIER_BONUS_AWARD_START_DT, TIER_BONUS_AWARD_END_DT, " +
+                "		YRS_IN_QPP, CUR_VAL " +
+                "        ,QUAL_SCHEME " +                   //Added by Logesh for MKP92708 - TPP Phase2 - Starts
+                " FROM   HIS_CUS_PPS_QUAL HCPQ ");
+        sqlQuery.append(" WHERE  HCPQ.INT_ID = ? " +
+                " AND 	HCPQ.PRG_CD = ? " +
+                " AND    RCRE_DATE = (SELECT	max(RCRE_DATE) " +
+                "					   FROM		HIS_CUS_PPS_QUAL" +
+                "					   WHERE	INT_ID = HCPQ.INT_ID" +
+                "					   AND	   	PRG_CD = HCPQ.PRG_CD)");
 
         String paramName = "modFunc";
-        String[] arrToReplace = {"prgCd", "tierType", "processType"};
+        String[] arrToReplace = {"intId", "prgCd"};
 
-        String[] arrTypes = { "VARCHAR", "VARCHAR", "VARCHAR"};
+        String[] arrTypes = { "VARCHAR", "VARCHAR"};
 
 
         String toPrint = null;
@@ -46,7 +48,7 @@ public class GenerateSqlFromBuffer {
         boolean paramsAreNotNestedObjects = true;
         if (toReplace) {
             if (paramsAreNotNestedObjects) {
-                toPrint = replaceQuestionMarkForNonObj(buffer.toString(), arrToReplace, arrTypes);
+                toPrint = replaceQuestionMarkForNonObj(sqlQuery.toString(), arrToReplace, arrTypes);
             } else {
                 toPrint = replaceQuestionMark(buffer.toString(), arrToReplace, paramName);
             }

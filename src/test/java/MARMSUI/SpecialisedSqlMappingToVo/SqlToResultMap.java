@@ -1,6 +1,9 @@
 package MARMSUI.SpecialisedSqlMappingToVo;
 
+import MARMSUI.SpecialisedSqlMappingToVo.model.CustomerTier;
+import MARMSUI.SpecialisedSqlMappingToVo.model.TierQual;
 import MARMSUI.SpecialisedSqlMappingToVo.model.Tierstat;
+import org.checkerframework.checker.units.qual.C;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -11,41 +14,30 @@ public class SqlToResultMap {
     public static void main(String[] args) {
         try {
             boolean toSortSqlColumns = true;
-            String sql = "SEQ_NO, TIER_STATUS_IND, TIER_STATUS_PTS_REQ, TIER_STATUS_SECT_REQ, TIER_STATUS_MIN_PRD, TIER_HIERARCHY,\n" +
-                    "        TIER_STATUS_PTS_OFFSET, TIER_STATUS_SECT_OFFSET, TIER_STATUS_ACCUM_PTS_REQ, TIER_STATUS_ACCUM_SECT_REQ,\n" +
-                    "        TIER_STATUS_ACCUM_PTS_OFFSET, TIER_STATUS_ACCUM_SECT_OFFSET, RULE_ACTIVE_IND, APPLICABLE_QLFY_IND,\n" +
-                    "        TIER_QUAL_PRD, TIER_STATUS_VAL_REQ, TIER_STATUS_ACCUM_VAL_REQ, RULE_IND, START_DT, END_DT, YRS_IN_TIER,\n" +
-                    "        TIER_STATUS_VAL_OFFSET, TIER_STATUS_ACCUM_VAL_OFFSET,PER_EM_PPS ,QUAL_SCHEME,QUAL_PROC_IND";
+            String sql = "TIER_STATUS_IND, QLFY_IND, QLFY_START_DT, CUR_MILEAGE, CUR_SECT_CNT, NO_YRS_QLYFIED, QLFY_END_DT,\n" +
+                    "        FORCE_QLFY_DT, FORCE_QLFY_EXTENDED_DT, NO_OF_EXTENDED_MTH, ORIG_EXP, QLFD_DT, TIER_BONUS_AWARD_START_DT,\n" +
+                    "        TIER_BONUS_AWARD_END_DT, YRS_IN_QPP, CUR_VAL ,QUAL_SCHEME";
 
-            String methodString = "ts.setSeqNo(rs.getInt(1));\n" +
-                    "        ts.setTierStatus(rs.getString(2));\n" +
-                    "        ts.setPtsReq((long) rs.getLong(3));\n" +
-                    "        ts.setSectReq((float) rs.getFloat(4));\n" +
-                    "        ts.setMinPeriod((long) rs.getLong(5));\n" +
-                    "        ts.setHierarchy(rs.getInt(6));\n" +
-                    "        ts.setPointOffset((long) rs.getLong(7));\n" +
-                    "        ts.setSectorOffset((float) rs.getFloat(8));\n" +
-                    "        ts.setAccPtsReq((long) rs.getLong(9));\n" +
-                    "        ts.setAccSectReq((float) rs.getFloat(10));\n" +
-                    "        ts.setAccPtsOffset((long) rs.getLong(11));\n" +
-                    "        ts.setAcctSectOffset((float) rs.getFloat(12));\n" +
-                    "            ts.setActive(rs.getString(13));\n" +
-                    "        ts.setApplQualInd(rs.getString(14));\n" +
-                    "        ts.setTierQuadPrd(rs.getInt(15));\n" +
-                    "        ts.setValReq(rs.getLong(16));\n" +
-                    "        ts.setAccValReq(rs.getLong(17));\n" +
-                    "        ts.setRuleInd(rs.getString(18));\n" +
-                    "        ts.setStartDate(rs.getDate(19));\n" +
-                    "        ts.setEndDate(rs.getDate(20));\n" +
-                    "        ts.setYrsInTier(rs.getInt(21));\n" +
-                    "        ts.setValOffset(rs.getLong(22));\n" +
-                    "        ts.setAccValOffset(rs.getLong(23));\n" +
-                    "        ts.setEliteOrPPSpercentage(rs.getInt(24));\n" +
-                    "        ts.setQualInterim(rs.getString(25))\n;" +
-                    "        ts.setQualProcID(rs.getString(26));";
+            String methodString = "retVal.setTierStatus(rs.getString(1));\n" +
+                    "\t\t\t\tretVal.setQlfyInd(rs.getString(2));\n" +
+                    "\t\t\t\tretVal.setQlfyStartDate(rs.getDate(3));\n" +
+                    "\t\t\t\tretVal.setCurMileage(rs.getLong(4));\n" +
+                    "\t\t\t\tretVal.setCurSectCount(rs.getFloat(5));\n" +
+                    "\t\t\t\tretVal.setNoYearsQlfd(rs.getInt(6));\n" +
+                    "\t\t\t\tretVal.setQlfyEndDate(rs.getDate(7));\n" +
+                    "\t\t\t\tretVal.setForceQlfyDate(rs.getDate(8));\n" +
+                    "\t\t\t\tretVal.setForceQlfyExtendedDate(rs.getDate(9));\n" +
+                    "\t\t\t\tretVal.setNoOfExtendedMonth(rs.getInt(10));\n" +
+                    "\t\t\t\tretVal.setOrigExp(rs.getDate(11));\n" +
+                    "\t\t\t\tretVal.setQlfyDate(rs.getDate(12));\n" +
+                    "\t\t\t\tretVal.setTierBonusStartDate(rs.getDate(13));\n" +
+                    "\t\t\t\tretVal.setTierBonusEndDate(rs.getDate(14));\n" +
+                    "\t\t\t\tretVal.setYearsInQPP(rs.getInt(15));\n" +
+                    "\t\t\t\tretVal.setCurValue(rs.getLong(16));\n" +
+                    "\t\t\t\tretVal.setInterimFlg(rs.getString(17));";
             List<String> methodNamesList = generateMethodNamesUsed(methodString);
             // paste in the class file in use
-            Tierstat ts = new Tierstat();
+            CustomerTier ts = new CustomerTier();
             validateMethodNames(methodNamesList, ts.getClass());
             List<String> fieldNameList = generateFieldNames(methodNamesList);
             List<Class> fieldReturnTypes = validateFieldNamesAndGenerateReturnType(fieldNameList, ts.getClass());

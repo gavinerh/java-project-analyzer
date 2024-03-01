@@ -18,6 +18,20 @@ public class TestingPurposes {
         String s = "-tst";
         String[] arr = s.split("-");
         System.out.println(arr.length);
+        try {
+            test() ;
+            if (s.equals("-tst")) {
+                throw new RuntimeException("Testing printing of exception");
+            }
+        }catch (Exception e) {
+            System.out.println(e);
+//            e.printStackTrace();
+        }
+    }
+
+    private static void test() throws Exception {
+        System.out.println("Hello");
+        throw new Exception("No particular error");
     }
 
 
