@@ -17,6 +17,8 @@ public class TestModel {
     public String responseString;
     public List<String> paramsList;
     public List<String> paramsTypeList;
+    public String request;
+    public String objectClassName;
 
     public TestModel() {
     }

@@ -1,10 +1,10 @@
-package MARMSUI.SpecialisedSqlMappingToVo;
+package MARMSUI.testCaseCreation;
 
 public class ChangeClassInMethodDeclaration {
     public static void main(String[] args) {
         String duplicateNum = "";
         String toReplace = "UserProfileDetail";
-        String[] replacementString = {"MergeTransactions","MiscTransactions","AirRedemptionTransactions","NonAirRedemptionTransactions","AccrualTransactions"};
+        String[] replacementString = {"CusAlternateName","EmailDomainInfoExample","ReferenceCdExample","CusOinfltPrefExample","CusSeatPref","CusSupplInfoExample","String","CusFamilyInfoExample","CusFamilyInfo","CityExample","CusStopmailInfoExample","CusAccountExample","CusPersExample","CusOinfltPref","CusCardIss","MileageSum","CusInfltPref","CusOdBucketPts","ReferenceCd","void","CusPrtSubprg","City","EventLogVo","CusPhone","Long","CusAlternateNameExample","CustomerStopmailInfoVo","CusSeatPrefExample","MileageSumExample","CountryExample","CusOffpInfo","long","CusPin","CusStopmailInfo","CusDirmailPref","CusCardIssExample","CusPers","CusLifestyle","CusPhoneExample","CusAddnInfo","CusAddrAud","CusSocialMedia","int","CusAddr","java.sql.Date","CusAddnInfoExample","boolean","CusCreditCard","CusCreditCardExample","CusGuardianInfo","short","CusMobilePref","CusAccount","CusSupplInfo"};
         String s = "    private static UserProfileDetail reflectionOnDataFromDb" + duplicateNum + "(UserProfileDetail tierstat, int counter) throws InvocationTargetException, IllegalAccessException, ParseException {\n" +
                 "if(counter == 0) {\n" +
                 "System.out.println(\"UserProfileDetail tierstat = null;\");\n" +
