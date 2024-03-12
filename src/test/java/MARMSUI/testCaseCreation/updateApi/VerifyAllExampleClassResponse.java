@@ -25,7 +25,7 @@ public class VerifyAllExampleClassResponse {
     // via the objectmapper writetostring method
 
     static Set<String> methodNames = new HashSet<>();
-    static Set<String> nonExampleMtdNames = new HashSet<>();
+    static Set<String> responseMethodNames = new HashSet<>();
     static List<String> whenCalls = new ArrayList<>();
     static Map<String, String> complexClassDeclaration = new HashMap<>(); // to store method declaration to generate eg. class EventLogVo
 
@@ -43,6 +43,12 @@ public class VerifyAllExampleClassResponse {
         fileInputStream.close();
         printWhenMethodCalls();
         printComplexMethodCalls();
+    }
+
+    private static void printComplexMethodCalls(){
+        for(String key : complexClassDeclaration.keySet()) {
+            System.out.println(complexClassDeclaration.get(key));
+        }
     }
 
     private static void verifyRequestString(List<TestModel> testModelList, ObjectMapper mapper) throws JsonProcessingException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -70,6 +76,7 @@ public class VerifyAllExampleClassResponse {
 
     private static void printWhenMethodCalls() {
         System.out.println(String.format("private void initialization(){"));
+        System.out.println("CustomDateFormat sdf = new CustomDateFormat();");
         System.out.println(String.format("try {"));
         for(String s : whenCalls) {
             System.out.println(s);
@@ -216,8 +223,8 @@ public class VerifyAllExampleClassResponse {
             String countStr = String.valueOf(count);
             finalName = "get" + mapper + methodName + countStr;
             ;
-            if (!nonExampleMtdNames.contains(finalName)) {
-                nonExampleMtdNames.add(finalName);
+            if (!responseMethodNames.contains(finalName)) {
+                responseMethodNames.add(finalName);
                 return finalName;
             }
             count++;
@@ -231,7 +238,8 @@ public class VerifyAllExampleClassResponse {
         List<Object> innerList1 = (List) countryExamples.get("oredCriteria");
         Map<String, Object> innerMap1 = (HashMap) innerList1.get(0);
         List<Object> innerList2 = (List) innerMap1.get("criteria");
-        printMethodDeclaration(testModel);
+        String methodName = generateMethodNameForExample(testModel);
+        printMethodDeclaration(testModel, methodName);
         String continuedMethodBody = "example.createCriteria()";
         for (Object o : innerList2) {
             Map<String, Object> innerMap3 = (HashMap) o;
@@ -240,9 +248,18 @@ public class VerifyAllExampleClassResponse {
             continuedMethodBody += generateExampleInstance(conditionStr, conditionVal, testModel);
         }
         System.out.println(continuedMethodBody + ";\nreturn example;\n}\n");
+        String responseMethodName = generateMethodName(testModel);
+        generateResponseForNonExample(testModel.response,testModel.returnType,responseMethodName);
+        addToWhenCalls(testModel, methodName, responseMethodName);
     }
 
-    private static void printMethodDeclaration(TestModel testModel) {
+    private static void addToWhenCalls(TestModel testModel, String methodName, String responseMethodName){
+        String whenDeclaration = "when(%s.%s(%s())).thenReturn(%s());";
+        String finalString = String.format(whenDeclaration,testModel.mapperName,testModel.mtdName,methodName, responseMethodName);
+        whenCalls.add(finalString);
+    }
+
+    private static String generateMethodNameForExample(TestModel testModel) {
         int count = 1;
         String name = "";
         while (true) {
@@ -254,6 +271,12 @@ public class VerifyAllExampleClassResponse {
             }
             count++;
         }
+        return name;
+    }
+
+
+
+    private static void printMethodDeclaration(TestModel testModel, String name) {
         System.out.println(String.format("private %s %s(){", testModel.objectClassName, name));
         System.out.println(String.format("%s example = new %s();", testModel.objectClassName, testModel.objectClassName));
     }
