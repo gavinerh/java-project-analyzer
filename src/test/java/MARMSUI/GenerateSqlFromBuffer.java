@@ -23,19 +23,13 @@ public class GenerateSqlFromBuffer {
         StringBuffer initial = new StringBuffer();
 
 
-        sqlQuery.append(" SELECT TIER_STATUS_IND, QLFY_IND, QLFY_START_DT, CUR_MILEAGE, " +
-                "		CUR_SECT_CNT, NO_YRS_QLYFIED, QLFY_END_DT, FORCE_QLFY_DT,  " +
-                "		FORCE_QLFY_EXTENDED_DT, NO_OF_EXTENDED_MTH, ORIG_EXP, " +
-                "		QLFD_DT, TIER_BONUS_AWARD_START_DT, TIER_BONUS_AWARD_END_DT, " +
-                "		YRS_IN_QPP, CUR_VAL " +
-                "        ,QUAL_SCHEME " +                   //Added by Logesh for MKP92708 - TPP Phase2 - Starts
-                " FROM   HIS_CUS_PPS_QUAL HCPQ ");
-        sqlQuery.append(" WHERE  HCPQ.INT_ID = ? " +
-                " AND 	HCPQ.PRG_CD = ? " +
-                " AND    RCRE_DATE = (SELECT	max(RCRE_DATE) " +
-                "					   FROM		HIS_CUS_PPS_QUAL" +
-                "					   WHERE	INT_ID = HCPQ.INT_ID" +
-                "					   AND	   	PRG_CD = HCPQ.PRG_CD)");
+        sqlQuery.append( "select PRG_CD, " );
+        sqlQuery.append( "ACCUM_AT_PTS, LAST_AT_ACT_DT, ACCUM_NAT_PTS, " );
+        sqlQuery.append( "LAST_NAT_ACT_DT, CUR_BAL, TOT_AIR_RDM_PTS, " );
+        sqlQuery.append( "TOT_NONAIR_RDM_PTS, TOT_MISC_CR_PTS, " );
+        sqlQuery.append( "TOT_MISC_DR_PTS, TOT_EXPIRED_PTS, LAST_STMT_PTS, " );
+        sqlQuery.append( "LAST_STMT_DT, ONLINE_STMT_PTS, ONLINE_STMT_DT, OD_BAL, LAST_NON_AT_ACT_DT " );
+        sqlQuery.append( "from MILEAGE_SUM where INT_ID=? and PRG_CD = ? " );
 
         String paramName = "modFunc";
         String[] arrToReplace = {"intId", "prgCd"};
