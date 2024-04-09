@@ -53,6 +53,9 @@ public class VerifyAllExampleClassResponse {
 
     private static void verifyRequestString(List<TestModel> testModelList, ObjectMapper mapper) throws JsonProcessingException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         for (TestModel testModel : testModelList) {
+            if(testModel.request.equals("{\"lchgUserId\":\"MRMUI\",\"lchgDt\":\"2024-04-09 13:51:07\",\"prefLangWritten1\":\"FR\",\"prefLangWritten2\":\"\",\"prefLangSpoken1\":\"ZH\",\"prefLangSpoken2\":\"\"}~{\"distinct\":false,\"oredCriteria\":[{\"criteria\":[{\"condition\":\"INT_ID =\",\"value\":8987005944,\"noValue\":false,\"singleValue\":true,\"betweenValue\":false,\"listValue\":false}],\"valid\":true,\"allCriteria\":[{\"condition\":\"INT_ID =\",\"value\":8987005944,\"noValue\":false,\"singleValue\":true,\"betweenValue\":false,\"listValue\":false}]}]}")){
+                System.out.println("reached checkpoint");
+            }
             if (testModel.isExampleRequest) {
                 generateForExample(mapper, testModel);
             } else {
@@ -61,7 +64,7 @@ public class VerifyAllExampleClassResponse {
         }
     }
 
-    private static void generateForNonExample(TestModel testModel) {
+    private static void generateForNonExample(TestModel testModel) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // print out the method declaration for non example mapper methods
         String[] paramDataTypes = testModel.requestTypes.split(",");
         String[] paramsArr = testModel.request.split("~");
@@ -69,6 +72,9 @@ public class VerifyAllExampleClassResponse {
         // reconstructedMethodName will be used in the when call and when generating the obj from response string
         String reconstructedMethodName = generateMethodName(testModel);
 //        printMethodDeclarationForNonExample(testModel, reconstructedMethodName);
+        if(reconstructedMethodName.contains("updateByExampleSelective")) {
+            System.out.println("name is called");
+        }
         generateRequestForNonExample(paramsArr, paramDataTypes, reconstructedMethodName, testModel);
 
         generateResponseForNonExample(testModel.response, testModel.returnType, reconstructedMethodName);
@@ -117,7 +123,7 @@ public class VerifyAllExampleClassResponse {
     }
 
 
-    private static void generateRequestForNonExample(String[] params, String[] paramTypes, String reconstructedMethodName, TestModel testModel) {
+    private static void generateRequestForNonExample(String[] params, String[] paramTypes, String reconstructedMethodName, TestModel testModel) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (params.length != paramTypes.length) {
@@ -132,13 +138,13 @@ public class VerifyAllExampleClassResponse {
         // print the when method call here or store it to be called later, but reference the method name here
         String paramsToEnterMethod = "";
         if(!params[0].equals("[]") && !paramTypes[0].equals("[]")) {
-            paramsToEnterMethod = extractParams(params, paramTypes);
+            paramsToEnterMethod = extractParams(params, paramTypes, testModel);
         }
         String whenCall = String.format(whenDeclaration, testModel.mapperName, testModel.mtdName, paramsToEnterMethod, reconstructedMethodName);
         whenCalls.add(whenCall);
     }
 
-    private static String extractParams(String[] params, String[] paramTypes) {
+    private static String extractParams(String[] params, String[] paramTypes, TestModel testModel) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         String toReturn = "";
         for (int i = 0; i < params.length; i++) {
             String type = paramTypes[i];
@@ -154,7 +160,7 @@ public class VerifyAllExampleClassResponse {
                 toReturn += String.format("%s,", params[i]);
             } else {
                 // complex data type
-                toReturn += generateComplexClassMtdCall(params[i], type);
+                toReturn += generateComplexClassMtdCall(params[i], type, testModel);
             }
         }
         if (!toReturn.equals("")) {
@@ -163,20 +169,38 @@ public class VerifyAllExampleClassResponse {
         return toReturn;
     }
 
-    private static String generateComplexClassMtdCall(String param, String type) {
+    private static String generateComplexClassMtdCall(String param, String type, TestModel testModel) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         int count = 0;
         String nameForMethod = "";
         while (true) {
             String countStr = String.valueOf(count);
             nameForMethod = "get" + type + countStr;
             if (!complexClassDeclaration.containsKey(nameForMethod)) {
-                complexClassDeclaration.put(nameForMethod, generateMethodDeclarationForCmplxClass(param, type, nameForMethod));
+                if(type.contains("Example")) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+                    mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
+                    mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+                    mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+                    TestModel testModelActual = new TestModel();
+                    testModelActual.request = param;
+                    testModelActual.returnType = type;
+                    testModelActual.objectClassName = type;
+                    testModelActual.mtdName = testModel.mtdName;
+                    testModelActual.mapperName = testModel.mapperName;
+                    nameForMethod = generateMethodNameForExample(testModelActual);
+                    complexClassDeclaration.put(nameForMethod,generateMethodBodyForExample(mapper,testModelActual,nameForMethod));
+                } else {
+                    complexClassDeclaration.put(nameForMethod, generateMethodDeclarationForCmplxClass(param, type, nameForMethod));
+                }
                 break;
             }
             count++;
         }
         return nameForMethod + "(),";
     }
+
+
 
     private static String generateMethodDeclarationForCmplxClass(String val, String type, String nameForMethod) {
         StringBuilder builder = new StringBuilder();
@@ -232,13 +256,22 @@ public class VerifyAllExampleClassResponse {
     }
 
 
+
     private static void generateForExample(ObjectMapper mapper, TestModel testModel) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        String methodName = generateMethodNameForExample(testModel);
+        System.out.println(generateMethodBodyForExample(mapper,testModel,methodName));
+        String responseMethodName = generateMethodName(testModel);
+        generateResponseForNonExample(testModel.response,testModel.returnType,responseMethodName);
+        addToWhenCalls(testModel, methodName, responseMethodName);
+    }
+
+    private static String generateMethodBodyForExample(ObjectMapper mapper, TestModel testModel, String methodName) throws JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Map<String, Object> countryExamples = mapper.readValue(testModel.request, new TypeReference<HashMap<String, Object>>() {
         });
         List<Object> innerList1 = (List) countryExamples.get("oredCriteria");
         Map<String, Object> innerMap1 = (HashMap) innerList1.get(0);
         List<Object> innerList2 = (List) innerMap1.get("criteria");
-        String methodName = generateMethodNameForExample(testModel);
+
         printMethodDeclaration(testModel, methodName);
         String continuedMethodBody = "example.createCriteria()";
         for (Object o : innerList2) {
@@ -248,9 +281,7 @@ public class VerifyAllExampleClassResponse {
             continuedMethodBody += generateExampleInstance(conditionStr, conditionVal, testModel);
         }
         System.out.println(continuedMethodBody + ";\nreturn example;\n}\n");
-        String responseMethodName = generateMethodName(testModel);
-        generateResponseForNonExample(testModel.response,testModel.returnType,responseMethodName);
-        addToWhenCalls(testModel, methodName, responseMethodName);
+        return "";
     }
 
     private static void addToWhenCalls(TestModel testModel, String methodName, String responseMethodName){
@@ -378,9 +409,6 @@ public class VerifyAllExampleClassResponse {
             } else if (count == 2) {
                 testModel.returnType = line;
             } else if (count == 3) {
-                if (line.contains("updateStopMailInfo")) {
-                    System.out.println("");
-                }
                 if (line.contains("Example")) {
                     isExampleRequest = true;
                     testModel.mtdName = line;
@@ -394,7 +422,11 @@ public class VerifyAllExampleClassResponse {
                 testModel.request = line;
             } else if (count == 6) {
                 if (isExampleRequest && line.contains(",")) {
-                    throw new RuntimeException("Example method has more than one params");
+                    // modify here to add logic to handle case where the example method has more than 1 params
+//                    throw new RuntimeException("Example method has more than one params");
+                    testModel.requestTypes = line;
+//                    testModelList.add(testModel);
+                    testModel.isExampleRequest = false;
                 }
                 if (isExampleRequest) {
                     testModel.objectClassName = line; // contain eg. CusAddnInfoExample
