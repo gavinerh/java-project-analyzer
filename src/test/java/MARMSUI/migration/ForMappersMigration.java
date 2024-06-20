@@ -1,23 +1,43 @@
 package MARMSUI.migration;
 
+import org.beryx.textio.TextIO;
+import org.beryx.textio.TextIoFactory;
+
+import java.io.Console;
 import java.io.FileInputStream;
 import java.util.*;
 
 public class ForMappersMigration {
     public static void main(String[] args) {
-        String mapperName = "syncDataConsumersMapper";
-        String mapperVariable = "";
 
-        String valuesToCopyPath = "/Users/macuser/Documents/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/util/CommonUtil.java";
-
-
-
-        mapperName = mapperName.substring(0,1).toUpperCase() + mapperName.substring(1);
-        String fromFilePathXml = "/Users/macuser/Documents/updated-lsl-app/lsl-customer/src/main/resources/com/sg/sq/lsl/database/sql/persistence/mappers/" + mapperName + ".xml";
-        String fromFilePathJava = "/Users/macuser/Documents/updated-lsl-app/lsl-customer/src/main/java/com/sg/sq/lsl/database/sql/persistence/mappers/" + mapperName + ".java";
-        String destinationXmlPath = "/Users/macuser/Documents/lsl-marmsui-profile/src/main/resources/com/sg/sq/marmsui/database/sql/persistence/mappers/" + mapperName + ".xml";
 
         // needs change
+        Scanner scanner = new Scanner(System.in);
+        String readVal = "c";
+        String mapperName = "ptsExtDtlsMapper";
+        while(true) {
+            System.out.println("Enter mapper name: ");
+            readVal = scanner.nextLine();
+            if(readVal.trim().equals("x")) {
+                scanner.close();
+                break;
+            }
+            mapperName = readVal;
+            String mapperVariable = "";
+
+            String copyTo = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/CustomerUpdateAccountServiceImpl.java";
+            mapperName = mapperName.substring(0,1).toUpperCase() + mapperName.substring(1);
+            String fromFilePathXml = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/resources/com/sg/sq/marmsui/database/sql/persistence/mappers/" + mapperName + ".xml";
+            String fromFilePathJava = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/database/sql/persistence/mappers/" + mapperName + ".java";
+            String destinationXmlPath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/resources/com/sg/sq/marmsui/database/sql/persistence/mappers/" + mapperName + ".xml";
+
+            execute(mapperVariable, readVal, destinationXmlPath, fromFilePathXml, copyTo, fromFilePathJava);
+        }
+        System.exit(0);
+    }
+
+    private static void execute(String mapperVariable, String mapperName, String destinationXmlPath, String fromFilePathXml, String copyTo,
+                                String fromFilePathJava){
         String patternToIdentifyFromCopyFile = null;
         if(mapperVariable.equals("")){
             patternToIdentifyFromCopyFile = mapperName.substring(0,1).toLowerCase() + mapperName.substring(1)+ ".";
@@ -29,7 +49,7 @@ public class ForMappersMigration {
         String patternIdentificationAtXml = "id=\"";
 
         try {
-            FileInputStream fileInputStream = new FileInputStream(valuesToCopyPath);
+            FileInputStream fileInputStream = new FileInputStream(copyTo);
             Set<String> listOfValuesToCopy = generateValuesToCopy(fileInputStream, patternToIdentifyFromCopyFile);
             fileInputStream.close();
 
@@ -54,6 +74,9 @@ public class ForMappersMigration {
     }
 
     public static void printJavaMtdAndSql(Map<String,String> javaMtds, Map<String,String> sql) {
+        if(javaMtds.isEmpty()) {
+            System.out.println("No Methods to copy over\n");
+        }
         for(String mtdName : javaMtds.keySet()) {
             System.out.println(sql.get(mtdName));
             System.out.println();

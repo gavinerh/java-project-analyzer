@@ -2,11 +2,6 @@ package MARMSUI;
 
 public class GenerateSqlFromBuffer {
     public static void main(String[] args) {
-        StringBuffer buffer = new StringBuffer();
-        StringBuffer buffer1 = new StringBuffer();
-        StringBuffer sqlBuilder = new StringBuffer();
-        StringBuffer SQL2 = new StringBuffer();
-        StringBuffer sb = new StringBuffer();
         StringBuffer sqlQuery = new StringBuffer();
         boolean isONL = true;
         boolean toIncludePrgCd = false;
@@ -22,36 +17,33 @@ public class GenerateSqlFromBuffer {
         String airTransCode = "'RC','RD'";
         StringBuffer initial = new StringBuffer();
 
+        sqlQuery.append( "INSERT INTO CUS_FAMILY_INFO ( " );
+        sqlQuery.append( "RCRE_USER_ID, RCRE_DT, INT_ID, " );
+        sqlQuery.append( "RELNSHIP_IND, SEQ_NO, " );
+        sqlQuery.append( "TITLE, FAMILY_NAME, GIVEN_NAME, " );
+        sqlQuery.append( "GENDER, DOB, FAMILY_MBR_INT_ID, FAMILY_MBR_PRG_CD, GUARDIAN_CONSENT, GUARDIAN_LINK, LINK_DT" ); //Added by Mohan for KFPROG-1418
+        sqlQuery.append( " ) VALUES ( " );
+        sqlQuery.append( "?, sysdate, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " ); //Added by Mohan for KFPROG-1418
+        sqlQuery.append( ")" );
 
-        sqlQuery.append( "select PRG_CD, " );
-        sqlQuery.append( "ACCUM_AT_PTS, LAST_AT_ACT_DT, ACCUM_NAT_PTS, " );
-        sqlQuery.append( "LAST_NAT_ACT_DT, CUR_BAL, TOT_AIR_RDM_PTS, " );
-        sqlQuery.append( "TOT_NONAIR_RDM_PTS, TOT_MISC_CR_PTS, " );
-        sqlQuery.append( "TOT_MISC_DR_PTS, TOT_EXPIRED_PTS, LAST_STMT_PTS, " );
-        sqlQuery.append( "LAST_STMT_DT, ONLINE_STMT_PTS, ONLINE_STMT_DT, OD_BAL, LAST_NON_AT_ACT_DT " );
-        sqlQuery.append( "from MILEAGE_SUM where INT_ID=? and PRG_CD = ? " );
 
-        String paramName = "modFunc";
-        String[] arrToReplace = {"intId", "prgCd"};
+        String paramName = "rsrv";
+        String[] arrToReplace = {"agentId", "internalId", "relationshipind", "seqno", "title", "familyname", "givenname", "gender", "dob", "familyMbrIntId", "familyMbrPrgCd", "guardianConsent", "guardianLink", "linkDt"};
 
-        String[] arrTypes = { "VARCHAR", "VARCHAR"};
+        String[] arrTypes = {"VARCHAR", "VARCHAR", "NUMERIC", "VARCHAR", "VARCHAR", "NUMERIC"};
 
 
         String toPrint = null;
         boolean toReplace = true;
-        boolean paramsAreNotNestedObjects = true;
+        boolean paramsAreNotNestedObjects = false;
         if (toReplace) {
             if (paramsAreNotNestedObjects) {
                 toPrint = replaceQuestionMarkForNonObj(sqlQuery.toString(), arrToReplace, arrTypes);
             } else {
-                toPrint = replaceQuestionMark(buffer.toString(), arrToReplace, paramName);
+                toPrint = replaceQuestionMark(sqlQuery.toString(), arrToReplace, paramName);
             }
         } else {
-            System.out.println(buffer.toString());
-            System.out.println(buffer1.toString());
-            System.out.println(sqlBuilder.toString());
-            System.out.println(SQL2.toString());
-            System.out.println(sb.toString());
+            System.out.println(sqlQuery.toString());
             System.out.println(initial.toString());
         }
 

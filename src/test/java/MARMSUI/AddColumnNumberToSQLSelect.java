@@ -2,15 +2,7 @@ package MARMSUI;
 
 public class AddColumnNumberToSQLSelect {
     public static void main(String[] args) {
-        String selectColumns = "PROMO_TRANS.BATCH_DT, PROMO_TRANS.TRANS_CD, PROMO_TRANS.PRT_CD, PROMO_TRANS.PROMO_AWD_DT,\n" +
-                "        PROMO_TRANS.BONUS_AWDED , NVL(PROMO_TRANS.PROMO_AWD_DESC,''), 0, '', '', '', 0, '', '', '', 'Y', 'N',\n" +
-                "        'N', 0, NVL(PROMO_TRANS.AMDMNT_RSN_CD,''), '', '', NVL(PROMO_TRANS.PROMO_CD,''),\n" +
-                "        NVL(PROMO_TRANS.PROMO_AWD_DESC,''), PROMO_TRANS.ELITE_BONUS_MILES_AWDED, NVL(PRT.ANA_IND, 'A') ANA_IND,\n" +
-                "        NVL(PROMO_TRANS.PROMO_XREF_ID, '') as promo_xref_id ,0, '', '' ,0 ,'' , NVL(OD_XREF_LINK.TRANS_XREF_ID, ''),\n" +
-                "        NVL(BILL_TO_PRT, ''), NVL(CD_SHARE_PRT, ''), 0, NVL(TKT_NO, ''), NVL(FAMILY_NAME, ''), NVL(GIVEN_NAME, ''),\n" +
-                "        null, '', '', 0, '', NVL(PRT_REF_CD, ''), NVL(BATCH_ID, ''), NVL(REVERSED_FLG, ''), NVL(NAME_MISMATCH_FLG,\n" +
-                "        ''), '' , '' , 0 ,PROMO_TRANS.PPS_BONUS_VALUE_AWDED , '' ,PROMO_TRANS.PPS_PROMO_FLG , '' , '' ,0 ,0 ,0 , '', ''\n" +
-                "        ,'', '', '', 0, 0, '', 0, '', ''";
+        String selectColumns = "AT_NON_ACR_TRANS.RCRE_DT,  \tAT_NON_ACR_TRANS.BATCH_DT,  \tAT_NON_ACR_TRANS.TRANS_CD,   \tAT_NON_ACR_TRANS.PRT_CD,   \tAT_NON_ACR_TRANS.FLT_AWD_DT,  \t0,   \tNVL(AT_NON_ACR_TRANS.AWD_DESC,' '),   \tNVL(AT_NON_ACR_TRANS.FLT_NO,0),  \tNVL(AT_NON_ACR_TRANS.ORG_CD,' '),   \tNVL(AT_NON_ACR_TRANS.DES_CD,' '),   \tNVL(AT_NON_ACR_TRANS.TRVL_CLS,' '),  \t0,  \t' ',   \t' ',   \t' ',  \t' ',   \t' ',   \t' ',  \t0,   \tAT_NON_ACR_TRANS.REJ_RSN_CD,  \tNVL(AT_NON_ACR_TRANS.OFFP_PRT_CD, ' '),   \tNVL(AT_NON_ACR_TRANS.OFFP_MBR_NO, ' '),  \t' ',  \t' ',  \t0,  \t' ',  \t' ' \t, 0, ' ', ' ' , ' ',  ' ',  NVL(AT_NON_ACR_TRANS.CD_SHARE_PRT, ' '),  NVL(AT_NON_ACR_TRANS.CD_SHARE_FLT_NO, 0),  NVL(AT_NON_ACR_TRANS.TKT_NO, ' '),  NVL(AT_NON_ACR_TRANS.FAMILY_NAME, ' '),  NVL(AT_NON_ACR_TRANS.GIVEN_NAME, ' '),  null,  ' ',  ' ',  0,  NVL(AT_NON_ACR_TRANS.INPUT_MODE_IND, ' '),  NVL(AT_NON_ACR_TRANS.PRT_REF_CD, ' '),  NVL(AT_NON_ACR_TRANS.BATCH_ID, ' '),  NVL(AT_NON_ACR_TRANS.REVERSED_FLG, ' '),  NVL(NAME_MISMATCH_FLG, ' '), ' '  ,' '  ,0  ,' '  ,0   ,0   ,' ' ";
         String toPrint = addColumnNumberToSelect(selectColumns);
         System.out.println(toPrint);
     }

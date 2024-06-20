@@ -1,7 +1,6 @@
 package web;
 
 import com.sun.net.httpserver.HttpServer;
-import com.sun.security.ntlm.Server;
 import exercises.ServerConfiguration;
 
 import java.io.IOException;

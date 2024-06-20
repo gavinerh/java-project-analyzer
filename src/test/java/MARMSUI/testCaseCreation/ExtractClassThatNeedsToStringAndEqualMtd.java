@@ -34,7 +34,19 @@ public class ExtractClassThatNeedsToStringAndEqualMtd {
                 "short\n" +
                 "CusAlternateNameExample\n" +
                 "CustomerStopmailInfoVo\n" +
-                "CusStopmailInfo";
+                "CusStopmailInfo\n" +
+                "CusInfltPrefExample\n" +
+                "CusOinfltPref\n" +
+                "CusInfltPref\n" +
+                "CusAddrExample\n" +
+                "CusProfileUpdateRequest\n" +
+                "DeleteCustomerDetailsVO\n" +
+                "CustomerParticularsVo\n" +
+                "CusAddr\n" +
+                "CountryAddrFormatExample\n" +
+                "CustomerCardIssVo\n" +
+                "CusTierQualExample\n" +
+                "CusSupplInfo";
         List<String> classesAlreadyAdded = Arrays.stream(toStringAlreadyAdded.split("\n")).collect(Collectors.toList());
         FileInputStream fileInputStream = new FileInputStream("/Users/macuser/Desktop/response_content");
         Set<String> set = new HashSet<>();

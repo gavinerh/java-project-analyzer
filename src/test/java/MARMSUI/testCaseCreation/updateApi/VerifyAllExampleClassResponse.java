@@ -12,6 +12,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
@@ -31,7 +32,11 @@ public class VerifyAllExampleClassResponse {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         String filename = "/Users/macuser/Desktop/response_content";
-        FileInputStream fileInputStream = new FileInputStream(filename);
+        String outputFile = "/Users/macuser/Desktop/response_cleaned.txt";
+        Set<String> methodsStringFromFile = new HashSet<>();
+        RemoveDuplicateMethods.extractIndividualMethod(methodsStringFromFile, new FileInputStream(filename));
+        RemoveDuplicateMethods.printSetContents(methodsStringFromFile,new FileWriter(outputFile));
+        FileInputStream fileInputStream = new FileInputStream(outputFile);
         List<TestModel> testModelList = iterateFileContentAndPopulateTestModel(fileInputStream);
         System.out.println(testModelList.size());
         ObjectMapper mapper = new ObjectMapper();
@@ -313,7 +318,7 @@ public class VerifyAllExampleClassResponse {
     }
 
     private static String generateExampleInstance(String condition, String val, TestModel testModel) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        String basePath = "/Users/macuser/Documents/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/database/sql/persistence/model";
+        String basePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/database/sql/persistence/model";
         String className = generateTypeFromExampleClass(testModel.objectClassName);
         String actualPath = basePath + "/" + className + ".java";
         String generatedField = transformConditionToField(condition);

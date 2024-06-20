@@ -17,13 +17,13 @@ public class ExtractAllGlobalFieldsToAutowire {
     static Set<String> setOfTypesToAutowire = new HashSet<>();
 
     public static void main(String[] args) {
-        String basePath = "/Users/macuser/Documents/lsl-marmsui-profile/src/main/java";
+        String basePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java";
         File file = new File(basePath);
         iterateAllFiles(file);
-        String classNameToSearch = "UpdateCustomerSelectiveServiceImpl";
+        String classNameToSearch = "QualificationServiceImpl";
         extractFields(mapOfClassNameToPath.get(classNameToSearch), classNameToSearch);
         System.out.println(setOfTypesToAutowire.size() + "\n =================================\nFields to autowire:\n");
-        printRelevantFields("/Users/macuser/Documents/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/database/sql/persistence/mappers");
+        printRelevantFields("/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/database/sql/persistence/mappers");
     }
 
     private static void printRelevantFields(String basePath) {
@@ -107,6 +107,10 @@ public class ExtractAllGlobalFieldsToAutowire {
     }
 
     private static void iterateAllFiles(File file) {
+        if(file.getName().equals(".DS_Store")){
+            System.out.println("reached here");
+            return;
+        }
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File innerFile : files) {
@@ -121,6 +125,9 @@ public class ExtractAllGlobalFieldsToAutowire {
     private static String removeFileExtension(String name) {
         String pattern = ".java";
         int end = name.indexOf(pattern);
+        if(end == -1) {
+            throw new RuntimeException("Should not be -1");
+        }
         return name.substring(0,end);
     }
 }

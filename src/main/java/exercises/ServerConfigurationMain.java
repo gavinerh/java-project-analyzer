@@ -1,6 +1,5 @@
 package exercises;
 
-import com.sun.security.ntlm.Server;
 import web.WebServer;
 
 import java.io.IOException;

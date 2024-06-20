@@ -11,105 +11,57 @@ public class SqlToResultMapToJavaFieldsToJsonField {
     // from resultmap, it will map to the java class fields and finally to the json field
     // if @JsonProperty is present
     public static void main(String[] args) {
-        String sqlSelectCols = "'MISC' as TRANSACTION_TYPE, TRANS_CD as TRANS_CD, BATCH_DT as BATCH_DATE, PTS_AWDED as PTS_AWDED,\n" +
-                "        NAT_TRANS.TRANS_XREF_ID as TRANS_XREF_ID,\n" +
-                "        PRT_CD AS PRT_CD, AWD_DESC AS AWD_DESC,\n" +
-                "        BATCH_DT as TRANS_DATE,\n" +
-                "        NVL(REMARKS,'') as REMARKS, ELITE_PTS as ELITE_PTS, PPS_PTS as PPS_PTS, SECT_CNT as SECT_CNT,\n" +
-                "        PPS_VAL as PPS_VAL, BATCH_ID as BATCH_ID, NVL(SUPERVISOR_ID,'') as SUPERVISOR_ID,\n" +
-                "\n" +
-                "        mergeMap.MERGE_ACCUM_NAT_PTS as MERGE_ACCUM_NAT_PTS, mergeMap.MERGE_CUR_ELITE_PTS as MERGE_CUR_ELITE_PTS,\n" +
-                "        mergeMap.MERGE_CUR_PPS_PTS as MERGE_CUR_PPS_PTS, mergeMap.MERGE_CUR_PPS_SECT_CNT as MERGE_CUR_PPS_SECT_CNT,\n" +
-                "        mergeMap.MERGE_ACCUM_ELITE_PTS as MERGE_ACCUM_ELITE_PTS, mergeMap.MERGE_ACCUM_PPS_PTS as MERGE_ACCUM_PPS_PTS,\n" +
-                "        mergeMap.MERGE_ACCUM_PPS_SECT_CNT as MERGE_ACCUM_PPS_SECT_CNT, mergeMap.MERGE_ELITE_QUAL_DT as\n" +
-                "        MERGE_ELITE_QUAL_DT,\n" +
-                "        mergeMap.MERGE_ELITE_EXP_DT as MERGE_ELITE_EXP_DT, mergeMap.MERGE_PPS_QUAL_DT as MERGE_PPS_QUAL_DT,\n" +
-                "        mergeMap.MERGE_PPS_EXP_DT as MERGE_PPS_EXP_DT, mergeMap.UNMERGE_ACCUM_NAT_PTS as UNMERGE_ACCUM_NAT_PTS,\n" +
-                "        mergeMap.UNMERGE_CUR_ELITE_PTS as UNMERGE_CUR_ELITE_PTS, mergeMap.UNMERGE_CUR_PPS_PTS as UNMERGE_CUR_PPS_PTS,\n" +
-                "        mergeMap.UNMERGE_CUR_PPS_SECT_CNT as UNMERGE_CUR_PPS_SECT_CNT,\n" +
-                "        mergeMap.UNMERGE_ACCUM_ELITE_PTS as UNMERGE_ACCUM_ELITE_PTS, mergeMap.UNMERGE_ACCUM_PPS_PTS as\n" +
-                "        UNMERGE_ACCUM_PPS_PTS,\n" +
-                "        mergeMap.UNMERGE_ACCUM_PPS_SECT_CNT as UNMERGE_ACCUM_PPS_SECT_CNT, mergeMap.UNMERGE_ELITE_QUAL_DT as\n" +
-                "        UNMERGE_ELITE_QUAL_DT,\n" +
-                "        mergeMap.UNMERGE_ELITE_EXP_DT as UNMERGE_ELITE_EXP_DT, mergeMap.UNMERGE_PPS_QUAL_DT as UNMERGE_PPS_QUAL_DT,\n" +
-                "        mergeMap.UNMERGE_PPS_EXP_DT as UNMERGE_PPS_EXP_DT, mergeMap.MERGE_CUR_PPS_VAL as MERGE_CUR_PPS_VAL,\n" +
-                "        mergeMap.MERGE_CUM_PPS_VAL as MERGE_CUM_PPS_VAL, mergeMap.MERGE_CUM_LIFETIME_PPS_VAL as\n" +
-                "        MERGE_CUM_LIFETIME_PPS_VAL,\n" +
-                "        mergeMap.UNMERGE_CUR_PPS_VAL as UNMERGE_CUR_PPS_VAL, mergeMap.UNMERGE_CUM_PPS_VAL as UNMERGE_CUM_PPS_VAL,\n" +
-                "        mergeMap.UNMERGE_CUM_LIFETIME_PPS_VAL as UNMERGE_CUM_LIFETIME_PPS_VAL";
+        String sqlSelectCols = "'OVERDRAFT' as TRANSACTION, BATCH_DT, TRANS_CD, nat.PRT_CD, AWD_DT, PTS_AWDED, AWD_DESC, AMDMNT_RSN_CD, PRT_REF_CD,\n" +
+                "        OD_RSN_CD, REMARKS, PTS_VALIDITY_PRD, TRANS_XREF_ID, BATCH_ID, SUPERVISOR_ID, REVERSED_FLG, info.user_name as USER_NAME,\n" +
+                "        OD_EXP_DT,\n" +
+                "        case\n" +
+                "        when OD_DUE_DT is null then sysdate\n" +
+                "        else OD_DUE_DT end as OD_DUE_DT,\n" +
+                "        OD_GRANTED_PTS, OD_USED_PTS,\n" +
+                "        OD_PAYBACK_PTS, OD_RESET_PTS,  LAST_PAYBACK_DT, EXP_DT_OVERWRITE_FLG,\n" +
+                "        DUE_DT_OVERWRITE_FLG, MILES_OVERWRITE_FLG";
 
 
-        String baseSqlColsWithColName = "'MISC' as TRANSACTION_TYPE, TRANS_CD as TRANS_CD, BATCH_DT as BATCH_DATE, PTS_AWDED as PTS_AWDED,\n" +
-                "        NAT_TRANS.TRANS_XREF_ID as TRANS_XREF_ID,\n" +
-                "        PRT_CD AS PRT_CD, AWD_DESC AS AWD_DESC,\n" +
-                "        BATCH_DT as TRANS_DATE,\n" +
-                "        NVL(REMARKS,'') as REMARKS, ELITE_PTS as ELITE_PTS, PPS_PTS as PPS_PTS, SECT_CNT as SECT_CNT,\n" +
-                "        PPS_VAL as PPS_VAL, BATCH_ID as BATCH_ID, NVL(SUPERVISOR_ID,'') as SUPERVISOR_ID,\n" +
-                "\n" +
-                "        mergeMap.MERGE_ACCUM_NAT_PTS as MERGE_ACCUM_NAT_PTS, mergeMap.MERGE_CUR_ELITE_PTS as MERGE_CUR_ELITE_PTS,\n" +
-                "        mergeMap.MERGE_CUR_PPS_PTS as MERGE_CUR_PPS_PTS, mergeMap.MERGE_CUR_PPS_SECT_CNT as MERGE_CUR_PPS_SECT_CNT,\n" +
-                "        mergeMap.MERGE_ACCUM_ELITE_PTS as MERGE_ACCUM_ELITE_PTS, mergeMap.MERGE_ACCUM_PPS_PTS as MERGE_ACCUM_PPS_PTS,\n" +
-                "        mergeMap.MERGE_ACCUM_PPS_SECT_CNT as MERGE_ACCUM_PPS_SECT_CNT, mergeMap.MERGE_ELITE_QUAL_DT as\n" +
-                "        MERGE_ELITE_QUAL_DT,\n" +
-                "        mergeMap.MERGE_ELITE_EXP_DT as MERGE_ELITE_EXP_DT, mergeMap.MERGE_PPS_QUAL_DT as MERGE_PPS_QUAL_DT,\n" +
-                "        mergeMap.MERGE_PPS_EXP_DT as MERGE_PPS_EXP_DT, mergeMap.UNMERGE_ACCUM_NAT_PTS as UNMERGE_ACCUM_NAT_PTS,\n" +
-                "        mergeMap.UNMERGE_CUR_ELITE_PTS as UNMERGE_CUR_ELITE_PTS, mergeMap.UNMERGE_CUR_PPS_PTS as UNMERGE_CUR_PPS_PTS,\n" +
-                "        mergeMap.UNMERGE_CUR_PPS_SECT_CNT as UNMERGE_CUR_PPS_SECT_CNT,\n" +
-                "        mergeMap.UNMERGE_ACCUM_ELITE_PTS as UNMERGE_ACCUM_ELITE_PTS, mergeMap.UNMERGE_ACCUM_PPS_PTS as\n" +
-                "        UNMERGE_ACCUM_PPS_PTS,\n" +
-                "        mergeMap.UNMERGE_ACCUM_PPS_SECT_CNT as UNMERGE_ACCUM_PPS_SECT_CNT, mergeMap.UNMERGE_ELITE_QUAL_DT as\n" +
-                "        UNMERGE_ELITE_QUAL_DT,\n" +
-                "        mergeMap.UNMERGE_ELITE_EXP_DT as UNMERGE_ELITE_EXP_DT, mergeMap.UNMERGE_PPS_QUAL_DT as UNMERGE_PPS_QUAL_DT,\n" +
-                "        mergeMap.UNMERGE_PPS_EXP_DT as UNMERGE_PPS_EXP_DT, mergeMap.MERGE_CUR_PPS_VAL as MERGE_CUR_PPS_VAL,\n" +
-                "        mergeMap.MERGE_CUM_PPS_VAL as MERGE_CUM_PPS_VAL, mergeMap.MERGE_CUM_LIFETIME_PPS_VAL as\n" +
-                "        MERGE_CUM_LIFETIME_PPS_VAL,\n" +
-                "        mergeMap.UNMERGE_CUR_PPS_VAL as UNMERGE_CUR_PPS_VAL, mergeMap.UNMERGE_CUM_PPS_VAL as UNMERGE_CUM_PPS_VAL,\n" +
-                "        mergeMap.UNMERGE_CUM_LIFETIME_PPS_VAL as UNMERGE_CUM_LIFETIME_PPS_VAL";
+        String baseSqlColsWithColName = "'OVERDRAFT' as TRANSACTION, BATCH_DT as BATCH_DT, TRANS_CD as TRANS_CD, nat.PRT_CD as PRT_CD, AWD_DT as AWD_DT," +
+                " PTS_AWDED as PTS_AWDED, AWD_DESC as AWD_DESC, AMDMNT_RSN_CD as AMDMNT_RSN_CD, PRT_REF_CD as PRT_REF_CD,\n" +
+                "        OD_RSN_CD as OD_RSN_CD, REMARKS as REMARKS, PTS_VALIDITY_PRD as PTS_VALIDITY_PRD, TRANS_XREF_ID as TRANS_XREF_ID," +
+                " BATCH_ID as BATCH_ID, SUPERVISOR_ID as SUPERVISOR_ID, REVERSED_FLG as REVERSED_FLG, info.user_name as USER_NAME,\n" +
+                "        OD_EXP_DT as OD_EXP_DT,\n" +
+                "        case\n" +
+                "        when OD_DUE_DT is null then sysdate\n" +
+                "        else OD_DUE_DT end as OD_DUE_DT,\n" +
+                "        OD_GRANTED_PTS AS OC_GRANTED_PTS, OD_USED_PTS as OD_USED_PTS,\n" +
+                "        OD_PAYBACK_PTS as OD_PAYBACK_PTS, OD_RESET_PTS as OD_RESET_PTS,  LAST_PAYBACK_DT as LAST_PAYBACK_DT, EXP_DT_OVERWRITE_FLG as EXP_DT_OVERWRITE_FLG,\n" +
+                "        DUE_DT_OVERWRITE_FLG as DUE_DT_OVERWRITE_FLG, MILES_OVERWRITE_FLG as MILES_OVERWRITE_FLG";
 
         // =============================================================
-        String resultMapString = "<result column=\"TRANSACTION_TYPE\" jdbcType=\"VARCHAR\" property=\"transactionType\"/>\n" +
-                "        <result column=\"TRANS_CD\" jdbcType=\"VARCHAR\" property=\"transCd\"/>\n" +
-                "        <result column=\"BATCH_DATE\" jdbcType=\"TIMESTAMP\" property=\"batchDate\"/>\n" +
-                "        <result column=\"PTS_AWDED\" jdbcType=\"NUMERIC\" property=\"ptsAwded\"/>\n" +
-                "        <result column=\"TRANS_XREF_ID\" jdbcType=\"VARCHAR\" property=\"transXrefId\"/>\n" +
-                "        <result column=\"PRT_CD\" jdbcType=\"VARCHAR\" property=\"prtCd\"/>\n" +
-                "        <result column=\"AWD_DESC\" jdbcType=\"VARCHAR\" property=\"awdDesc\"/>\n" +
-                "        <result column=\"TRANS_DATE\" jdbcType=\"TIMESTAMP\" property=\"transDate\"/>\n" +
-                "        <result column=\"REMARKS\" jdbcType=\"VARCHAR\" property=\"remarks\"/>\n" +
-                "        <result column=\"ELITE_PTS\" jdbcType=\"NUMERIC\" property=\"elitePts\"/>\n" +
-                "        <result column=\"PPS_PTS\" jdbcType=\"NUMERIC\" property=\"ppsPts\"/>\n" +
-                "        <result column=\"SECT_CNT\" jdbcType=\"DOUBLE\" property=\"sectCnt\"/>\n" +
-                "        <result column=\"PPS_VAL\" jdbcType=\"NUMERIC\" property=\"ppsVal\"/>\n" +
+        String resultMapString = "<result column=\"TRANSACTION\" jdbcType=\"VARCHAR\" property=\"transactionType\"/>\n" +
+                "        <result column=\"BATCH_DT\" jdbcType=\"TIMESTAMP\" property=\"batchDate\"/>\n" +
+                "        <result column=\"TRANS_CD\" jdbcType=\"VARCHAR\" property=\"transCd\" />\n" +
+                "        <result column=\"PRT_CD\" jdbcType=\"VARCHAR\" property=\"prtCd\" />\n" +
+                "        <result column=\"AWD_DT\" jdbcType=\"TIMESTAMP\" property=\"transDate\" />\n" +
+                "        <result column=\"PTS_AWDED\" jdbcType=\"NUMERIC\" property=\"ptsAwarded\"/>\n" +
+                "        <result column=\"AWD_DESC\" jdbcType=\"VARCHAR\" property=\"awdDesc\" />\n" +
+                "        <result column=\"AMDMNT_RSN_CD\" jdbcType=\"VARCHAR\" property=\"amdmntRsnCd\" />\n" +
+                "        <result column=\"PRT_REF_CD\" jdbcType=\"VARCHAR\" property=\"prtRefCd\" />\n" +
+                "        <result column=\"OD_RSN_CD\" jdbcType=\"VARCHAR\" property=\"odRsnCd\"/>\n" +
+                "        <result column=\"REMARKS\" jdbcType=\"VARCHAR\" property=\"remark\"/>\n" +
+                "        <result column=\"PTS_VALIDITY_PRD\" jdbcType=\"NUMERIC\" property=\"ptsValidityPrd\"/>\n" +
+                "        <result column=\"TRANS_XREF_ID\" jdbcType=\"VARCHAR\" property=\"transXrefId\" />\n" +
                 "        <result column=\"BATCH_ID\" jdbcType=\"VARCHAR\" property=\"batchId\"/>\n" +
                 "        <result column=\"SUPERVISOR_ID\" jdbcType=\"VARCHAR\" property=\"supervisorId\"/>\n" +
-                "        <result column=\"MERGE_ACCUM_NAT_PTS\" jdbcType=\"NUMERIC\" property=\"mergeAccumNatPts\"/>\n" +
-                "        <result column=\"MERGE_CUR_ELITE_PTS\" jdbcType=\"NUMERIC\" property=\"mergeCurElitePts\"/>\n" +
-                "        <result column=\"MERGE_CUR_PPS_PTS\" jdbcType=\"NUMERIC\" property=\"mergeCurPpsPts\"/>\n" +
-                "        <result column=\"MERGE_CUR_PPS_SECT_CNT\" jdbcType=\"NUMERIC\" property=\"mergeCurPpsSectCnt\"/>\n" +
-                "        <result column=\"MERGE_ACCUM_ELITE_PTS\" jdbcType=\"NUMERIC\" property=\"mergeAccumElitePts\"/>\n" +
-                "        <result column=\"MERGE_ACCUM_PPS_PTS\" jdbcType=\"NUMERIC\" property=\"mergeAccumPpsPts\"/>\n" +
-                "        <result column=\"MERGE_ACCUM_PPS_SECT_CNT\" jdbcType=\"DOUBLE\" property=\"mergeAccumPpsSectCnt\"/>\n" +
-                "        <result column=\"MERGE_ELITE_QUAL_DT\" jdbcType=\"TIMESTAMP\" property=\"mergeEliteQualDt\"/>\n" +
-                "        <result column=\"MERGE_ELITE_EXP_DT\" jdbcType=\"TIMESTAMP\" property=\"mergeEliteExpDt\"/>\n" +
-                "        <result column=\"MERGE_PPS_QUAL_DT\" jdbcType=\"TIMESTAMP\" property=\"mergePpsQualDt\"/>\n" +
-                "        <result column=\"MERGE_PPS_EXP_DT\" jdbcType=\"TIMESTAMP\" property=\"mergePpsExpDt\"/>\n" +
-                "        <result column=\"UNMERGE_ACCUM_NAT_PTS\" jdbcType=\"NUMERIC\" property=\"unmergeAccumNatPts\"/>\n" +
-                "        <result column=\"UNMERGE_CUR_ELITE_PTS\" jdbcType=\"NUMERIC\" property=\"unmergeCurElitePts\"/>\n" +
-                "        <result column=\"UNMERGE_CUR_PPS_PTS\" jdbcType=\"NUMERIC\" property=\"unmergeCurPpsPts\"/>\n" +
-                "        <result column=\"UNMERGE_CUR_PPS_SECT_CNT\" jdbcType=\"NUMERIC\" property=\"unmergeCurPpsSectCnt\"/>\n" +
-                "        <result column=\"UNMERGE_ACCUM_ELITE_PTS\" jdbcType=\"NUMERIC\" property=\"unmergeAccumElitePts\"/>\n" +
-                "        <result column=\"UNMERGE_ACCUM_PPS_PTS\" jdbcType=\"NUMERIC\" property=\"unmergeAccumPpsPts\"/>\n" +
-                "        <result column=\"UNMERGE_ACCUM_PPS_SECT_CNT\" jdbcType=\"NUMERIC\" property=\"unmergeAccumPpsSectCnt\"/>\n" +
-                "        <result column=\"UNMERGE_ELITE_QUAL_DT\" jdbcType=\"TIMESTAMP\" property=\"unmergeEliteQualDt\"/>\n" +
-                "        <result column=\"UNMERGE_ELITE_EXP_DT\" jdbcType=\"TIMESTAMP\" property=\"unmergeEliteExpDt\"/>\n" +
-                "        <result column=\"UNMERGE_PPS_QUAL_DT\" jdbcType=\"TIMESTAMP\" property=\"unmergePpsQualDt\"/>\n" +
-                "        <result column=\"UNMERGE_PPS_EXP_DT\" jdbcType=\"TIMESTAMP\" property=\"unmergePpsExpDt\"/>\n" +
-                "        <result column=\"MERGE_CUR_PPS_VAL\" jdbcType=\"NUMERIC\" property=\"mergeCurPpsVal\"/>\n" +
-                "        <result column=\"MERGE_CUM_PPS_VAL\" jdbcType=\"NUMERIC\" property=\"mergeCumPpsVal\"/>\n" +
-                "        <result column=\"MERGE_CUM_LIFETIME_PPS_VAL\" jdbcType=\"NUMERIC\" property=\"mergeCumLifetimePpsVal\"/>\n" +
-                "        <result column=\"UNMERGE_CUR_PPS_VAL\" jdbcType=\"NUMERIC\" property=\"unmergeCurPpsVal\"/>\n" +
-                "        <result column=\"UNMERGE_CUM_PPS_VAL\" jdbcType=\"NUMERIC\" property=\"unmergeCumPpsVal\"/>\n" +
-                "        <result column=\"UNMERGE_CUM_LIFETIME_PPS_VAL\" jdbcType=\"NUMERIC\" property=\"unmergeCumLifetimePpsVal\"/>";
+                "        <result column=\"REVERSED_FLG\" jdbcType=\"VARCHAR\" property=\"reversedFlg\" />\n" +
+                "        <result column=\"USER_NAME\" jdbcType=\"VARCHAR\" property=\"userName\" />\n" +
+                "        <result column=\"OD_EXP_DT\" jdbcType=\"TIMESTAMP\" property=\"odExpDt\" />\n" +
+                "        <result column=\"OD_DUE_DT\" jdbcType=\"TIMESTAMP\" property=\"odDueDt\" />\n" +
+                "        <result column=\"OD_GRANTED_PTS\" jdbcType=\"NUMERIC\" property=\"grantedPts\" />\n" +
+                "        <result column=\"OD_USED_PTS\" jdbcType=\"NUMERIC\" property=\"usedPts\" />\n" +
+                "        <result column=\"OD_PAYBACK_PTS\" jdbcType=\"NUMERIC\" property=\"paybackPts\" />\n" +
+                "        <result column=\"OD_RESET_PTS\" jdbcType=\"NUMERIC\" property=\"resetPts\" />\n" +
+                "        <result column=\"LAST_PAYBACK_DT\" jdbcType=\"TIMESTAMP\" property=\"paybackDt\" />\n" +
+                "        <result column=\"EXP_DT_OVERWRITE_FLG\" jdbcType=\"VARCHAR\" property=\"expOverrideFlg\" />\n" +
+                "        <result column=\"DUE_DT_OVERWRITE_FLG\" jdbcType=\"VARCHAR\" property=\"dueOverrideFlg\" />\n" +
+                "        <result column=\"MILES_OVERWRITE_FLG\" jdbcType=\"VARCHAR\" property=\"milesOverrideFlg\" />";
 
 
         String javaFields = "@JsonProperty(\"type\")\n" +
@@ -634,7 +586,36 @@ public class SqlToResultMapToJavaFieldsToJsonField {
                 "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
                 "    private String ptyLocDesc;\n" +
                 "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
-                "    private boolean ffpCrBeforePPS; // accrual";
+                "    private boolean ffpCrBeforePPS; // accrual\n" +
+                "@JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private String odRsnCd; // overdraft\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private int ptsValidityPrd; // overdraft\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private String userName;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = \"yyyy-MM-dd HH:mm:ss\", timezone = \"Asia/Singapore\")\n" +
+                "    private Date odExpDt;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = \"yyyy-MM-dd HH:mm:ss\", timezone = \"Asia/Singapore\")\n" +
+                "    private Date odDueDt;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private long grantedPts;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private long usedPts;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private long paybackPts;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private long resetPts;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = \"yyyy-MM-dd HH:mm:ss\", timezone = \"Asia/Singapore\")\n" +
+                "    private Date paybackDt;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private String expOverrideFlg;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private String dueOverrideFlg;\n" +
+                "    @JsonInclude(JsonInclude.Include.NON_DEFAULT)\n" +
+                "    private String milesOverrideFlg;";
         String[] javaFieldsArr = javaFields.split("\n");
         Map<String, String> mapOfJavaFieldToJsonField = new HashMap<>(); // key: java field, value: json value
         Map<String, String> mapOfJavaFieldToDataType = new HashMap<>();
