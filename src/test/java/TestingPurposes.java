@@ -1,27 +1,17 @@
+import org.mapstruct.factory.Mappers;
+
 import java.io.IOException;
 
 public class TestingPurposes {
 
 
-    public static void main(String[] args) throws IOException {
-        Object t = "Y";
-        System.out.println(t.equals("Y"));
-        String val = "Re-instate Reserve Value\tchkReinstateRsrvVal\n" +
-                "type of qualification\tcboQualType\n" +
-                "Disable Early Requalification\tchkRequalDisable\n" +
-                "Change Qual start Date\tchkChangeQualStart\n" +
-                "For (months)\tcboFor\n" +
-                "Qualify As\tcboQualType\n" +
-                "current date\trdoCurrentDate\n" +
-                "expiry date\trdoExpiryDate\n" +
-                "other\trdoOtherDate\n" +
-                "Award tier bonus\tchkAwardTier\n" +
-                "Reinstate cumulative value\tchkReinstate\n" +
-                "Increment years\tchkYears\n" +
-                "Recalculate Reserve Value\tchkPostRecalReserveVal\n" +
-                "(Post Requalification)\tlblPost";
-        String[] lines = val.split("\n");
-        printStringVariables(lines);
+    private static MapperClone mapperClone = Mappers.getMapper(MapperClone.class);
+    public static void main(String[] args) throws IOException, CloneNotSupportedException {
+        Mod mod = new Mod();
+        mod.setName("test");
+        Mod mod2 = mapperClone.clone(mod);
+        mod.setName("changed name");
+        System.out.println(mod2);
     }
 
     private static void printStringVariables(String[] lines) {

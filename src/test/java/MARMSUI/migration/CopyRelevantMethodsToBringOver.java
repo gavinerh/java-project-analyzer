@@ -17,10 +17,10 @@ public class CopyRelevantMethodsToBringOver {
     private static Set<String> destinationMethodNamesAlreadyPresent = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
-        String filenameToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/PointsHandlerImpl.java";
-        String patternToIdentify = "pointsHandlerData.";
-        String fileToExtractMethodFrom = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/dataaccess/activity/PointsHandlerData.java";
-        String fileToPasteMethodTo = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/data/PointsHandlerData.java";
+        String filenameToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/ValidatorImpl.java";
+        String patternToIdentify = "referenceData.";
+        String fileToExtractMethodFrom = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/dataaccess/validator/ReferenceData.java";
+        String fileToPasteMethodTo = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/data/ReferenceData.java";
         FileInputStream fileInputStream = new FileInputStream(filenameToExamine);
         Set<String> methodNames = new HashSet<>();
         Scanner scanner = new Scanner(fileInputStream);
@@ -35,11 +35,11 @@ public class CopyRelevantMethodsToBringOver {
             }
         }
         // populate the existing methods in the destination file
-        execute(null, fileToPasteMethodTo);
+        execute(null, fileToPasteMethodTo, -1);
         Set<String> methodsToCopy = removeMethodsAlreadyPresent(methodNames, destinationMethodNamesAlreadyPresent);
         System.out.println("Only bringing over method count: "+ methodsToCopy.size());
         for(String methodName : methodsToCopy) {
-            execute(methodName, fileToExtractMethodFrom);
+            execute(methodName, fileToExtractMethodFrom, -1);
         }
     }
 
@@ -59,7 +59,7 @@ public class CopyRelevantMethodsToBringOver {
         return line.substring(start, end).trim();
     }
 
-    private static void execute(String methodName, String filePath) throws FileNotFoundException {
+    public static void execute(String methodName, String filePath, int paramSize) throws FileNotFoundException {
 
         // Path to the Java file to be parsed
 
@@ -68,7 +68,7 @@ public class CopyRelevantMethodsToBringOver {
         CompilationUnit cu = StaticJavaParser.parse(in);
 
         // Visit and print the methods in the file
-        new MethodVisitor(methodName).visit(cu, null);
+        new MethodVisitor(methodName, paramSize).visit(cu, null);
     }
 
     /**
@@ -76,9 +76,11 @@ public class CopyRelevantMethodsToBringOver {
      */
     private static class MethodVisitor extends VoidVisitorAdapter<Void> {
         private String methodName;
+        private int paramSize;
 
-        public MethodVisitor(String methodName) {
+        public MethodVisitor(String methodName, int paramSize) {
             this.methodName = methodName;
+            this.paramSize = paramSize;
         }
 
         @Override
@@ -92,11 +94,19 @@ public class CopyRelevantMethodsToBringOver {
 
                     // Print parameters
 //                    System.out.print("Parameters: ");
-                    n.getParameters().forEach(param -> System.out.print(param.getType() + " " + param.getName() + ", "));
-                    System.out.println("\n");
+                    if(paramSize == -1) {
+//                        n.getParameters().forEach(param -> System.out.print(param.getType() + " " + param.getName() + ", "));
+//                        System.out.println("\n");
 
-                    // Optionally, print the entire method declaration
-                    System.out.println(n);
+                        // Optionally, print the entire method declaration
+                        System.out.println(n);
+                    } else {
+                        // compare param size
+                        if(n.getParameters().size() == paramSize) {
+                            System.out.println(n);
+                        }
+                    }
+
                 }
                 super.visit(n, arg);
             }
