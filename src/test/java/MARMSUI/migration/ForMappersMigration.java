@@ -25,13 +25,13 @@ public class ForMappersMigration {
             mapperName = readVal;
             String mapperVariable = "";
 
-            String copyTo = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/CustomerUpdateAccountServiceImpl.java";
+            String fileToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/helper/CustomerInfoHelper.java";
             mapperName = mapperName.substring(0,1).toUpperCase() + mapperName.substring(1);
             String fromFilePathXml = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/resources/com/sg/sq/marmsui/database/sql/persistence/mappers/" + mapperName + ".xml";
             String fromFilePathJava = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/database/sql/persistence/mappers/" + mapperName + ".java";
             String destinationXmlPath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/resources/com/sg/sq/marmsui/database/sql/persistence/mappers/" + mapperName + ".xml";
 
-            execute(mapperVariable, readVal, destinationXmlPath, fromFilePathXml, copyTo, fromFilePathJava);
+            execute(mapperVariable, readVal, destinationXmlPath, fromFilePathXml, fileToExamine, fromFilePathJava);
         }
         System.exit(0);
     }

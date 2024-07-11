@@ -17,10 +17,10 @@ public class CopyRelevantMethodsToBringOver {
     private static Set<String> destinationMethodNamesAlreadyPresent = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
-        String filenameToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/ValidatorImpl.java";
-        String patternToIdentify = "referenceData.";
-        String fileToExtractMethodFrom = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/dataaccess/validator/ReferenceData.java";
-        String fileToPasteMethodTo = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/data/ReferenceData.java";
+        String filenameToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/VoucherServiceImpl.java";
+        String patternToIdentify = "rewardsData.";
+        String fileToExtractMethodFrom = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/dataaccess/milestonerewards/RewardsData.java";
+        String fileToPasteMethodTo = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/data/RewardsData.java";
         FileInputStream fileInputStream = new FileInputStream(filenameToExamine);
         Set<String> methodNames = new HashSet<>();
         Scanner scanner = new Scanner(fileInputStream);

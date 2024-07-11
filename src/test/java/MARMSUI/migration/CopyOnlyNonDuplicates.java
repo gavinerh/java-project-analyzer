@@ -6,15 +6,15 @@ import java.util.*;
 
 public class CopyOnlyNonDuplicates {
     public static void main(String[] args) {
-        String fromFilePath = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/business/activity/overdraft/OverdraftConstant.java";
-        String toFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/Overdraft.java";
+        String fromFilePath = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/business/customer/tier/TierConstant.java";
+        String toFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/constant/TierConstant.java";
         // change this only
-        String valuesToCopyPath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/Overdraft.java";
-        String patternToIdentify = "OverdraftConstant.";
-        String fieldDeclaration = "public static final";
+        String fileToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/data/QualificationData.java";
+        String patternToIdentify = "TierConstant.";
+        String fieldDeclaration = "public final static";
 
         try {
-            FileInputStream fileInputStream = new FileInputStream(valuesToCopyPath);
+            FileInputStream fileInputStream = new FileInputStream(fileToExamine);
             Set<String> listOfValuesToCopy = generateValuesToCopy(fileInputStream, patternToIdentify);
             listOfValuesToCopy.add("MAILING_INDICATOR_X");
             // check if the destination file has these chosen values

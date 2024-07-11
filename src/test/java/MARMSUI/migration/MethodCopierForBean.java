@@ -22,8 +22,8 @@ public class MethodCopierForBean {
         Map<String, Integer> innerMethodCallNames = new HashMap<>();
         Map<String, Integer> methodsAlreadyPresent = new HashMap<>();
 
-        String destinationFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/VoucherServiceImpl.java";
-        String originFilePath = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/EJB/VoucherInfoService/com/singaporeair/marms/abacus/business/voucherinfo/VoucherInfoServiceBean.java";
+        String destinationFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/helper/CustomerInfoHelper.java";
+        String originFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/helper/CustomerInfoHelper.java";
 
         extractInnerMethodCalls(destinationFilePath, methodsAlreadyPresent, innerMethodCallNames);
         System.out.println(methodsAlreadyPresent);

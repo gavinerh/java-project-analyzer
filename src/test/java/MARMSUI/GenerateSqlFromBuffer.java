@@ -17,25 +17,19 @@ public class GenerateSqlFromBuffer {
         String airTransCode = "'RC','RD'";
         StringBuffer initial = new StringBuffer();
 
-        sqlQuery.append( "INSERT INTO CUS_FAMILY_INFO ( " );
-        sqlQuery.append( "RCRE_USER_ID, RCRE_DT, INT_ID, " );
-        sqlQuery.append( "RELNSHIP_IND, SEQ_NO, " );
-        sqlQuery.append( "TITLE, FAMILY_NAME, GIVEN_NAME, " );
-        sqlQuery.append( "GENDER, DOB, FAMILY_MBR_INT_ID, FAMILY_MBR_PRG_CD, GUARDIAN_CONSENT, GUARDIAN_LINK, LINK_DT" ); //Added by Mohan for KFPROG-1418
-        sqlQuery.append( " ) VALUES ( " );
-        sqlQuery.append( "?, sysdate, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " ); //Added by Mohan for KFPROG-1418
-        sqlQuery.append( ")" );
+        
+        sqlQuery.append("SELECT COUNT(*) FROM CUS_STOPMAIL_INFO WHERE INT_ID = #{internalID,jdbcType=NUMERIC}"+
+                " AND COMM_CHNL = #{channel,jdbcType=VARCHAR} AND ACTION_IND = 'A'");
 
+        String paramName = "award";
+        String[] arrToReplace = {"kfNumber", "programCode"};
 
-        String paramName = "rsrv";
-        String[] arrToReplace = {"agentId", "internalId", "relationshipind", "seqno", "title", "familyname", "givenname", "gender", "dob", "familyMbrIntId", "familyMbrPrgCd", "guardianConsent", "guardianLink", "linkDt"};
-
-        String[] arrTypes = {"VARCHAR", "VARCHAR", "NUMERIC", "VARCHAR", "VARCHAR", "NUMERIC"};
+        String[] arrTypes = {"VARCHAR","VARCHAR"};
 
 
         String toPrint = null;
         boolean toReplace = true;
-        boolean paramsAreNotNestedObjects = false;
+        boolean paramsAreNotNestedObjects = true;
         if (toReplace) {
             if (paramsAreNotNestedObjects) {
                 toPrint = replaceQuestionMarkForNonObj(sqlQuery.toString(), arrToReplace, arrTypes);
