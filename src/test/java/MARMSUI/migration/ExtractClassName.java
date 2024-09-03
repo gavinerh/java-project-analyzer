@@ -33,7 +33,6 @@ public class ExtractClassName {
         public void visit(ClassOrInterfaceDeclaration n, List<String> classNames) {
             // Add the class name to the list
             classNames.add(n.getNameAsString());
-
             // Don't forget to call super, it makes sure you visit all nodes in the AST
             super.visit(n, classNames);
         }

@@ -17,9 +17,21 @@ public class GenerateSqlFromBuffer {
         String airTransCode = "'RC','RD'";
         StringBuffer initial = new StringBuffer();
 
-        
-        sqlQuery.append("SELECT COUNT(*) FROM CUS_STOPMAIL_INFO WHERE INT_ID = #{internalID,jdbcType=NUMERIC}"+
-                " AND COMM_CHNL = #{channel,jdbcType=VARCHAR} AND ACTION_IND = 'A'");
+
+        sqlQuery.append("SELECT TRANS_CD, A.RCRE_DT,A.APPROVAL_CD,  A.ADJ_APPROVAL_CD, NET_PTS_REQ ,  ACTION_CD,  TKT_MCO_NO,  RDPN_TYPE ,  AWD_ZONE, ");
+        sqlQuery.append("B.PROMO_SAVINGS  ,  BILLING_PRT, A.RCRE_PCC, A.RCRE_SALES_OFF, A.RCRE_AGENT_ID, TKT_STOCK1,  C.ITIN_XREF_ID   ,  PNR_NAME, ");
+        sqlQuery.append("ACTION_CD2, PNR_REF, TURNPTS_BOARD, A.INT_ID, TKT_SRC_IND, AWD_TYPE,TKT_VALIDITY_DT , B.RDPN_NET_PTS_REQ, FORFEIT_PTS, B.TRANS_PTS , REVERSED_FLG, D.PROMO_CD , PROMO_NAME, BATCH_ID , BATCH_DT,TOT_STOPOVER_PTS,C.CERTIFICATE_NUMBER  ");
+
+        //SUMATHI Changes for - MKP91492 - KRISFLYER VALUE BASED REDEMPTION - START
+        sqlQuery.append (" ,A.MMK_IND, A.PYMT_RFND_LC, A.TOTAL_FARE_IN_LC, A.FARE_WO_TAX_IN_LC, A.TAX_IN_LC, A.NET_FARE_PAID_IN_LC, A.NET_KF_MILES_VAL_IN_LC, ");
+        sqlQuery.append("  A.TRANS_FARE_PAID_IN_LC, A.TRANS_KF_MILES_VAL_IN_LC, A.TOTAL_FARE_IN_SGD, A.FARE_WO_TAX_IN_SGD, A.TAX_IN_SGD, A.NET_FARE_PAID_IN_SGD, ");
+        sqlQuery.append(" A.NET_KF_MILES_VAL_IN_SGD, A.TRANS_FARE_PAID_IN_SGD, A.TRANS_KF_MILES_VAL_IN_SGD");
+        //Added By Hari for MKP91775 - PwM Start
+        sqlQuery.append(" ,A.NET_TAX_PAID_IN_LC, A.NET_TAX_PAID_IN_SGD");
+        //Added By Hari for MKP91775 - PwM End
+        sqlQuery.append(" , A.ORIG_CURRENCY_CD"); // SUBHA - MKP91492 - Added for the Account Summary screen changes
+        sqlQuery.append(" , A.initial_action_cd , A.rfic_cd , A.rfic_desc  ");
+
 
         String paramName = "award";
         String[] arrToReplace = {"kfNumber", "programCode"};

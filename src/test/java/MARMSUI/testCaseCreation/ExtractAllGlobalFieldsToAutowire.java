@@ -20,7 +20,7 @@ public class ExtractAllGlobalFieldsToAutowire {
         String basePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java";
         File file = new File(basePath);
         iterateAllFiles(file);
-        String classNameToSearch = "QualificationServiceImpl";
+        String classNameToSearch = "ReserveValServiceImpl";
         extractFields(mapOfClassNameToPath.get(classNameToSearch), classNameToSearch);
         System.out.println(setOfTypesToAutowire.size() + "\n =================================\nFields to autowire:\n");
         printRelevantFields("/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/database/sql/persistence/mappers");

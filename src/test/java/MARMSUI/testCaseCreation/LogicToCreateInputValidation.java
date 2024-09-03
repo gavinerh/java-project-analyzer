@@ -4,8 +4,14 @@ import java.lang.reflect.Field;
 
 public class LogicToCreateInputValidation {
     public static void main(String[] args) throws ClassNotFoundException {
-        String apiName = "reserveval";
-        generateValidation(apiName, "com.sg.sq.marmsui.vo.reserveval.ReserveValRequest");
+        int month = 2;
+
+        switch (month) {
+            case 1 -> System.out.println("1");
+            case 2 -> System.out.println("2");
+            case 3 -> System.out.println("3");
+            case 4 -> System.out.println("4");
+        }
     }
 
     private static void generateValidation(String apiName, String nameOfClass) throws ClassNotFoundException {

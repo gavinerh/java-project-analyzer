@@ -6,12 +6,12 @@ import java.util.*;
 
 public class CopyOnlyNonDuplicates {
     public static void main(String[] args) {
-        String fromFilePath = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/business/customer/tier/TierConstant.java";
-        String toFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/constant/TierConstant.java";
+        String fromFilePath = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/business/activity/overdraft/OverdraftConstant.java";
+        String toFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/constant/OverdraftConstant.java";
         // change this only
-        String fileToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/data/QualificationData.java";
-        String patternToIdentify = "TierConstant.";
-        String fieldDeclaration = "public final static";
+        String fileToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/Overdraft.java";
+        String patternToIdentify = "OverdraftConstant.";
+        String fieldDeclaration = "public static final";
 
         try {
             FileInputStream fileInputStream = new FileInputStream(fileToExamine);
