@@ -38,7 +38,7 @@ public class VerifyAllExampleClassResponse {
         RemoveDuplicateMethods.printSetContents(methodsStringFromFile,new FileWriter(outputFile));
         FileInputStream fileInputStream = new FileInputStream(outputFile);
         List<TestModel> testModelList = iterateFileContentAndPopulateTestModel(fileInputStream);
-        System.out.println(testModelList.size());
+        System.out.println("Start: " + testModelList.size());
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
@@ -48,6 +48,7 @@ public class VerifyAllExampleClassResponse {
         fileInputStream.close();
         printWhenMethodCalls();
         printComplexMethodCalls();
+        System.out.println("End");
     }
 
     private static void printComplexMethodCalls(){
@@ -318,7 +319,7 @@ public class VerifyAllExampleClassResponse {
     }
 
     private static String generateExampleInstance(String condition, String val, TestModel testModel) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        String basePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/database/sql/persistence/model";
+        String basePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/database/sql/persistence/model";
         String className = generateTypeFromExampleClass(testModel.objectClassName);
         String actualPath = basePath + "/" + className + ".java";
         String generatedField = transformConditionToField(condition);

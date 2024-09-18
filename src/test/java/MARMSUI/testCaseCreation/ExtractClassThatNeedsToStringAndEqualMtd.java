@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 
 public class ExtractClassThatNeedsToStringAndEqualMtd {
     public static void main(String[] args) throws IOException {
-        String toStringAlreadyAdded = "CusSeatPrefExample\n" +
+        // Todo: must change the toStringAlreadyAdded variable reference to either qual or profile app
+        String toStringAlreadyAddedForProfile = "CusSeatPrefExample\n" +
                 "EmailDomainInfoExample\n" +
                 "ReferenceCdExample\n" +
                 "CusOinfltPrefExample\n" +
@@ -46,8 +47,15 @@ public class ExtractClassThatNeedsToStringAndEqualMtd {
                 "CountryAddrFormatExample\n" +
                 "CustomerCardIssVo\n" +
                 "CusTierQualExample\n" +
-                "CusSupplInfo";
-        List<String> classesAlreadyAdded = Arrays.stream(toStringAlreadyAdded.split("\n")).collect(Collectors.toList());
+                "CusSupplInfo\n" +
+                "CusNextKinExample\n" +
+                "CusRdpnNomineesExample";
+        String toStringAlreadyAddedForQual = "ReferenceCdExample\n" +
+                "CusSeatPrefExample\nCusOinfltPrefExample\nMileageSumExample\nCusSupplInfoExample\n" +
+                "ApiConfigExample\nCusFamilyInfoExample\nCusAccountExample\nCusPersExample\nCusPhoneExample\n" +
+                "TierQual\nCusAddrAud\nEventLogVo\nCard\nCusAddnInfoExample\nCustomerTier\nCusCreditCardExample\n" +
+                "CusAlternateNameExample\nErrRecExample\nPPSYearQual";
+        List<String> classesAlreadyAdded = Arrays.stream(toStringAlreadyAddedForQual.split("\n")).collect(Collectors.toList());
         FileInputStream fileInputStream = new FileInputStream("/Users/macuser/Desktop/response_content");
         Set<String> set = new HashSet<>();
         extractClassName(set, fileInputStream);

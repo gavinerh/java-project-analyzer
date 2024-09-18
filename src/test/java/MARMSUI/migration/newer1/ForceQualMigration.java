@@ -12,10 +12,10 @@ import java.util.Map;
 public class ForceQualMigration {
     public static void main(String[] args) throws JsonProcessingException {
         String jsonString = "{\n" +
-                "                    \"tierStatus\": \"G\",\n" +
+                "\"tierStatus\": \"T\",\n" +
                 "                    \"chkChangeQualStart\": {\n" +
                 "                        \"description\": \"Change Qual start Date\",\n" +
-                "                        \"isEnabled\": \"Y\",\n" +
+                "                        \"isEnabled\": \"N\",\n" +
                 "                        \"value\": \"N\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
@@ -29,16 +29,16 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkRecalReserveVal\": {\n" +
                 "                        \"description\": \"Recalculate Reserve Value\",\n" +
-                "                        \"isEnabled\": \"N\",\n" +
+                "                        \"isEnabled\": \"Y\",\n" +
                 "                        \"value\": \"N\",\n" +
-                "                        \"visible\": \"N\",\n" +
+                "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"lblPre\": {\n" +
                 "                        \"description\": \"(Pre Requalification)\",\n" +
                 "                        \"isEnabled\": \"N\",\n" +
                 "                        \"value\": null,\n" +
-                "                        \"visible\": \"N\",\n" +
+                "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": null\n" +
                 "                    },\n" +
                 "                    \"chkIncrementQppYears\": {\n" +
@@ -52,12 +52,12 @@ public class ForceQualMigration {
                 "                        \"description\": \"Re-instate Reserve Value\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
                 "                        \"value\": \"N\",\n" +
-                "                        \"visible\": \"N\",\n" +
+                "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"chkRequalDisable\": {\n" +
                 "                        \"description\": \"Disable Early Requalification\",\n" +
-                "                        \"isEnabled\": \"Y\",\n" +
+                "                        \"isEnabled\": \"N\",\n" +
                 "                        \"value\": \"N\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
@@ -65,7 +65,7 @@ public class ForceQualMigration {
                 "                    \"chkAwardTier\": {\n" +
                 "                        \"description\": \"Award Tier Bonus\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": \"N\",\n" +
+                "                        \"value\": \"Y\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
@@ -79,7 +79,7 @@ public class ForceQualMigration {
                 "                    \"chkYears\": {\n" +
                 "                        \"description\": \"Increment Years\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": \"N\",\n" +
+                "                        \"value\": \"Y\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
@@ -104,26 +104,26 @@ public class ForceQualMigration {
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"Text\"\n" +
                 "                    },\n" +
-                "                    \"forceExtLimitEnabled\": \"Y\",\n" +
-                "                    \"forceExtLimit\": 12,\n" +
+                "                    \"forceExtLimitEnabled\": \"N\",\n" +
+                "                    \"forceExtLimit\": 0,\n" +
                 "                    \"dateSelection\": [\n" +
                 "                        {\n" +
-                "                            \"description\": \"Expiry Date\",\n" +
+                "                            \"description\": \"Current Date\",\n" +
                 "                            \"isEnabled\": \"Y\",\n" +
                 "                            \"value\": {\n" +
-                "                                \"qualStartDt\": \"2024-06-05 00:00:00\",\n" +
-                "                                \"qualEndDt\": \"2026-06-30 00:00:00\",\n" +
-                "                                \"extensionStartDt\": \"2025-07-01 00:00:00\",\n" +
+                "                                \"qualStartDt\": \"2024-09-18 14:34:35\",\n" +
+                "                                \"qualEndDt\": \"2025-09-30 14:34:35\",\n" +
+                "                                \"extensionStartDt\": null,\n" +
                 "                                \"reinstateStartDt\": null,\n" +
                 "                                \"otherDate\": null\n" +
                 "                            },\n" +
                 "                            \"visible\": \"Y\",\n" +
                 "                            \"type\": \"Radio\"\n" +
                 "                        }\n" +
-                "                    ]\n" +
+                "                    ]" +
                 "                }";
-        String flattenedJson = flattenJsonString(jsonString);
-        Map<String, Object> objectMap = extractFieldFromJsonString(flattenedJson);
+//        String flattenedJson = flattenJsonString(jsonString);
+        Map<String, Object> objectMap = extractFieldFromJsonString(jsonString);
         printMapToJsonString(objectMap);
     }
 
