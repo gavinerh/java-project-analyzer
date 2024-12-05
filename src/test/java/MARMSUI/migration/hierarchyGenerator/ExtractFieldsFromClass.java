@@ -1,4 +1,4 @@
-package MARMSUI.migration;
+package MARMSUI.migration.hierarchyGenerator;
 
 import MARMSUI.migration.model.Type;
 import com.github.javaparser.JavaParser;

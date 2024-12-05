@@ -14,7 +14,7 @@ public class CheckIfClassOrInterface {
 
     // prints interface or class
     public static void main(String[] args) {
-        String val = execute("/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java");
+        String val = execute("/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/controller/ReserveValController.java");
         System.out.println(val);
     }
     public static String execute(String filePath) {

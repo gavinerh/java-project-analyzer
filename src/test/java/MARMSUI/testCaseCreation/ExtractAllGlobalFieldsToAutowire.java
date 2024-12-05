@@ -17,10 +17,10 @@ public class ExtractAllGlobalFieldsToAutowire {
     static Set<String> setOfTypesToAutowire = new HashSet<>();
 
     public static void main(String[] args) {
-        String basePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java";
+        String basePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java";
         File file = new File(basePath);
         iterateAllFiles(file);
-        String classNameToSearch = "CustomerServiceImpl";
+        String classNameToSearch = "NonExpiryMiles";
         extractFields(mapOfClassNameToPath.get(classNameToSearch), classNameToSearch);
         System.out.println(setOfTypesToAutowire.size() + "\n =================================\nFields to autowire:\n");
         printRelevantFields("/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/database/sql/persistence/mappers");

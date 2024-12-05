@@ -54,7 +54,8 @@ public class ExtractClassThatNeedsToStringAndEqualMtd {
                 "CusSeatPrefExample\nCusOinfltPrefExample\nMileageSumExample\nCusSupplInfoExample\n" +
                 "ApiConfigExample\nCusFamilyInfoExample\nCusAccountExample\nCusPersExample\nCusPhoneExample\n" +
                 "TierQual\nCusAddrAud\nEventLogVo\nCard\nCusAddnInfoExample\nCustomerTier\nCusCreditCardExample\n" +
-                "CusAlternateNameExample\nErrRecExample\nPPSYearQual";
+                "CusAlternateNameExample\nErrRecExample\nPPSYearQual\nTransReserveVal\nPPSReserveVal\nPromotionAward\n" +
+                "QuarterlyBucketPoints\nCusBucketPoints\nMileageSum\nTicketSourceInfo\nTransBucketPoints";
         List<String> classesAlreadyAdded = Arrays.stream(toStringAlreadyAddedForQual.split("\n")).collect(Collectors.toList());
         FileInputStream fileInputStream = new FileInputStream("/Users/macuser/Desktop/response_content");
         Set<String> set = new HashSet<>();

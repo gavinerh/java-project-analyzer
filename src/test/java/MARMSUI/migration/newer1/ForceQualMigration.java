@@ -12,7 +12,7 @@ import java.util.Map;
 public class ForceQualMigration {
     public static void main(String[] args) throws JsonProcessingException {
         String jsonString = "{\n" +
-                "\"tierStatus\": \"T\",\n" +
+                "\"tierStatus\": \"S\",\n" +
                 "                    \"chkChangeQualStart\": {\n" +
                 "                        \"description\": \"Change Qual start Date\",\n" +
                 "                        \"isEnabled\": \"N\",\n" +
@@ -29,16 +29,16 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkRecalReserveVal\": {\n" +
                 "                        \"description\": \"Recalculate Reserve Value\",\n" +
-                "                        \"isEnabled\": \"Y\",\n" +
+                "                        \"isEnabled\": \"N\",\n" +
                 "                        \"value\": \"N\",\n" +
-                "                        \"visible\": \"Y\",\n" +
+                "                        \"visible\": \"N\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"lblPre\": {\n" +
                 "                        \"description\": \"(Pre Requalification)\",\n" +
                 "                        \"isEnabled\": \"N\",\n" +
                 "                        \"value\": null,\n" +
-                "                        \"visible\": \"Y\",\n" +
+                "                        \"visible\": \"N\",\n" +
                 "                        \"type\": null\n" +
                 "                    },\n" +
                 "                    \"chkIncrementQppYears\": {\n" +
@@ -52,7 +52,7 @@ public class ForceQualMigration {
                 "                        \"description\": \"Re-instate Reserve Value\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
                 "                        \"value\": \"N\",\n" +
-                "                        \"visible\": \"Y\",\n" +
+                "                        \"visible\": \"N\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"chkRequalDisable\": {\n" +
@@ -111,8 +111,8 @@ public class ForceQualMigration {
                 "                            \"description\": \"Current Date\",\n" +
                 "                            \"isEnabled\": \"Y\",\n" +
                 "                            \"value\": {\n" +
-                "                                \"qualStartDt\": \"2024-09-18 14:34:35\",\n" +
-                "                                \"qualEndDt\": \"2025-09-30 14:34:35\",\n" +
+                "                                \"qualStartDt\": \"2024-11-20 13:16:19\",\n" +
+                "                                \"qualEndDt\": \"2025-11-30 13:16:19\",\n" +
                 "                                \"extensionStartDt\": null,\n" +
                 "                                \"reinstateStartDt\": null,\n" +
                 "                                \"otherDate\": null\n" +

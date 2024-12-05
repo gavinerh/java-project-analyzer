@@ -13,7 +13,7 @@ import java.util.List;
 //String filePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
 public class CheckIfThereAreInterfacesImplemented {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 
         String filePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/QualificationService.java";
@@ -26,7 +26,7 @@ public class CheckIfThereAreInterfacesImplemented {
         }
     }
 
-    public static List<String> execute(String filePath) {
+    public static List<String> execute(String filePath) throws IOException {
         try {
             List<String> interfaces = getImplementedInterfaces(filePath);
             if (interfaces.isEmpty()) {
@@ -36,8 +36,8 @@ public class CheckIfThereAreInterfacesImplemented {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            throw e;
         }
-        return null;
     }
 
     public static List<String> getImplementedInterfaces(String filePath) throws IOException {
