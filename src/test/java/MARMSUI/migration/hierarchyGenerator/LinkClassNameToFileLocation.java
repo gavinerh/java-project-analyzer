@@ -32,12 +32,12 @@ public class LinkClassNameToFileLocation {
                 }
                 if(type.equals("class")) {
                     if (map.containsKey(MappingAllMethodsInClass.extractClassName(file.getAbsolutePath()))) {
-                        throw new RuntimeException("Duplicate class name found");
+                        throw new RuntimeException("Duplicate class name found: " + MappingAllMethodsInClass.extractClassName(file.getAbsolutePath()));
                     }
                     map.put(MappingAllMethodsInClass.extractClassName(file.getAbsolutePath()), file.getAbsolutePath());
                 } else if (type.equals("interface")) {
                     if (interfacesMap.containsKey(MappingAllMethodsInClass.extractClassName(file.getAbsolutePath()))) {
-                        throw new RuntimeException("Duplicate class name found");
+                        throw new RuntimeException("Duplicate interface name found: " + MappingAllMethodsInClass.extractClassName(file.getAbsolutePath()));
                     }
                     interfacesMap.put(MappingAllMethodsInClass.extractClassName(file.getAbsolutePath()), file.getAbsolutePath());
                 }

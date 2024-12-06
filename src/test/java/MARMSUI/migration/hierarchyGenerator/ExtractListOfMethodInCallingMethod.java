@@ -1,6 +1,7 @@
 package MARMSUI.migration.hierarchyGenerator;
 
 import MARMSUI.migration.hierarchyGenerator.model.MethodCallDetails;
+import MARMSUI.migration.hierarchyGenerator.model.MethodChain;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static MARMSUI.migration.hierarchyGenerator.MappingAllMethodsInClass.extractClassName;
 
 //        String filePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
 //        String methodName = "getDetailsFromServerAndInitialize";
@@ -44,11 +47,56 @@ public class ExtractListOfMethodInCallingMethod {
         }
     }
 
-    public static List<MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration> execute(String currentFilePath, String methodNameUnderInspection) throws IOException {
+    // only call this method from main
+    public static MethodChain getMethodChain(String currentFilePath, String methodNameUnderInspection, Map<String,String> mapOfClassToFilePath, Map<String,String> mapOfInterfaceToImpl) throws IOException {
+        List<MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration> methodCallDetailsList = execute(currentFilePath, methodNameUnderInspection);
+        String className = extractClassName(currentFilePath);
+        MethodChain methodChain = new MethodChain(methodNameUnderInspection, className);
+        for (MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration methodDeclaration : methodCallDetailsList) {
+//            if(methodDeclaration.methodName.equals("validateAccountStatus")) {
+//                System.out.println("Found the method");
+//            }
+            add actual parent node to the child method chain
+            MethodChain childMethodChain = new MethodChain(methodDeclaration.methodName, methodDeclaration.variableType == null || methodDeclaration.variableType.isBlank() ? className : methodDeclaration.variableType);
+            childMethodChain.addParentMethodChain(new MethodChain(methodNameUnderInspection, className));
+            // recursively add child method chains
+            String childFilePath = null;
+            if(methodDeclaration.variableType == null) {
+                childFilePath = currentFilePath;
+            } else {
+                childFilePath = extractFilePathFromMapOfInterfaceToImpl(mapOfClassToFilePath,mapOfInterfaceToImpl,methodDeclaration.variableType);
+                if(childFilePath == null) {
+                    // a class not an interface is entered
+                    childFilePath = mapOfClassToFilePath.get(methodDeclaration.variableType);
+                }
+            }
+            MethodChain childMethodChain1 = null;
+            if(childFilePath == null) {
+                // probably reached one of the interface with no implementation like a mapper class
+                System.out.println("No implementation found for interface: " + methodDeclaration.variableType);
+            } else {
+                childMethodChain1 = getMethodChain(childFilePath, methodDeclaration.methodName,mapOfClassToFilePath,mapOfInterfaceToImpl);
+                childMethodChain.setChildMethodChains(childMethodChain1.getChildMethodChains());
+//                childMethodChain.addChildMethodChain(childMethodChain1);
+            }
+            methodChain.addChildMethodChain(childMethodChain);
+        }
+        return methodChain;
+    }
+
+    private static String extractFilePathFromMapOfInterfaceToImpl(Map<String,String> mapOfClassToFilePath, Map<String,String> mapOfInterfaceToImpl,String interfaceName) {
+        String className = mapOfInterfaceToImpl.get(interfaceName);
+        return mapOfClassToFilePath.get(className);
+    }
+
+    private static List<MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration> execute(String currentFilePath, String methodNameUnderInspection) throws IOException {
         List<MethodCallDetails> methodCallDetails = analyzeMethodCalls(currentFilePath,methodNameUnderInspection);
         List<MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration> methodDeclarations = new ArrayList<>();
         for(MethodCallDetails detail : methodCallDetails) {
             MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration declaration = new MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration(null,detail.getMethodCallExpr().getArguments().size());
+            if(detail.getFieldType() != null && detail.getFieldType().equals("Logger")) {
+                continue;
+            }
             declaration.methodName = detail.getMethodName();
             declaration.variableName = detail.getFieldName();
             declaration.variableType = detail.getFieldType();

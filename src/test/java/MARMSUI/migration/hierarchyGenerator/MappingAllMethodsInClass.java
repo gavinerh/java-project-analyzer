@@ -19,32 +19,23 @@ public class MappingAllMethodsInClass {
     // store all method declaration in the class into a map
     // key: className + methodName + no. of parameters, value: method declaration
     static Map<String, List<MethodInfo>> methodDeclarationMap;
+    static String className;
 
     //    public static void main(String[] args) {
 //        methodDeclarationMap = new HashMap<>();
 //    }
     public static void main(String[] args) {
-        methodDeclarationMap = new HashMap<>();
-
         String filePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
+        Map<String,List<MethodInfo>>map = getMethodDeclarationMap(filePath);
+        System.out.println(map.size());
+    }
 
-        try (FileInputStream in = new FileInputStream(filePath)) {
-            CompilationUnit cu = StaticJavaParser.parse(in);
-
-            List<MethodInfo> methodInfos = new ArrayList<>();
-            cu.accept(new MethodVisitor(), methodInfos);
-
-            // Print the extracted method information
-            for (MethodInfo methodInfo : methodInfos) {
-                if(methodInfo.getModifiers().isEmpty()) {
-                    System.out.println(String.format("There are no modifiers declared for %s method in %s", methodInfo.getMethodName(),filePath));
-                }
-                storeMethodInfoInMap(methodInfo, methodInfo.getMethodName(), extractClassName(filePath));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    // call this method from outside to get the method declaration map
+    public static Map<String,List<MethodInfo>> getMethodDeclarationMap(String filePath) {
+        methodDeclarationMap = new HashMap<>();
+        className = extractClassName(filePath);
+        execute(filePath);
+        return methodDeclarationMap;
     }
 
     public static void execute(String filePath) {
@@ -67,7 +58,7 @@ public class MappingAllMethodsInClass {
                 storeMethodInfoInMap(methodInfo, methodInfo.getMethodName(), extractClassName(filePath));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error in MappingAllMethodsInClass: " + e);
         }
     }
 
@@ -85,7 +76,7 @@ public class MappingAllMethodsInClass {
             MethodInfo methodInfo = new MethodInfo();
             methodInfo.setMethodName(md.getNameAsString());
             methodInfo.setReturnType(md.getType().asString());
-            methodInfo.setClassName(md.getNameAsString());
+            methodInfo.setClassName(className);
 
             List<String> modifiers = new ArrayList<>();
             md.getModifiers().forEach(modifier -> modifiers.add(modifier.getKeyword().asString()));
@@ -105,13 +96,13 @@ public class MappingAllMethodsInClass {
     }
 
     private static void storeMethodInfoInMap(MethodInfo methodInfo, String methodName, String className) {
-        if(methodDeclarationMap.containsKey(className + "-" + methodName)) {
-            List<MethodInfo> methodInfoList = methodDeclarationMap.get(className + "-" + methodName);
+        if(methodDeclarationMap.containsKey(methodName)) {
+            List<MethodInfo> methodInfoList = methodDeclarationMap.get(methodName);
             methodInfoList.add(methodInfo);
         } else {
             List<MethodInfo> methodInfoList = new ArrayList<>();
             methodInfoList.add(methodInfo);
-            methodDeclarationMap.put(className + "-" + methodName, methodInfoList);
+            methodDeclarationMap.put(methodName, methodInfoList);
         }
     }
 

@@ -1,5 +1,6 @@
 package MARMSUI.migration.hierarchyGenerator;
 
+import MARMSUI.migration.hierarchyGenerator.model.MethodChain;
 import MARMSUI.migration.hierarchyGenerator.util.CheckIfThereAreInterfacesImplemented;
 
 import java.io.FileNotFoundException;
@@ -23,14 +24,20 @@ public class Main {
         Map<String, String> mapOfInterfaceToImplementation = new HashMap<>();
         String baseFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui";
         LinkClassNameToFileLocation.execute(baseFilePath, mapOfClassNameToFileLocation, mapOfInterfaceToFileLocation);
-//        System.out.println(mapOfInterfaceToFileLocation.size());
-        linkClassImplToInterface(mapOfClassNameToFileLocation, mapOfInterfaceToFileLocation, mapOfInterfaceToImplementation);
+
+//        linkClassImplToInterface(mapOfClassNameToFileLocation, mapOfInterfaceToFileLocation, mapOfInterfaceToImplementation);
+        generateTemporaryLinksFromInterfaceToImpl(mapOfInterfaceToImplementation);
+        for(String key : mapOfInterfaceToImplementation.keySet()) {
+            System.out.println(key + ":" + mapOfInterfaceToImplementation.get(key));
+        }
         // all the interfaces are now linked to their implementations
         // can continue to find the starting method and populate the hierarchy from there
         Map<String,Map<String,String>> mapOfClassNameToMapOfFieldVariableToType = new HashMap<>();
         String startingClass = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
         String startingMethod = "getDetailsFromServer";
 
+        MethodChain chain = ExtractListOfMethodInCallingMethod.getMethodChain(startingClass, startingMethod, mapOfClassNameToFileLocation, mapOfInterfaceToImplementation);
+        System.out.println(chain);
         // continue to create a method to loop through all the methods in the class and populate the hierarchy
         // use the MethodChain model to help create the chain
         // from the classes that are visited, populate the total methods declared in the class in a new map, in case it is called later in the method chain
@@ -45,8 +52,31 @@ public class Main {
         // the entered method name and class name will be found in the map and hierarchy will be generated frm there
     }
 
+    private static void generateTemporaryLinksFromInterfaceToImpl(Map<String,String> mapOfInterfaceToClass) {
+        String links = "CustomerUpdateAccountService:CustomerUpdateAccountServiceImpl\n" +
+                "AdminFee:AdminFeeImpl\n" +
+                "ReserveValService:ReserveValServiceImpl\n" +
+                "TierHandlerService:TierHandlerServiceImpl\n" +
+                "MenuService:MenuServiceImpl\n" +
+                "QualificationService:QualificationServiceImpl\n" +
+                "LSLServiceHandler:LSLServiceHandlerImpl\n" +
+                "CustomerIDHandler:CustomerIDHandlerImpl\n" +
+                "Collateral:CollateralImpl\n" +
+                "AirAccrualService:AirAccrualServiceImpl\n" +
+                "VoucherService:VoucherServiceImpl\n" +
+                "ChangeEventListener:CustomEventListener";
+        String[] linkArray = links.split("\n");
+        for(String link : linkArray) {
+            String[] linkSplit = link.split(":");
+            mapOfInterfaceToClass.put(linkSplit[0],linkSplit[1]);
+        }
+    }
+
     private static void linkClassImplToInterface(Map<String, String> mapOfClassNameToFileLocation, Map<String, String> mapOfInterfaceToFileLocation, Map<String, String> mapOfInterfaceToImplementation) throws IOException {
         for (String cls : mapOfClassNameToFileLocation.keySet()) {
+            if(cls.endsWith("Vo") || cls.endsWith("Key")) {
+                continue;
+            }
             List<String> interfaceList = CheckIfThereAreInterfacesImplemented.execute(mapOfClassNameToFileLocation.get(cls));
             if (interfaceList != null) {
                 if(interfaceList.size() > 1) {

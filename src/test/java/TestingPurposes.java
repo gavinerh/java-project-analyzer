@@ -22,6 +22,7 @@ public class TestingPurposes {
     }
 
 
+
     private static void iterateFiles(File file, String basedir, String packageName, List<String> fileNames) throws IOException, CloneNotSupportedException {
         for (File innerFile : file.listFiles()) {
             if (innerFile.isDirectory()) {
