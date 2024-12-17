@@ -9,8 +9,19 @@ public class MethodChain {
     private int paramsCount;
     private List<MethodChain> parentMethodChains; // if the size is 0, then it is the root method chain
     private List<MethodChain> childMethodChains;
+    private boolean toKeep;
 
+    public void removeLastChild() {
+        this.childMethodChains.remove(this.childMethodChains.size() - 1);
+    }
 
+    public boolean isToKeep() {
+        return toKeep;
+    }
+
+    public void setToKeep(boolean toKeep) {
+        this.toKeep = toKeep;
+    }
 
     public MethodChain(String methodName, String className) {
         this.methodName = methodName;

@@ -3,11 +3,8 @@ package MARMSUI.migration.hierarchyGenerator;
 import MARMSUI.migration.hierarchyGenerator.model.MethodChain;
 import MARMSUI.migration.hierarchyGenerator.util.CheckIfThereAreInterfacesImplemented;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
     // 1. start with mapping class names to their respective file location and concurrently map their interfaces with implementation
@@ -27,14 +24,16 @@ public class Main {
 
 //        linkClassImplToInterface(mapOfClassNameToFileLocation, mapOfInterfaceToFileLocation, mapOfInterfaceToImplementation);
         generateTemporaryLinksFromInterfaceToImpl(mapOfInterfaceToImplementation);
-        for(String key : mapOfInterfaceToImplementation.keySet()) {
+        for (String key : mapOfInterfaceToImplementation.keySet()) {
             System.out.println(key + ":" + mapOfInterfaceToImplementation.get(key));
         }
         // all the interfaces are now linked to their implementations
         // can continue to find the starting method and populate the hierarchy from there
-        Map<String,Map<String,String>> mapOfClassNameToMapOfFieldVariableToType = new HashMap<>();
+        Map<String, Map<String, String>> mapOfClassNameToMapOfFieldVariableToType = new HashMap<>();
         String startingClass = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
-        String startingMethod = "getDetailsFromServer";
+        String startingMethod = "parent1";
+        String cName = "QualificationServiceImpl";
+
 
         MethodChain chain = ExtractListOfMethodInCallingMethod.getMethodChain(startingClass, startingMethod, mapOfClassNameToFileLocation, mapOfInterfaceToImplementation);
         System.out.println(chain);
@@ -50,9 +49,90 @@ public class Main {
         // allow the program to add in accept the class name and method name as input
 
         // the entered method name and class name will be found in the map and hierarchy will be generated frm there
+
+        String className = "";
+        String methodName = "";
+        Scanner scanner = new Scanner(System.in);
+        Stack<String> hierarchyList = new Stack<>();
+        while (true) {
+            className = getUserInput("Enter class Name: ", scanner);
+            methodName = getUserInput("Enter method Name: ", scanner);
+            if (className == null || methodName == null) {
+                break;
+            }
+            MethodChain dupChain = new MethodChain(null, null);
+            // Todo: need to consider multiple parents calling this method u enter into program to search
+//            extractHierarchyFromChain(className, methodName, chain, hierarchyList);
+            extractHierarchyFromChainModified(className, methodName, chain, dupChain);
+            System.out.println(dupChain);
+            int count = 1;
+//            for(String val : hierarchyList) {
+//                System.out.println(count + ": " + val);
+//                count++;
+//            }
+//            hierarchyList.clear();
+        }
+        scanner.close();
     }
 
-    private static void generateTemporaryLinksFromInterfaceToImpl(Map<String,String> mapOfInterfaceToClass) {
+    private static String extractHierarchyFromChainModified(String className, String methodName, MethodChain chain, MethodChain newChain) {
+        if (newChain.getClassName() == null && newChain.getMethodName() == null) {
+            // initialise the dup chain
+            newChain.setClassName(chain.getClassName());
+            newChain.setMethodName(chain.getMethodName());
+        }
+        boolean flag = false;
+        if (chain.getClassName().equalsIgnoreCase(className) && chain.getMethodName().equalsIgnoreCase(methodName)) {
+//            newChain.addChildMethodChain(chain);
+            return chain.getClassName() + "." + chain.getMethodName();
+        } else {
+            for (MethodChain child : chain.getChildMethodChains()) {
+                MethodChain dupChild = new MethodChain(child.getMethodName(), child.getClassName());
+                newChain.addChildMethodChain(dupChild);
+                String val = extractHierarchyFromChainModified(className, methodName, child, dupChild);
+                if (val != null) {
+                    flag = true;
+                }
+                if (val == null && !flag) {
+                    newChain.removeLastChild();
+
+                }
+            } // after adding flag to preserve the state that the method was found, need to add a condition to remove the last child if the method was not found
+            // Todo: Test with more complex data
+            return null;
+        }
+    }
+
+    // Todo: modify this method to allow for multiple parents calling the same child method
+    // Todo: work on the MethodChain class and create method to remove the child that is not relevant
+    private static String extractHierarchyFromChain(String className, String methodName, MethodChain chain, Stack<String> hierarchyList) {
+        if (chain.getClassName().equalsIgnoreCase(className) && chain.getMethodName().equalsIgnoreCase(methodName)) {
+            hierarchyList.add(chain.getClassName() + "." + chain.getMethodName());
+            return chain.getClassName() + "." + chain.getMethodName();
+        } else {
+            for (MethodChain child : chain.getChildMethodChains()) {
+                hierarchyList.add(chain.getClassName() + "." + chain.getMethodName());
+                String val = extractHierarchyFromChain(className, methodName, child, hierarchyList);
+                if (val == null) {
+                    hierarchyList.pop();
+                } else {
+                    return val;
+                }
+            }
+            return null;
+        }
+    }
+
+    private static String getUserInput(String toPrintToConsole, Scanner scanner) {
+        System.out.print(toPrintToConsole);
+        String val = scanner.nextLine();
+        if (val.equals("-")) {
+            return null;
+        }
+        return val;
+    }
+
+    private static void generateTemporaryLinksFromInterfaceToImpl(Map<String, String> mapOfInterfaceToClass) {
         String links = "CustomerUpdateAccountService:CustomerUpdateAccountServiceImpl\n" +
                 "AdminFee:AdminFeeImpl\n" +
                 "ReserveValService:ReserveValServiceImpl\n" +
@@ -66,25 +146,25 @@ public class Main {
                 "VoucherService:VoucherServiceImpl\n" +
                 "ChangeEventListener:CustomEventListener";
         String[] linkArray = links.split("\n");
-        for(String link : linkArray) {
+        for (String link : linkArray) {
             String[] linkSplit = link.split(":");
-            mapOfInterfaceToClass.put(linkSplit[0],linkSplit[1]);
+            mapOfInterfaceToClass.put(linkSplit[0], linkSplit[1]);
         }
     }
 
     private static void linkClassImplToInterface(Map<String, String> mapOfClassNameToFileLocation, Map<String, String> mapOfInterfaceToFileLocation, Map<String, String> mapOfInterfaceToImplementation) throws IOException {
         for (String cls : mapOfClassNameToFileLocation.keySet()) {
-            if(cls.endsWith("Vo") || cls.endsWith("Key")) {
+            if (cls.endsWith("Vo") || cls.endsWith("Key")) {
                 continue;
             }
             List<String> interfaceList = CheckIfThereAreInterfacesImplemented.execute(mapOfClassNameToFileLocation.get(cls));
             if (interfaceList != null) {
-                if(interfaceList.size() > 1) {
+                if (interfaceList.size() > 1) {
                     System.out.println("Multiple interfaces implemented in " + cls + " were " + interfaceList.toString());
                 }
                 // link the interface to the implementation
-                if(mapOfInterfaceToFileLocation.containsKey(interfaceList.get(0))) {
-                    if(mapOfInterfaceToImplementation.containsKey(interfaceList.get(0))) {
+                if (mapOfInterfaceToFileLocation.containsKey(interfaceList.get(0))) {
+                    if (mapOfInterfaceToImplementation.containsKey(interfaceList.get(0))) {
                         System.out.println("Duplicate implementation found for the interface " + interfaceList.get(0));
                     }
                     mapOfInterfaceToImplementation.put(interfaceList.get(0), cls);

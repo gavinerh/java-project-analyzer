@@ -2,6 +2,7 @@ package MARMSUI.migration.hierarchyGenerator;
 
 import MARMSUI.migration.hierarchyGenerator.model.MethodCallDetails;
 import MARMSUI.migration.hierarchyGenerator.model.MethodChain;
+import com.github.javaparser.Range;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -14,10 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,16 +47,21 @@ public class ExtractListOfMethodInCallingMethod {
 
     // only call this method from main
     public static MethodChain getMethodChain(String currentFilePath, String methodNameUnderInspection, Map<String,String> mapOfClassToFilePath, Map<String,String> mapOfInterfaceToImpl) throws IOException {
+        // Todo: accept another map from the calling method to store the details of each methodChain with the respective list parent methods
         List<MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration> methodCallDetailsList = execute(currentFilePath, methodNameUnderInspection);
         String className = extractClassName(currentFilePath);
         MethodChain methodChain = new MethodChain(methodNameUnderInspection, className);
         for (MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration methodDeclaration : methodCallDetailsList) {
+            Optional<Range> rangeOptional = methodDeclaration.methodCallDetails.getMethodCallExpr().getRange();
+            Range range = rangeOptional.get();
+            int line = range.begin.line;
 //            if(methodDeclaration.methodName.equals("validateAccountStatus")) {
 //                System.out.println("Found the method");
 //            }
-            add actual parent node to the child method chain
+//            add actual parent node to the child method chain
+            // Todo: add to the new map to be added to this method declaration, combine className, methodName and line number to create key to the object to be inserted into map
             MethodChain childMethodChain = new MethodChain(methodDeclaration.methodName, methodDeclaration.variableType == null || methodDeclaration.variableType.isBlank() ? className : methodDeclaration.variableType);
-            childMethodChain.addParentMethodChain(new MethodChain(methodNameUnderInspection, className));
+            childMethodChain.addParentMethodChain(methodChain);
             // recursively add child method chains
             String childFilePath = null;
             if(methodDeclaration.variableType == null) {
