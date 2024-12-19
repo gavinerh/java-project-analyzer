@@ -2,6 +2,7 @@ package MARMSUI.migration.hierarchyGenerator;
 
 import MARMSUI.migration.hierarchyGenerator.model.MethodChain;
 import MARMSUI.migration.hierarchyGenerator.util.CheckIfThereAreInterfacesImplemented;
+import MARMSUI.migration.hierarchyGenerator.util.SavingHierarchyInFile;
 
 import java.io.IOException;
 import java.util.*;
@@ -31,12 +32,13 @@ public class Main {
         // can continue to find the starting method and populate the hierarchy from there
         Map<String, Map<String, String>> mapOfClassNameToMapOfFieldVariableToType = new HashMap<>();
         String startingClass = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
-        String startingMethod = "parent1";
+        String startingMethod = "forceQualifyByOnline";
         String cName = "QualificationServiceImpl";
 
 
         MethodChain chain = ExtractListOfMethodInCallingMethod.getMethodChain(startingClass, startingMethod, mapOfClassNameToFileLocation, mapOfInterfaceToImplementation);
         System.out.println(chain);
+        SavingHierarchyInFile.saveHierarchyInFile(chain,"/Users/macuser/Desktop/hierarchy-generator/forcequal-map");
         // continue to create a method to loop through all the methods in the class and populate the hierarchy
         // use the MethodChain model to help create the chain
         // from the classes that are visited, populate the total methods declared in the class in a new map, in case it is called later in the method chain
@@ -50,6 +52,10 @@ public class Main {
 
         // the entered method name and class name will be found in the map and hierarchy will be generated frm there
 
+        //  Todo: to restore extractHierarchyGivenEndMethodDetails(chain);
+    }
+
+    private static void extractHierarchyGivenEndMethodDetails(MethodChain chain) {
         String className = "";
         String methodName = "";
         Scanner scanner = new Scanner(System.in);
@@ -75,7 +81,9 @@ public class Main {
         scanner.close();
     }
 
-    private static String extractHierarchyFromChainModified(String className, String methodName, MethodChain chain, MethodChain newChain) {
+
+
+    private static boolean extractHierarchyFromChainModified(String className, String methodName, MethodChain chain, MethodChain newChain) {
         if (newChain.getClassName() == null && newChain.getMethodName() == null) {
             // initialise the dup chain
             newChain.setClassName(chain.getClassName());
@@ -84,22 +92,21 @@ public class Main {
         boolean flag = false;
         if (chain.getClassName().equalsIgnoreCase(className) && chain.getMethodName().equalsIgnoreCase(methodName)) {
 //            newChain.addChildMethodChain(chain);
-            return chain.getClassName() + "." + chain.getMethodName();
+            return true;
         } else {
             for (MethodChain child : chain.getChildMethodChains()) {
                 MethodChain dupChild = new MethodChain(child.getMethodName(), child.getClassName());
                 newChain.addChildMethodChain(dupChild);
-                String val = extractHierarchyFromChainModified(className, methodName, child, dupChild);
-                if (val != null) {
+                boolean val = extractHierarchyFromChainModified(className, methodName, child, dupChild);
+                if(val) {
                     flag = true;
                 }
-                if (val == null && !flag) {
+                if (!val) {
                     newChain.removeLastChild();
-
                 }
             } // after adding flag to preserve the state that the method was found, need to add a condition to remove the last child if the method was not found
             // Todo: Test with more complex data
-            return null;
+            return flag;
         }
     }
 

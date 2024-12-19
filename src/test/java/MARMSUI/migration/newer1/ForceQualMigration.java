@@ -11,8 +11,7 @@ import java.util.Map;
 
 public class ForceQualMigration {
     public static void main(String[] args) throws JsonProcessingException {
-        String jsonString = "{\n" +
-                "\"tierStatus\": \"S\",\n" +
+        String jsonString = "{\"tierStatus\": \"Q\",\n" +
                 "                    \"chkChangeQualStart\": {\n" +
                 "                        \"description\": \"Change Qual start Date\",\n" +
                 "                        \"isEnabled\": \"N\",\n" +
@@ -22,7 +21,7 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkCardIssBySQ\": {\n" +
                 "                        \"description\": \"Card Already Issued by SQ\",\n" +
-                "                        \"isEnabled\": \"Y\",\n" +
+                "                        \"isEnabled\": \"N\",\n" +
                 "                        \"value\": \"N\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
@@ -64,8 +63,8 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkAwardTier\": {\n" +
                 "                        \"description\": \"Award Tier Bonus\",\n" +
-                "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": \"Y\",\n" +
+                "                        \"isEnabled\": \"N\",\n" +
+                "                        \"value\": \"N\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
@@ -78,8 +77,8 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkYears\": {\n" +
                 "                        \"description\": \"Increment Years\",\n" +
-                "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": \"Y\",\n" +
+                "                        \"isEnabled\": \"N\",\n" +
+                "                        \"value\": \"N\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
@@ -109,17 +108,17 @@ public class ForceQualMigration {
                 "                    \"dateSelection\": [\n" +
                 "                        {\n" +
                 "                            \"description\": \"Current Date\",\n" +
-                "                            \"isEnabled\": \"Y\",\n" +
+                "                            \"isEnabled\": \"N\",\n" +
                 "                            \"value\": {\n" +
-                "                                \"qualStartDt\": \"2024-11-20 13:16:19\",\n" +
-                "                                \"qualEndDt\": \"2025-11-30 13:16:19\",\n" +
+                "                                \"qualStartDt\": \"2024-12-19 08:45:09\",\n" +
+                "                                \"qualEndDt\": \"2025-12-31 08:45:09\",\n" +
                 "                                \"extensionStartDt\": null,\n" +
                 "                                \"reinstateStartDt\": null,\n" +
                 "                                \"otherDate\": null\n" +
                 "                            },\n" +
                 "                            \"visible\": \"Y\",\n" +
                 "                            \"type\": \"Radio\"\n" +
-                "                        }\n" +
+                "                        }" +
                 "                    ]" +
                 "                }";
 //        String flattenedJson = flattenJsonString(jsonString);
