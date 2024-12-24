@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class ExtractHierarchyFromFile {
     public static void main(String[] args) {
-        MethodChain chain = extractHierarchyFromFile("/Users/macuser/Desktop/hierarchy-generator/map");
+        // Todo: to change the file path
+        MethodChain chain = extractHierarchyFromFile("/Users/macuser/Desktop/hierarchy-generator/updatecust-map");
         System.out.println(chain);
 
     }
@@ -63,7 +64,7 @@ public class ExtractHierarchyFromFile {
             String line;
             while ((line = reader.readLine()) != null) {
                 String classPlusMtd = line.split(":")[1];
-                map.put(line.split(":")[0], new MethodChain(splitBySth("\\.",classPlusMtd)[0],splitBySth("\\.",classPlusMtd)[1]));
+                map.put(line.split(":")[0], new MethodChain(splitBySth("\\.",classPlusMtd)[1],splitBySth("\\.",classPlusMtd)[0]));
             }
         } catch (IOException e) {
             System.err.println("An IOException was caught: " + e.getMessage());

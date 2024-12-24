@@ -20,25 +20,25 @@ public class Main {
         Map<String, String> mapOfClassNameToFileLocation = new HashMap<>();
         Map<String, String> mapOfInterfaceToFileLocation = new HashMap<>();
         Map<String, String> mapOfInterfaceToImplementation = new HashMap<>();
-        String baseFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui";
+        String baseFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui";
         LinkClassNameToFileLocation.execute(baseFilePath, mapOfClassNameToFileLocation, mapOfInterfaceToFileLocation);
 
-//        linkClassImplToInterface(mapOfClassNameToFileLocation, mapOfInterfaceToFileLocation, mapOfInterfaceToImplementation);
-        generateTemporaryLinksFromInterfaceToImpl(mapOfInterfaceToImplementation);
-        for (String key : mapOfInterfaceToImplementation.keySet()) {
-            System.out.println(key + ":" + mapOfInterfaceToImplementation.get(key));
-        }
+        linkClassImplToInterface(mapOfClassNameToFileLocation, mapOfInterfaceToFileLocation, mapOfInterfaceToImplementation);
+//        generateTemporaryLinksFromInterfaceToImplForQual(mapOfInterfaceToImplementation);
+//        for (String key : mapOfInterfaceToImplementation.keySet()) {
+//            System.out.println(key + ":" + mapOfInterfaceToImplementation.get(key));
+//        }
         // all the interfaces are now linked to their implementations
         // can continue to find the starting method and populate the hierarchy from there
         Map<String, Map<String, String>> mapOfClassNameToMapOfFieldVariableToType = new HashMap<>();
-        String startingClass = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
-        String startingMethod = "forceQualifyByOnline";
+        String startingClass = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/service/impl/UpdateCustomerSelectiveServiceImpl.java";
+        String startingMethod = "updateSelectiveDetails";
         String cName = "QualificationServiceImpl";
 
 
         MethodChain chain = ExtractListOfMethodInCallingMethod.getMethodChain(startingClass, startingMethod, mapOfClassNameToFileLocation, mapOfInterfaceToImplementation);
         System.out.println(chain);
-        SavingHierarchyInFile.saveHierarchyInFile(chain,"/Users/macuser/Desktop/hierarchy-generator/forcequal-map");
+        SavingHierarchyInFile.saveHierarchyInFile(chain,"/Users/macuser/Desktop/hierarchy-generator/updatecust-map");
         // continue to create a method to loop through all the methods in the class and populate the hierarchy
         // use the MethodChain model to help create the chain
         // from the classes that are visited, populate the total methods declared in the class in a new map, in case it is called later in the method chain
@@ -139,7 +139,7 @@ public class Main {
         return val;
     }
 
-    private static void generateTemporaryLinksFromInterfaceToImpl(Map<String, String> mapOfInterfaceToClass) {
+    private static void generateTemporaryLinksFromInterfaceToImplForQual(Map<String, String> mapOfInterfaceToClass) {
         String links = "CustomerUpdateAccountService:CustomerUpdateAccountServiceImpl\n" +
                 "AdminFee:AdminFeeImpl\n" +
                 "ReserveValService:ReserveValServiceImpl\n" +
@@ -180,4 +180,6 @@ public class Main {
 
         }
     }
+
+
 }

@@ -55,9 +55,6 @@ public class ExtractListOfMethodInCallingMethod {
             Optional<Range> rangeOptional = methodDeclaration.methodCallDetails.getMethodCallExpr().getRange();
             Range range = rangeOptional.get();
             int line = range.begin.line;
-//            if(methodDeclaration.methodName.equals("validateAccountStatus")) {
-//                System.out.println("Found the method");
-//            }
 //            add actual parent node to the child method chain
             // Todo: add to the new map to be added to this method declaration, combine className, methodName and line number to create key to the object to be inserted into map
             MethodChain childMethodChain = new MethodChain(methodDeclaration.methodName, methodDeclaration.variableType == null || methodDeclaration.variableType.isBlank() ? className : methodDeclaration.variableType);
@@ -67,6 +64,9 @@ public class ExtractListOfMethodInCallingMethod {
             if(methodDeclaration.variableType == null) {
                 childFilePath = currentFilePath;
             } else {
+                if(methodDeclaration.variableType.equals("UpdateUserInfoService")) {
+                    System.out.println("found it");
+                }
                 childFilePath = extractFilePathFromMapOfInterfaceToImpl(mapOfClassToFilePath,mapOfInterfaceToImpl,methodDeclaration.variableType);
                 if(childFilePath == null) {
                     // a class not an interface is entered
@@ -80,6 +80,49 @@ public class ExtractListOfMethodInCallingMethod {
             } else {
                 childMethodChain1 = getMethodChain(childFilePath, methodDeclaration.methodName,mapOfClassToFilePath,mapOfInterfaceToImpl);
                 childMethodChain.setChildMethodChains(childMethodChain1.getChildMethodChains());
+//                childMethodChain.addChildMethodChain(childMethodChain1);
+            }
+            methodChain.addChildMethodChain(childMethodChain);
+        }
+        return methodChain;
+    }
+
+    public static MethodChain getMethodChainImproved(String currentFilePath, String methodNameUnderInspection, Map<String,String> mapOfClassToFilePath, Map<String,String> mapOfInterfaceToImpl) throws IOException {
+        // Todo: accept another map from the calling method to store the details of each methodChain with the respective list parent methods
+        List<MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration> methodCallDetailsList = execute(currentFilePath, methodNameUnderInspection);
+        String className = extractClassName(currentFilePath);
+        MethodChain methodChain = new MethodChain(methodNameUnderInspection, className);
+        for (MARMSUI.migration.hierarchyGenerator.model.MethodDeclaration methodDeclaration : methodCallDetailsList) {
+            Optional<Range> rangeOptional = methodDeclaration.methodCallDetails.getMethodCallExpr().getRange();
+            Range range = rangeOptional.get();
+            int line = range.begin.line;
+//            add actual parent node to the child method chain
+            // Todo: add to the new map to be added to this method declaration, combine className, methodName and line number to create key to the object to be inserted into map
+            MethodChain childMethodChain = new MethodChain(methodDeclaration.methodName, methodDeclaration.variableType == null || methodDeclaration.variableType.isBlank() ? className : methodDeclaration.variableType);
+            childMethodChain.addParentMethodChain(methodChain);
+            // recursively add child method chains
+            String childFilePath = null;
+            if(methodDeclaration.variableType == null) {
+                childFilePath = currentFilePath;
+            } else {
+//                modifyMethodChainClassName()
+                if(methodDeclaration.variableType.equals("EmailServiceMarms")) {
+                    System.out.println("found it");
+                }
+                childFilePath = extractFilePathFromMapOfInterfaceToImpl(mapOfClassToFilePath,mapOfInterfaceToImpl,methodDeclaration.variableType);
+                if(childFilePath == null) {
+                    // a class not an interface is entered
+                    childFilePath = mapOfClassToFilePath.get(methodDeclaration.variableType);
+                }
+            }
+            MethodChain childMethodChain1 = null;
+            if(childFilePath == null) {
+                // probably reached one of the interface with no implementation like a mapper class
+                System.out.println("No implementation found for interface: " + methodDeclaration.variableType);
+            } else {
+                childMethodChain1 = getMethodChainImproved(childFilePath, methodDeclaration.methodName,mapOfClassToFilePath,mapOfInterfaceToImpl);
+                childMethodChain.setChildMethodChains(childMethodChain1.getChildMethodChains());
+                childMethodChain.setClassName(extractClassName(childFilePath));
 //                childMethodChain.addChildMethodChain(childMethodChain1);
             }
             methodChain.addChildMethodChain(childMethodChain);

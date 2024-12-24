@@ -15,6 +15,37 @@ public class LinkClassNameToFileLocation {
         Map<String,String> map = new HashMap<>();
     }
 
+
+    public static void executeModifiedForComplex(String basePath, Map<String,String> map, Map<String,String> interfacesMap) throws FileNotFoundException {
+        File[] files = new File(basePath).listFiles();
+        for(File file : files) {
+            if (file.isDirectory()) {
+                executeModifiedForComplex(file.getAbsolutePath(), map, interfacesMap);
+            } else {
+                if(!file.getAbsolutePath().contains(".java")) continue;
+                String type = null;
+                try {
+                    type = CheckIfClassOrInterface.execute(file.getAbsolutePath());
+                } catch (Exception e) {
+                    System.out.println(file.getAbsolutePath() + " threw error");
+                    e.printStackTrace();
+                    throw new RuntimeException("Error in checking type");
+                }
+                if(type.equals("class")) {
+                    if (map.containsKey(file.getAbsolutePath())) {
+                        throw new RuntimeException("Duplicate class name found: " + file.getAbsolutePath());
+                    }
+                    map.put(file.getAbsolutePath(), file.getAbsolutePath());
+                } else if (type.equals("interface")) {
+                    if (interfacesMap.containsKey(file.getAbsolutePath())) {
+                        throw new RuntimeException("Duplicate interface name found: " + file.getAbsolutePath());
+                    }
+                    interfacesMap.put(file.getAbsolutePath(), file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
     public static void execute(String basePath, Map<String,String> map, Map<String,String> interfacesMap) throws FileNotFoundException {
         File[] files = new File(basePath).listFiles();
         for(File file : files) {
