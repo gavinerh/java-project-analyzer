@@ -19,6 +19,7 @@ public class CompleteSqlQueryConverter {
     static Map<String, String> mapOfTypes = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
+//        mapOfTypes.put("o","map");
         mapOfTypes.put("m", "resultMap");
         mapOfTypes.put("t", "resultType");
         mapOfTypes.put("s", "select");
@@ -30,6 +31,7 @@ public class CompleteSqlQueryConverter {
         mapOfTypes.put("int", "java.lang.Integer");
         mapOfTypes.put("integer", "java.lang.Integer");
         mapOfTypes.put("date", "java.util.Date");
+        mapOfTypes.put("map","map");
         Map<String, String> paramObjMap = new HashMap<>();
         File resultMapFileInput = null;
         Scanner scanner = new Scanner(System.in);

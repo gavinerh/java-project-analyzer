@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ForceQualMigration {
     public static void main(String[] args) throws JsonProcessingException {
-        String jsonString = "{\"tierStatus\": \"Q\",\n" +
+        String jsonString = "{\"tierStatus\": \"G\",\n" +
                 "                    \"chkChangeQualStart\": {\n" +
                 "                        \"description\": \"Change Qual start Date\",\n" +
                 "                        \"isEnabled\": \"N\",\n" +
@@ -21,7 +21,7 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkCardIssBySQ\": {\n" +
                 "                        \"description\": \"Card Already Issued by SQ\",\n" +
-                "                        \"isEnabled\": \"N\",\n" +
+                "                        \"isEnabled\": \"Y\",\n" +
                 "                        \"value\": \"N\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
@@ -63,8 +63,8 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkAwardTier\": {\n" +
                 "                        \"description\": \"Award Tier Bonus\",\n" +
-                "                        \"isEnabled\": \"N\",\n" +
-                "                        \"value\": \"N\",\n" +
+                "                        \"isEnabled\": \"Y\",\n" +
+                "                        \"value\": \"Y\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
@@ -77,8 +77,8 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkYears\": {\n" +
                 "                        \"description\": \"Increment Years\",\n" +
-                "                        \"isEnabled\": \"N\",\n" +
-                "                        \"value\": \"N\",\n" +
+                "                        \"isEnabled\": \"Y\",\n" +
+                "                        \"value\": \"Y\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
@@ -108,18 +108,18 @@ public class ForceQualMigration {
                 "                    \"dateSelection\": [\n" +
                 "                        {\n" +
                 "                            \"description\": \"Current Date\",\n" +
-                "                            \"isEnabled\": \"N\",\n" +
+                "                            \"isEnabled\": \"Y\",\n" +
                 "                            \"value\": {\n" +
-                "                                \"qualStartDt\": \"2024-12-19 08:45:09\",\n" +
-                "                                \"qualEndDt\": \"2025-12-31 08:45:09\",\n" +
+                "                                \"qualStartDt\": \"2025-02-13 15:34:08\",\n" +
+                "                                \"qualEndDt\": \"2026-02-28 15:34:08\",\n" +
                 "                                \"extensionStartDt\": null,\n" +
                 "                                \"reinstateStartDt\": null,\n" +
                 "                                \"otherDate\": null\n" +
                 "                            },\n" +
                 "                            \"visible\": \"Y\",\n" +
                 "                            \"type\": \"Radio\"\n" +
-                "                        }" +
-                "                    ]" +
+                "                        }\n" +
+                "                    ]\n" +
                 "                }";
 //        String flattenedJson = flattenJsonString(jsonString);
         Map<String, Object> objectMap = extractFieldFromJsonString(jsonString);

@@ -1,41 +1,134 @@
 import org.mapstruct.factory.Mappers;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TestingPurposes {
 
+    private static String template = "Moving from %s --> %s";
 
     private static MapperClone mapperClone = Mappers.getMapper(MapperClone.class);
 
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
-        String basedir = "com.sg.sq.marmsui.vo.";
-        String dirToIterate = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/vo";
-        File file = new File(dirToIterate);
-        List<String> fileNames = new ArrayList<>();
-        iterateFiles(file, basedir, "", fileNames);
-        for(String name : fileNames) {
-            System.out.print("\"" + name + "\",");
-        }
+        hanoi(3,"A","B","C");
     }
 
+    private static void hanoi(int count, String source, String inter,String dest) {
+        if(count == 1) {
+            System.out.println(String.format(template,source,dest));
+            return;
+        }
+        hanoi(count-1,source,dest,inter);
+        hanoi(1,source,inter,dest);
+        hanoi(count-1,inter,source,dest);
+    }
 
-
-    private static void iterateFiles(File file, String basedir, String packageName, List<String> fileNames) throws IOException, CloneNotSupportedException {
-        for (File innerFile : file.listFiles()) {
-            if (innerFile.isDirectory()) {
-                iterateFiles(innerFile, basedir, packageName + innerFile.getName() + ".", fileNames);
-            } else {
-                if (innerFile.getName().endsWith(".java")) {
-                    String className = innerFile.getName().replace(".java", "");
-                    String fullClassName = basedir + packageName + className;
-                    fileNames.add(fullClassName);
+    public static Map<String,List<Integer>> createMapping(int[] A) {
+        // Implement your solution here
+        Map<String,List<Integer>> map = new HashMap<>();
+        for(int i : A) {
+            int[] firstAndLast = getFirstLast(i);
+            String key = generateKey(firstAndLast);
+            List<Integer> list = map.get(key);
+            if(list == null) {
+                list = new ArrayList<>();
+            }
+            list.add(i);
+            map.put(key,list);
+            for(int j=1; j<A.length; j++) {
+                int[] next = getFirstLast(A[j]);
+                if(firstAndLast[0] == next[0] && firstAndLast[1] == next[1]) {
+                    // first and last match, add to map
+                    if(map.containsKey(key)) {
+                        list.add(A[j]);
+                    }
                 }
             }
         }
-
-
+        return map;
     }
+
+
+    private static String generateKey(int[] arr) {
+        return String.format("%d%d",arr[0],arr[1]);
+    }
+
+    private static int[] getFirstLast(int val) {
+        if(val < 10) {
+            return new int[]{0,val};
+        }
+        String valString = String.valueOf(val);
+        int first = Integer.parseInt(valString.substring(0,1));
+        int last = Integer.parseInt(valString.substring(valString.length()-1));
+        return new int[]{first,last};
+    }
+
+    private static int getLongestBinaryGap(List<Integer> binList) {
+        int largest = 0;
+        int current = 0;
+        for(int i=binList.size()- 1; i>=0; i--) {
+            if(binList.get(i)==0) {
+                current++;
+            } else if(binList.get(i) != 0){
+                largest = current >= largest ? current : largest;
+                current = 0;
+            }
+            if(i == 0 && binList.get(i) == 0) {
+                current = 0;
+            }
+        }
+        largest = current >= largest ? current : largest;
+        return largest;
+    }
+
+    private static List<Integer> convertIntegerToBinary(int val) {
+        List<Integer> bin = new ArrayList<>();
+        if(val == 0) {
+            return bin;
+        }
+        while(val > 0) {
+            bin.add(val % 2);
+            val = val / 2;
+        }
+        return bin;
+    }
+
+
+    private static int solutionDup(int[] A) {
+        int[] sortedArr = Arrays.stream(A).sorted().toArray();
+        int smallestInt = 1;
+        Integer prevInt = null;
+        for (int i = 0; i < sortedArr.length; i++) {
+            // loop through the arr and
+            if(prevInt != null && prevInt == sortedArr[i]) {
+                continue;
+            }
+            if (sortedArr[i] != smallestInt) {
+                break;
+            }
+            // increment the smallest int when its the first number
+            if(prevInt == null || prevInt != sortedArr[i]) {
+                smallestInt++;
+            }
+            prevInt = sortedArr[i];
+        }
+        return smallestInt;
+    }
+
+    private static void printPath(List<String> paths) {
+        String template = "{%s}";
+        String innerTemplate = "\"%s\",";
+        String finalString = "";
+        for (String path : paths) {
+            finalString += String.format(innerTemplate, path);
+        }
+        System.out.println(String.format(template, finalString));
+    }
+
+    private static String removeExtension(String path, String end) {
+        int endInd = path.indexOf(end);
+        return path.substring(0, endInd);
+    }
+
+
 }
