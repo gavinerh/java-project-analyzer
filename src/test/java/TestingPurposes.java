@@ -10,8 +10,55 @@ public class TestingPurposes {
     private static MapperClone mapperClone = Mappers.getMapper(MapperClone.class);
 
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
-        hanoi(3,"A","B","C");
+//        System.out.println(1/2);
+        int[] arr = new int[]{9,3,5,7,3,37,11,2,1,8,10};
+        mergesort(arr, 0, arr.length-1);
+        System.out.println(arr);
     }
+
+    private static void mergesort(int[] arr, int left, int right) {
+        if(left < right) {
+            int mid = (left + right) / 2;
+            mergesort(arr, left, mid);
+            mergesort(arr, mid+1, right);
+            merge(arr,left,mid,right);
+        } else {
+            // should be the same for left and right
+            return;
+        }
+    }
+
+    private static void merge(int[] arr, int left, int mid, int right) {
+        // inplace merge
+        int[] dupArr = new int[right - left + 1];
+        int rightIndex = mid+1;
+        int leftIndex = left;
+        for(int i=0; i<dupArr.length; i++) {
+            if(leftIndex > mid) {
+                dupArr[i] = arr[rightIndex];
+                rightIndex++;
+            } else if (rightIndex > right) {
+                dupArr[i] = arr[leftIndex];
+                leftIndex++;
+            } else if(arr[leftIndex] < arr[rightIndex]) {
+                dupArr[i] = arr[leftIndex];
+                leftIndex++;
+            } else {
+                dupArr[i] = arr[rightIndex];
+                rightIndex++;
+            }
+        }
+
+        int index = 0;
+        for(int i = left; i <= right; i++) {
+            arr[i] = dupArr[index];
+            index++;
+        }
+    }
+
+
+
+
 
     private static void hanoi(int count, String source, String inter,String dest) {
         if(count == 1) {
