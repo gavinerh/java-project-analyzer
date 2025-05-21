@@ -1,5 +1,6 @@
 import org.mapstruct.factory.Mappers;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,36 +12,37 @@ public class TestingPurposes {
 
 
     public static void main(String[] args) {
-        String val = "'NM_profileupd','NM_prfupKFID','NM_prfupKFCN','NM_prflupPPS','NM_prfupPSCN','NM_prfupPSID','NM_LNKCHILD','NM_LNKPARENT','NM_LNKGUD','NM_LNKMIR','NM_HMALNK','NM_NTDLN','NM_NTLNK','NM_XODLN','NM_XOLNK','NM_XOLNKPPS','NM_TCLNK','NM_HMADLN','NM_TCDLN','NM_pinackKF','NM_pinackKFCN','NM_pinackKFID','NM_pinackPPS','NM_pwdackKF','NM_pwdackKFCN','NM_pwdackKFID','NM_pwdackPps','NM_HAACLNK','NM_HAACDLN'";
-        String[] originalArr = printLength(val);
-        System.out.println("==================================");
-        String valChanged = "'NMprfupd','NMprfKFID','NMprfKFCN','NMprfPPS','NMprfPSCN','NMprfPSID','NMLKCHILD','NMLKPARNT','NMLNKGUD','NMLNKMIR','NMHMALNK','NMNTDLN','NMNTLNK','NMXODLN','NMXOLNK','NMXOLNKPS','NMTCLNK','NMHMADLN','NMTCDLN','NMpinKF','NMpinKFCN','NMpinKFID','NMpinPPS','NMpwdKF','NMpwdKFCN','NMpwdKFID','NMpwdPps','NMHAACLNK','NMHAACDLN'";
-        String[] modifiedArr = printLength(valChanged);
-        Map<String,String> map = printOldMatchToNew(originalArr,modifiedArr);
-        System.out.println(map.size());
+        String fileName = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java";
+        String projPath = "com/sg/sq/marmsui/database/sql/persistence/model";
+        String projDirec = projPath.replaceAll("/", ".");
+        List<String> names = new ArrayList<>();
+        File files = new File(fileName + "/" + projPath);
+        for(File file : files.listFiles()) {
+            if(file.getName().endsWith("Vo.java") || file.getName().endsWith("Example.java")) {
+                continue;
+            }
+            String name = file.getName();
+            int end = name.indexOf(".java");
+            String truncated = name.substring(0,end);
+
+            names.add(projDirec + "." + truncated);
+        }
+        System.out.println(names.size());
+        for(String name : names) {
+            System.out.print(String.format("\"%s\",",name));
+        }
     }
 
-    private static Map<String,String> printOldMatchToNew(String[] val, String[] modified) {
-        Map<String,String> map = new HashMap<>();
-        if(val.length != modified.length) {
-            throw new RuntimeException("Length is not the same");
+    private static void compareTruncatedResult(Set<String> map, String menu) {
+        String truncated = menu.length() > 12 ? menu.substring(0,menu.length()-3) : menu;
+        if(map.contains(truncated)) {
+            System.out.println(String.format("%s is truncated and conflicts with truncated value of %s",menu, truncated));
+        } else {
+            map.add(truncated);
         }
-        for(int i=0; i<val.length; i++) {
-            System.out.println(String.format("%s -- %s",val[i],modified[i]));
-            map.put(val[i],modified[i]);
-        }
-        return map;
     }
 
-    private static String[] printLength(String val) {
-        String[] valArr = val.split(",");
-        for(int i=0; i<valArr.length; i++) {
-            String idModified = removeSingleQuotes(valArr[i]);
-            valArr[i] = idModified;
-            System.out.println(String.format("%s -- %d",idModified,idModified.length()));
-        }
-        return valArr;
-    }
+
 
     private static String removeSingleQuotes(String val) {
         return val.substring(1,val.length() - 1);

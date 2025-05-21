@@ -25,7 +25,8 @@ public class Main {
         // Todo: to change
         String absoluteBasePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/";
         // Todo: to change
-        String[] packageNotToSearchInService = new String[]{"accountSummary", "adminfee", "airredemption", "alteaservices", "common", "corporate", "customer", "customerservicing", "dataintegrity", "ecertrevalidation", "ecertservice", "eventlog", "ignoreupgradeonOAL", "milesadmin", "milesconversion", "mua", "nonairredemption", "promotion", "redemptionenquiry", "redemptionupgrade", "reference", "requestcertificate", "requestupgrade", "requestupgradeonOAL", "rewardVouchers", "sslinterface", "starmwservice", "upgradeonsq", "useraccess", "validation"};
+        String[] packageNotToSearchInService = new String[0];
+//                new String[]{"accountSummary", "adminfee", "airredemption", "alteaservices", "common", "corporate", "customer", "customerservicing", "dataintegrity", "ecertrevalidation", "ecertservice", "eventlog", "ignoreupgradeonOAL", "milesadmin", "milesconversion", "mua", "nonairredemption", "promotion", "redemptionenquiry", "redemptionupgrade", "reference", "requestcertificate", "requestupgrade", "requestupgradeonOAL", "rewardVouchers", "sslinterface", "starmwservice", "upgradeonsq", "useraccess", "validation"};
         String servicePackagePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/service";
 
         // extract all files to be inspected
@@ -44,7 +45,7 @@ public class Main {
         MethodChain chain = ExtractListOfMethodInCallingMethod.getMethodChainImproved(startingFilePath, startingMethod, mapOfClassNameToFileLocation, mapOfInterfaceToImplementation);
         System.out.println(chain);
 //        // Todo: to change
-        SavingHierarchyInFile.saveHierarchyInFile(chain,"/Users/macuser/Desktop/hierarchy-generator/updatecust-map");
+        SavingHierarchyInFile.saveHierarchyInFile(chain,"/Users/macuser/Desktop/hierarchy-generator/forcequal-map");
 
         System.out.println(mapOfInterfaceToImplementation);
     }
