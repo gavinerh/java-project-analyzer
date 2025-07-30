@@ -9,6 +9,15 @@ public class MethodDetails {
     private int numOfParameters = 0;
     private List<MethodDetails> childMethods;
     private boolean isDetailConfigured = false;
+    private Long val;
+
+    public Long getVal() {
+        return val;
+    }
+
+    public void setVal(Long val) {
+        this.val = val;
+    }
 
     public MethodDetails(String name) {
         this.name = name;

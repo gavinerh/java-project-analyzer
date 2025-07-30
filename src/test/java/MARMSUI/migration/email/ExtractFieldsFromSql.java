@@ -53,7 +53,7 @@ public class ExtractFieldsFromSql {
         String tableName = "MRM.USR_API_ACL";
 //        String columnToExtract = "email_subject";
 //        extractColumnValue();
-        printUpdateScripts(val,tableName, false);
+        printUpdateScripts(val,tableName, true);
 
     }
 
@@ -85,6 +85,13 @@ public class ExtractFieldsFromSql {
             System.out.print(String.format("'%s',",menu));
         }
         System.out.println("\nNo of menu ids: " + menuIds.size());
+        String printSelectApiCds = "Select * from usr_api_acl where api_cd in (%s);";
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String apiCd : apiCds) {
+            stringBuilder.append("").append(apiCd).append(",");
+        }
+        stringBuilder.replace(stringBuilder.length()-2,stringBuilder.length()-1,"");
+        System.out.println(String.format(printSelectApiCds, stringBuilder.toString()));
     }
 
     private static String transformMenuId(String old) {

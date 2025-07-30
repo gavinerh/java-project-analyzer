@@ -6,11 +6,11 @@ import java.util.*;
 
 public class CopyOnlyNonDuplicates {
     public static void main(String[] args) {
-        String fromFilePath = "/Users/macuser/Documents/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/business/activity/overdraft/OverdraftConstant.java";
-        String toFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/constant/OverdraftConstant.java";
+        String fromFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/constant/TierConstant.java";
+        String toFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/constant/TierConstant.java";
         // change this only
-        String fileToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/Overdraft.java";
-        String patternToIdentify = "OverdraftConstant.";
+        String fileToExamine = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/TierHandlerUtilTemp.java";
+        String patternToIdentify = "TierConstant.";
         String fieldDeclaration = "public static final";
 
         try {

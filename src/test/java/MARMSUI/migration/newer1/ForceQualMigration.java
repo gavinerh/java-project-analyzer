@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ForceQualMigration {
     public static void main(String[] args) throws JsonProcessingException {
-        String jsonString = "{\"tierStatus\": \"G\",\n" +
+        String jsonString = "{\"tierStatus\": \"S\",\n" +
                 "                    \"chkChangeQualStart\": {\n" +
                 "                        \"description\": \"Change Qual start Date\",\n" +
                 "                        \"isEnabled\": \"N\",\n" +
@@ -110,8 +110,8 @@ public class ForceQualMigration {
                 "                            \"description\": \"Current Date\",\n" +
                 "                            \"isEnabled\": \"Y\",\n" +
                 "                            \"value\": {\n" +
-                "                                \"qualStartDt\": \"2025-02-13 15:34:08\",\n" +
-                "                                \"qualEndDt\": \"2026-02-28 15:34:08\",\n" +
+                "                                \"qualStartDt\": \"2025-07-28 15:50:40\",\n" +
+                "                                \"qualEndDt\": \"2026-07-31 15:50:40\",\n" +
                 "                                \"extensionStartDt\": null,\n" +
                 "                                \"reinstateStartDt\": null,\n" +
                 "                                \"otherDate\": null\n" +

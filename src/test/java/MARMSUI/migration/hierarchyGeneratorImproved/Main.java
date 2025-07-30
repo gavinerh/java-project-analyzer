@@ -15,19 +15,19 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         // Todo: to change
-        String startingMethod = "updateSelectiveDetails";
+        String startingMethod = "forceQualifyByOnline";
         // Todo: to change
-        String startingFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/service/impl/UpdateCustomerSelectiveServiceImpl.java";
+        String startingFilePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/QualificationServiceImpl.java";
         // from the starting file, get all the files that are required from the import statements
         String importPrefix = "import com.sg.sq.marmsui";
         String[] stopLine = new String[]{"public class", "public interface"};
         Set<String> fileSet = new HashSet<>();
         // Todo: to change
-        String absoluteBasePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/";
+        String absoluteBasePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/";
         // Todo: to change
         String[] packageNotToSearchInService = new String[0];
 //                new String[]{"accountSummary", "adminfee", "airredemption", "alteaservices", "common", "corporate", "customer", "customerservicing", "dataintegrity", "ecertrevalidation", "ecertservice", "eventlog", "ignoreupgradeonOAL", "milesadmin", "milesconversion", "mua", "nonairredemption", "promotion", "redemptionenquiry", "redemptionupgrade", "reference", "requestcertificate", "requestupgrade", "requestupgradeonOAL", "rewardVouchers", "sslinterface", "starmwservice", "upgradeonsq", "useraccess", "validation"};
-        String servicePackagePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/service";
+        String servicePackagePath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service";
 
         // extract all files to be inspected
         ImportStatementExtractor.executeAndExtractFilePaths(startingFilePath, importPrefix, stopLine, absoluteBasePath, fileSet, packageNotToSearchInService, servicePackagePath);
@@ -45,7 +45,7 @@ public class Main {
         MethodChain chain = ExtractListOfMethodInCallingMethod.getMethodChainImproved(startingFilePath, startingMethod, mapOfClassNameToFileLocation, mapOfInterfaceToImplementation);
         System.out.println(chain);
 //        // Todo: to change
-        SavingHierarchyInFile.saveHierarchyInFile(chain,"/Users/macuser/Desktop/hierarchy-generator/forcequal-map");
+//        SavingHierarchyInFile.saveHierarchyInFile(chain,"/Users/macuser/Desktop/hierarchy-generator/forcequal-map");
 
         System.out.println(mapOfInterfaceToImplementation);
     }

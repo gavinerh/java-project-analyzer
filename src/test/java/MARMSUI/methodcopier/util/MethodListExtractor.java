@@ -1,4 +1,4 @@
-package MARMSUI.methodcopier;
+package MARMSUI.methodcopier.util;
 
 
 import MARMSUI.methodcopier.model.MethodDetails;
@@ -25,7 +25,9 @@ public class MethodListExtractor {
         System.out.println(mapOfMethodsToSaveToFile);
     }
 
-    private static void printListOfMethods(Path javaFilePath, Map<String, MethodDetails> mapOfMethods) {
+
+    // creates a hierarchy of methods in a given class
+    public static void printListOfMethods(Path javaFilePath, Map<String, MethodDetails> mapOfMethods) {
         try {
             // Path to the Java file you want to parse
 //            Path javaFilePath = Paths.get("/Users/macuser/Documents/updated-lsl-app/marms/MARMS/Source Code/Business Components/EJB/QualificationService/com/singaporeair/marms/abacus/business/customer/tier/QualificationServiceBean.java");
@@ -94,7 +96,7 @@ public class MethodListExtractor {
         }
     }
 
-    private static String getKey(MethodDetails methodDetails) {
+    public static String getKey(MethodDetails methodDetails) {
         return methodDetails.getName() + "-" + methodDetails.getNumOfParameters();
     }
 

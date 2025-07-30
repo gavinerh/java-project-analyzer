@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class QueryConv {
     public static void main(String[] args) throws FileNotFoundException {
-        String fileName = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/VoucherServiceImpl.java";
+        String fileName = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/codeupdate/service/impl/PointsHandlerImplNew.java";
         FileInputStream fileInputStream = new FileInputStream(fileName);
         Scanner scanner = new Scanner(fileInputStream);
         List<String> params = new ArrayList<>();
@@ -28,7 +28,7 @@ public class QueryConv {
             }
             if(line.contains("database.update(")) {
                 // use update method
-                System.out.println("Line: " + lineNo);
+                System.out.println("Line: " + lineNo + "\n");
                 String variableName = extractVariableName(".update(",line);
                 String paramToInsert = extractUpdateParam(".update(", line);
             } else if (line.contains("database.getQuery(") || line.contains(".getQuery")) {
@@ -37,7 +37,7 @@ public class QueryConv {
             } else if (line.contains("database.setQuery(") || line.contains(".setQuery")) {
                 System.out.println("Line: " + lineNo);
                 if(!printedAuditId) {
-                    System.out.println("cusAccountMapper.setAuditId(\"\");");
+                    System.out.println("adminFeesMapper.setAuditId(\"\");");
                 }
                 printStatement(".setQuery(",line, params);
             } else if (line.contains("query.bind(") || line.contains("qry.bind(") || line.contains(".bind(")) {
@@ -45,7 +45,7 @@ public class QueryConv {
             } else if ((line.contains("query.setAuditId(") || line.contains("qry.setAuditId(")) && !line.contains("adminFeesMapper.setAuditId(")) {
                 auditIdString = extractStringWithinParenthesis(".setAuditId(", line);
                 System.out.println("Line " + lineNo);
-                System.out.println(String.format("cusAccountMapper.setAuditId(%s);",auditIdString));
+                System.out.println(String.format("adminFeesMapper.setAuditId(%s);",auditIdString));
                 printedAuditId = true;
             }
         }

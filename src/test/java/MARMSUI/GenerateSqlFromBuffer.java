@@ -18,23 +18,22 @@ public class GenerateSqlFromBuffer {
         StringBuffer initial = new StringBuffer();
 
 
-        sqlQuery.append(" SELECT NVL(SUM(DECODE(trans_cd, 'TC', pts_awded, 'TD', -pts_awded, 'SC', pts_awded, 'SD', -pts_awded)),0) Elite_value ");
-        sqlQuery.append(" FROM AT_TRANS  Where Int_Id = ? And Prg_Cd = 'KF' AND Elite_Bucket_Flg = 'Y' And Flt_Awd_Dt Between trunc(?) and trunc(?) ");
-        sqlQuery.append(" And Trans_Cd In ('TC', 'TD', 'SC', 'SD') And decode(CD_SHARE_PRT, null, PRT_CD, CD_SHARE_PRT ) IN ('SQ','MI','TR') "); //Added TR for KFPROG-1128 by Saranya
-        sqlQuery.append(" UNION ALL ");
-        sqlQuery.append(" SELECT    NVL(SUM(DECODE(trans_cd, 'MC', CUR_ELITE_PTS, 'MD', -CUR_ELITE_PTS)),0) Elite_value ");
-        sqlQuery.append(" FROM PRT_CUS_MERGE WHERE INT_ID = ? And Prg_Cd = 'KF' And Cur_Elite_Pts != 0  ");
-        sqlQuery.append(" And Batch_Dt Between trunc(?) and trunc(?) And Trans_Cd In ('MC', 'MD') AND PRT_CD in ('SQ','MI','TR') ");//Added TR for KFPROG-1128 by Saranya
-        sqlQuery.append(" UNION ALL ");
-        sqlQuery.append(" SELECT NVL(SUM(DECODE(trans_cd, 'ZC', ELITE_BONUS_MILES_AWDED, 'ZD', -ELITE_BONUS_MILES_AWDED)),0) Elite_value ");
-        sqlQuery.append(" FROM PROMO_TRANS WHERE INT_ID = ? AND PRG_CD = 'KF' And Elite_Bonus_Miles_Awded != 0 AND Batch_Dt Between trunc(?) and trunc(?) ");
-        sqlQuery.append(" And Trans_Cd In ('ZC', 'ZD') AND PRT_CD in ('SQ','MI','TR') ");
+        sqlQuery.append(" SELECT * FROM ( ");
+        sqlQuery.append(" SELECT TIER_STATUS_IND, QLFY_IND, QLFY_START_DT, CUR_MILEAGE, " +
+                "		CUR_SECT_CNT, NO_YRS_QLYFIED, QLFY_END_DT, FORCE_QLFY_DT,  " +
+                "		FORCE_QLFY_EXTENDED_DT, NO_OF_EXTENDED_MTH, ORIG_EXP, " +
+                "		QLFD_DT, TIER_BONUS_AWARD_START_DT, TIER_BONUS_AWARD_END_DT, " +
+                "		YRS_IN_QPP, CUR_VAL " +
+                " FROM   HIS_CUS_PPS_QUAL HCPQ ");
+        sqlQuery.append(" WHERE  HCPQ.INT_ID = ? " +
+                " AND 	HCPQ.PRG_CD = ? " +
+                " ORDER BY RCRE_DATE DESC )");
 
 
         String paramName = "award";
-        String[] arrToReplace = {"internalId", "startDt","endDt","internalId", "startDt","endDt","internalId", "startDt","endDt"};
+        String[] arrToReplace = {"kfNumber","programCode"};
 
-        String[] arrTypes = {"NUMERIC","TIMESTAMP","TIMESTAMP","NUMERIC","TIMESTAMP","TIMESTAMP","NUMERIC","TIMESTAMP","TIMESTAMP"};
+        String[] arrTypes = {"VARCHAR","VARCHAR"};
 
 
         String toPrint = null;
