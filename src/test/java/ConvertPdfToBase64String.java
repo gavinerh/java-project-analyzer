@@ -5,7 +5,7 @@ import java.util.Base64;
 
 public class ConvertPdfToBase64String {
     public static void main(String[] args) {
-        String filePath = "/Users/macuser/Downloads/TEC_CN.pdf"; // specify the path to your PDF file
+        String filePath = "/Users/macuser/Desktop/holdingForTempFiles/RMC_Classified.csv"; // specify the path to your PDF file
         try {
             // Read the PDF file into a byte array
             byte[] pdfBytes = Files.readAllBytes(Paths.get(filePath));

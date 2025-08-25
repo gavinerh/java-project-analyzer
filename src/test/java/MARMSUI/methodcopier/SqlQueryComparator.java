@@ -9,12 +9,12 @@ public class SqlQueryComparator {
         while(true) {
             String formatted = receiveFormattedQuery();
             String raw = receiveRawquery();
-             compare(formatted.toLowerCase(),raw.toLowerCase());
+             compare(formatted.toLowerCase(),raw.toLowerCase(), true);
 
         }
     }
 
-    private static void compare(String formatted, String raw) {
+    public static int compare(String formatted, String raw, boolean toPrintSuccessMsg) {
         int left = 0;
         int right = 0;
         while(left != formatted.length() && right != raw.length()) {
@@ -31,15 +31,15 @@ public class SqlQueryComparator {
             if(rightChar != leftChar) {
                 System.out.println("Difference found");
                 System.out.println("Formatted: " + formatted.substring(0,left) + " <<<DIFF>>> " + formatted.substring(left));
-                System.out.println("Raw: " + raw.substring(0,right) + " <<<DIFF>>> " + raw.substring(right));
-                return;
+                System.out.println("Updated: " + raw.substring(0,right) + " <<<DIFF>>> " + raw.substring(right));
+                return -1;
             }
             right++;
             left++;
         }
         if(left < 20 || right < 20) {
             System.out.println("Comparison is not valid, inputs are too short");
-            return;
+            return -1;
         }
         if(left != formatted.length()) {
             String remaining = formatted.substring(left).trim();
@@ -47,7 +47,7 @@ public class SqlQueryComparator {
                 System.out.println("Difference found");
                 System.out.println("Formatted: " + formatted.substring(0,left) + " <<<DIFF>>> " + formatted.substring(left));
                 System.out.println("Raw: " + raw.substring(0,right) + " <<<DIFF>>> " + raw.substring(right));
-                return;
+                return -1;
             }
         }
         if(right != raw.length()) {
@@ -56,10 +56,11 @@ public class SqlQueryComparator {
                 System.out.println("Difference found");
                 System.out.println("Formatted: " + formatted.substring(0,left) + " <<<DIFF>>> " + formatted.substring(left));
                 System.out.println("Raw: " + raw.substring(0,right) + " <<<DIFF>>> " + raw.substring(right));
-                return;
+                return -1;
             }
         }
         System.out.println("Comparison is successful, inputs are similar");
+        return 0;
     }
 
     private static String receiveRawquery() {

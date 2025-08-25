@@ -14,7 +14,7 @@ public class ReplaceExceptionWithProperLogging {
         String template = "throw commonUtil.generateVerboseMarmsException(clsName + \".%s - \" + %s,ErrorConstants.SYSTEM_ERROR_CODE);";
         String templateForQuotes = "throw commonUtil.generateVerboseMarmsException(clsName + \".%s - \" + \"%s\",ErrorConstants.SYSTEM_ERROR_CODE);";
         String fileName = userEntersFileName("Enter file name:");
-        String toReplace = "new DataException(";
+        String[] toReplace = new String[]{"new DataException(","new SystemException("};
         FileInputStream fileInputStream = new FileInputStream(fileName);
         Scanner scanner = new Scanner(fileInputStream);
         boolean methodReached = false;
@@ -30,13 +30,15 @@ public class ReplaceExceptionWithProperLogging {
                 methodName = extractMethodName(line);
                 continue;
             }
-            if (line.contains(toReplace)) {
-                System.out.println("line no: " + lineNo);
-                String[] val = extractValuesWithinParams(line);
-                if (val[1].equals("Y")) {
-                    System.out.println(String.format(templateForQuotes, methodName, val[0]));
-                } else
-                    System.out.println(String.format(template, methodName, val[0]));
+            for(String replace : toReplace) {
+                if (line.contains(replace)) {
+                    System.out.println("line no: " + lineNo);
+                    String[] val = extractValuesWithinParams(line);
+                    if (val[1].equals("Y")) {
+                        System.out.println(String.format(templateForQuotes, methodName, val[0]));
+                    } else
+                        System.out.println(String.format(template, methodName, val[0]));
+                }
             }
 
 

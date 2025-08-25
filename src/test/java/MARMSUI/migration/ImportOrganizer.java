@@ -73,7 +73,7 @@ public class ImportOrganizer {
             if (!map.containsKey(currentFile.getName())) {
                 List<String> list = new ArrayList<>();
                 list.add(extractRelativePath(basePath, currentFile.getPath()));
-                map.put(extractFileName(currentFile.getName()), list);
+                map.put(extractFileName(currentFile.getName(), ".java"), list);
             } else {
                 List<String> existingList = new ArrayList<>();
                 System.out.println(currentFile.getName() + " was detected again");
@@ -107,8 +107,8 @@ public class ImportOrganizer {
         return finalPath;
     }
 
-    private static String extractFileName(String name) {
-        int endInd = name.indexOf(".java");
+    public static String extractFileName(String name, String endExt) {
+        int endInd = name.indexOf(endExt);
         return name.substring(0,endInd);
     }
 }

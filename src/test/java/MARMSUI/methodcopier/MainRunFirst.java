@@ -9,8 +9,8 @@ import java.util.Set;
 public class MainRunFirst {
     public static void main(String[] args) throws FileNotFoundException {
         // for partially migrated code to spring boot
-        String clsName = "ppsParticipantData";
-        String fileName = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/TierHandlerUtilTemp.java";
+        String clsName = "tierMileageSummaryData";
+        String fileName = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/migration/TierHandlerServiceImpl.java";
         Set<String> methodSet = new HashSet<>();
         FileInputStream fileInputStream = new FileInputStream(fileName);
         Scanner scanner = new Scanner(fileInputStream);

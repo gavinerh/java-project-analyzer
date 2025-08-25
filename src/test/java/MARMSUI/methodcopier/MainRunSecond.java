@@ -13,11 +13,11 @@ import java.util.Map;
 public class MainRunSecond {
     public static void main(String[] args) throws IOException {
         // change
-        String starterMethod = "getTierSummary-4";
+        String starterMethod = "getTierMileageInfo-2";
         // change
-        String sourceFile = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/util/TierHandlerUtilTemp.java";
+        String sourceFile = "/Users/macuser/Documents/updated-lsl-app/marms/MARMS/Source Code/Business Components/Common Classes/com/singaporeair/marms/abacus/dataaccess/customer/tier/TierMileageSummaryData.java";
         // change
-        String destinationFile = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/TierHandlerUtilTemp.java";
+        String destinationFile = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/migration/TierMileageSummaryData.java";
         String[] methods = starterMethod.split("\n");
         for(String mtd : methods) {
             execute(sourceFile,mtd,destinationFile);

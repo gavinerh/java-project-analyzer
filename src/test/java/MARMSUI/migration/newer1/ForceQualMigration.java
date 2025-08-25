@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ForceQualMigration {
     public static void main(String[] args) throws JsonProcessingException {
-        String jsonString = "{\"tierStatus\": \"S\",\n" +
+        String jsonString = "{\"tierStatus\": \"Q\",\n" +
                 "                    \"chkChangeQualStart\": {\n" +
                 "                        \"description\": \"Change Qual start Date\",\n" +
                 "                        \"isEnabled\": \"N\",\n" +
@@ -51,7 +51,7 @@ public class ForceQualMigration {
                 "                        \"description\": \"Re-instate Reserve Value\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
                 "                        \"value\": \"N\",\n" +
-                "                        \"visible\": \"N\",\n" +
+                "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"chkRequalDisable\": {\n" +
@@ -71,8 +71,8 @@ public class ForceQualMigration {
                 "                    \"chkReinstate\": {\n" +
                 "                        \"description\": \"Reinstate Cumulative Value\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": \"N\",\n" +
-                "                        \"visible\": \"N\",\n" +
+                "                        \"value\": \"Y\",\n" +
+                "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"chkYears\": {\n" +
@@ -99,7 +99,7 @@ public class ForceQualMigration {
                 "                    \"txtCardCode\": {\n" +
                 "                        \"description\": \"Card Create Code\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": null,\n" +
+                "                        \"value\": \"UP\",\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"Text\"\n" +
                 "                    },\n" +
@@ -107,14 +107,14 @@ public class ForceQualMigration {
                 "                    \"forceExtLimit\": 0,\n" +
                 "                    \"dateSelection\": [\n" +
                 "                        {\n" +
-                "                            \"description\": \"Current Date\",\n" +
+                "                            \"description\": \"Other Date\",\n" +
                 "                            \"isEnabled\": \"Y\",\n" +
                 "                            \"value\": {\n" +
-                "                                \"qualStartDt\": \"2025-07-28 15:50:40\",\n" +
-                "                                \"qualEndDt\": \"2026-07-31 15:50:40\",\n" +
+                "                                \"qualStartDt\": \"2024-08-01 00:00:00\",\n" +
+                "                                \"qualEndDt\": \"2025-08-31 00:00:00\",\n" +
                 "                                \"extensionStartDt\": null,\n" +
                 "                                \"reinstateStartDt\": null,\n" +
-                "                                \"otherDate\": null\n" +
+                "                                \"otherDate\": \"2024-08-01 00:00:00\"\n" +
                 "                            },\n" +
                 "                            \"visible\": \"Y\",\n" +
                 "                            \"type\": \"Radio\"\n" +
