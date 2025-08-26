@@ -1,4 +1,4 @@
-package MARMSUI.migration.ComparingMethodContents;
+package ComparingMethodContents;
 
 public class ComparisonResult {
     private String content;

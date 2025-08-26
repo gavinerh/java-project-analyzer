@@ -1,6 +1,5 @@
-package MARMSUI.migration.ComparingMethodContents;
+package ComparingMethodContents;
 
-import MARMSUI.methodcopier.SqlQueryComparator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -10,9 +9,9 @@ public class MethodBodyComparator {
 
     }
 
-    public static List<ComparisonResult> compareMethodBodies(MethodInfoExtractor.MethodInfo method1, MethodInfoExtractor.MethodInfo method2) {
+    public static List<ComparisonResult> compareMethodBodies(Main.MethodInfo method1, Main.MethodInfo method2) {
         // must make sure the parameters and method names are the same before calling this method
-        return compareAndFindAllDifferences(method1.getMethodBody(), method2.getMethodBody(), MethodInfoExtractor.generateUniqueMethodName(method1.getMethodName(),method1.getParameterTypes(),null));
+        return compareAndFindAllDifferences(method1.getMethodBody(), method2.getMethodBody(), Main.generateUniqueMethodName(method1.getMethodName(),method1.getParameterTypes(),null));
     }
 
     private static List<ComparisonResult> compareAndFindAllDifferences(String formatted, String raw, String uniqueName) {

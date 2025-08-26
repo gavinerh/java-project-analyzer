@@ -1,5 +1,4 @@
-package MARMSUI.migration.ComparingMethodContents;
-import MARMSUI.util.WriterToFile;
+package ComparingMethodContents;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -10,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MethodInfoExtractor {
+public class Main {
 
     public static class MethodInfo {
         private String methodName;
