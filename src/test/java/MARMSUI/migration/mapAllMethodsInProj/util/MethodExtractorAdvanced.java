@@ -66,7 +66,8 @@ public class MethodExtractorAdvanced {
             for (MethodDeclaration method : methods) {
                 MethodAnalysisResult methodResult = new MethodAnalysisResult(
                         method.getNameAsString(),
-                        method.getDeclarationAsString(false, false, true)
+                        method.getSignature().getParameterTypes().toString()
+//                        method.getDeclarationAsString(false, false, true)
                 );
 
                 // Create a visitor to find method calls within this method
