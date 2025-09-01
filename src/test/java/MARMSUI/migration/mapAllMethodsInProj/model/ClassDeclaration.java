@@ -1,6 +1,9 @@
 package MARMSUI.migration.mapAllMethodsInProj.model;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ClassDeclaration {
     private String name;
@@ -10,6 +13,24 @@ public class ClassDeclaration {
     private List<String> importList; // to help the fields find the respective class files
     private List<String> fieldList;
     private String concreteClassPath;
+    private Map<String,String> fieldMap;
+    private Map<String, MethodDeclaration> methodMap;
+
+    public Map<String, MethodDeclaration> getMethodMap() {
+        return methodMap;
+    }
+
+    public void setMethodMap(Map<String, MethodDeclaration> methodMap) {
+        this.methodMap = methodMap;
+    }
+
+    public Map<String, String> getFieldMap() {
+        return fieldMap;
+    }
+
+    public void setFieldMap(Map<String, String> fieldMap) {
+        this.fieldMap = fieldMap;
+    }
 
     public String getConcreteClassPath() {
         return concreteClassPath;

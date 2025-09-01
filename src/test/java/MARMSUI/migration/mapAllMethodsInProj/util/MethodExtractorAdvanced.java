@@ -23,10 +23,7 @@ public class MethodExtractorAdvanced {
     public static ClassAnalysisResult analyzeClass(String filePath, String projectRoot) {
         try {
             // Set up symbol solver for type resolution
-            CombinedTypeSolver typeSolver = new CombinedTypeSolver();
-            typeSolver.add(new ReflectionTypeSolver());
-            typeSolver.add(new JavaParserTypeSolver(new File(projectRoot)));
-
+            CombinedTypeSolver typeSolver = configureTypeSolver(projectRoot);
             JavaSymbolSolver symbolSolver = new JavaSymbolSolver(typeSolver);
             StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
 
@@ -34,53 +31,20 @@ public class MethodExtractorAdvanced {
             CompilationUnit cu = StaticJavaParser.parse(new FileInputStream(filePath));
 
             // Get the class name and package
-            String className = cu.findFirst(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration.class)
-                    .map(c -> c.getNameAsString())
-                    .orElse("UnknownClass");
-
-            String packageName;
-            if (cu.getPackageDeclaration().isPresent()) {
-                packageName = cu.getPackageDeclaration().get().getNameAsString();
-            } else {
-                packageName = "";
-            }
+            String className = extractClassName(cu);
+            String packageName = extractPackageName(cu);
 
             // Get all fields in the class for reference
-            Map<String, FieldInfo> fields = new HashMap<>();
-            cu.findAll(FieldDeclaration.class).forEach(field -> {
-                field.getVariables().forEach(variable -> {
-                    String typeName = field.getElementType().asString();
-                    boolean isProjectType = isProjectType(typeName, packageName);
-                    fields.put(variable.getNameAsString(), new FieldInfo(typeName, isProjectType));
-                });
-            });
+            Map<String, FieldInfo> fields = extractClassFields(cu, packageName);
 
             // Create the class analysis result object
             ClassAnalysisResult result = new ClassAnalysisResult(className, packageName);
 
             // Extract all method declarations
-            List<MethodDeclaration> methods = new ArrayList<>();
-            cu.findAll(MethodDeclaration.class).forEach(methods::add);
+            List<MethodDeclaration> methods = extractMethods(cu);
 
             // Analyze each method
-            for (MethodDeclaration method : methods) {
-                MethodAnalysisResult methodResult = new MethodAnalysisResult(
-                        method.getNameAsString(),
-                        method.getSignature().getParameterTypes().toString()
-//                        method.getDeclarationAsString(false, false, true)
-                );
-
-                // Create a visitor to find method calls within this method
-                MethodCallVisitor visitor = new MethodCallVisitor(fields);
-                method.accept(visitor, null);
-
-                // Get the results
-                methodResult.setInternalMethodCalls(visitor.getInternalMethodCalls());
-                methodResult.setProjectFieldMethodCalls(visitor.getProjectFieldMethodCalls());
-
-                // Add to class result
-                result.addMethodResult(methodResult);
-            }
+            analyzeMethodsAndAddToResult(methods, fields, result);
 
             return result;
 
@@ -91,20 +55,91 @@ public class MethodExtractorAdvanced {
     }
 
     /**
+     * Configure and set up the type solver with reflection and Java parser
+     */
+    private static CombinedTypeSolver configureTypeSolver(String projectRoot) {
+        CombinedTypeSolver typeSolver = new CombinedTypeSolver();
+        typeSolver.add(new ReflectionTypeSolver());
+        typeSolver.add(new JavaParserTypeSolver(new File(projectRoot)));
+        return typeSolver;
+    }
+
+    /**
+     * Extract class name from compilation unit
+     */
+    private static String extractClassName(CompilationUnit cu) {
+        return cu.findFirst(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration.class)
+                .map(c -> c.getNameAsString())
+                .orElse("UnknownClass");
+    }
+
+    /**
+     * Extract package name from compilation unit
+     */
+    private static String extractPackageName(CompilationUnit cu) {
+        if (cu.getPackageDeclaration().isPresent()) {
+            return cu.getPackageDeclaration().get().getNameAsString();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Extract all fields from the class with their types
+     */
+    private static Map<String, FieldInfo> extractClassFields(CompilationUnit cu, String packageName) {
+        Map<String, FieldInfo> fields = new HashMap<>();
+        cu.findAll(FieldDeclaration.class).forEach(field -> {
+            field.getVariables().forEach(variable -> {
+                String typeName = field.getElementType().asString();
+                boolean isProjectType = isProjectType(typeName, packageName);
+                fields.put(variable.getNameAsString(), new FieldInfo(typeName, isProjectType));
+            });
+        });
+        return fields;
+    }
+
+    /**
+     * Extract all method declarations from the compilation unit
+     */
+    private static List<MethodDeclaration> extractMethods(CompilationUnit cu) {
+        List<MethodDeclaration> methods = new ArrayList<>();
+        cu.findAll(MethodDeclaration.class).forEach(methods::add);
+        return methods;
+    }
+
+    /**
+     * Analyze all methods and add their analysis results to the class result
+     */
+    private static void analyzeMethodsAndAddToResult(List<MethodDeclaration> methods,
+                                                     Map<String, FieldInfo> fields, ClassAnalysisResult result) {
+        for (MethodDeclaration method : methods) {
+            MethodAnalysisResult methodResult = new MethodAnalysisResult(
+                    method.getNameAsString(),
+                    method.getSignature().getParameterTypes().toString()
+            );
+
+            // Create a visitor to find method calls within this method
+            MethodCallVisitor visitor = new MethodCallVisitor(fields);
+            method.accept(visitor, null);
+
+            // Get the results
+            methodResult.setInternalMethodCalls(visitor.getInternalMethodCalls());
+            methodResult.setProjectFieldMethodCalls(visitor.getProjectFieldMethodCalls());
+
+            // Add to class result
+            result.addMethodResult(methodResult);
+        }
+    }
+
+    /**
      * Determine if a type is likely from the project rather than a standard library
      */
     private static boolean isProjectType(String typeName, String packageName) {
-        List<String> commonExternalPackages = Arrays.asList(
-                "java.", "javax.", "com.sun.", "sun.", "org.xml.", "org.w3c.",
-                "org.omg.", "org.ietf.", "org.jcp.", "org.junit.", "org.mockito.",
-                "org.apache.", "org.springframework.", "com.google.", "io.netty.",
-                "lombok"
-        );
+        List<String> commonExternalPackages = getCommonExternalPackages();
 
         // Check for primitive types
-        if (typeName.equals("int") || typeName.equals("boolean") || typeName.equals("char") ||
-                typeName.equals("byte") || typeName.equals("short") || typeName.equals("long") ||
-                typeName.equals("float") || typeName.equals("double") || typeName.equals("void")) {
+        if (isPrimitiveType(typeName)) {
             return false;
         }
 
@@ -127,6 +162,27 @@ public class MethodExtractorAdvanced {
 
         // For everything else, assume it could be from the project
         return true;
+    }
+
+    /**
+     * Get a list of common external package prefixes
+     */
+    private static List<String> getCommonExternalPackages() {
+        return Arrays.asList(
+                "java.", "javax.", "com.sun.", "sun.", "org.xml.", "org.w3c.",
+                "org.omg.", "org.ietf.", "org.jcp.", "org.junit.", "org.mockito.",
+                "org.apache.", "org.springframework.", "com.google.", "io.netty.",
+                "lombok"
+        );
+    }
+
+    /**
+     * Check if a type name is a primitive Java type
+     */
+    private static boolean isPrimitiveType(String typeName) {
+        return typeName.equals("int") || typeName.equals("boolean") || typeName.equals("char") ||
+                typeName.equals("byte") || typeName.equals("short") || typeName.equals("long") ||
+                typeName.equals("float") || typeName.equals("double") || typeName.equals("void");
     }
 
     /**
@@ -386,15 +442,23 @@ public class MethodExtractorAdvanced {
         ClassAnalysisResult result = analyzeClass(filePath, projectRoot);
         System.out.println(result);
 
-        // Example: Find methods that call other methods with more than 3 parameters
+        // Find methods that call other methods with more than 3 parameters
+        findMethodsWithManyParameters(result);
+    }
+
+    /**
+     * Find and print methods that call other methods with more than 3 parameters
+     */
+    private static void findMethodsWithManyParameters(ClassAnalysisResult result) {
         System.out.println("\nMethods calling methods with more than 3 parameters:");
         for (MethodAnalysisResult methodResult : result.getMethodResults()) {
             // Check internal calls
             for (MethodCallInfo call : methodResult.getInternalMethodCalls()) {
                 if (call.getParameterCount() > 3) {
-//                    System.out.println("- " + methodResult.getMethodName() +
-//                            " calls " + call.getMethodName() +
-//                            " with " + call.getParameterCount() + " parameters");
+                    // Commented code
+                    // System.out.println("- " + methodResult.getMethodName() +
+                    //         " calls " + call.getMethodName() +
+                    //         " with " + call.getParameterCount() + " parameters");
                 }
             }
 
@@ -402,9 +466,10 @@ public class MethodExtractorAdvanced {
             for (FieldMethodCalls fieldCalls : methodResult.getProjectFieldMethodCalls().values()) {
                 for (MethodCallInfo call : fieldCalls.getMethodCalls()) {
                     if (call.getParameterCount() > 3) {
-//                        System.out.println("- " + methodResult.getMethodName() +
-//                                " calls " + fieldCalls.getFieldName() + "." + call.getMethodName() +
-//                                " with " + call.getParameterCount() + " parameters");
+                        // Commented code
+                        // System.out.println("- " + methodResult.getMethodName() +
+                        //         " calls " + fieldCalls.getFieldName() + "." + call.getMethodName() +
+                        //         " with " + call.getParameterCount() + " parameters");
                     }
                 }
             }

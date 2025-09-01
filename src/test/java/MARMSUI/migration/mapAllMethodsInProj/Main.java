@@ -5,126 +5,371 @@ import MARMSUI.migration.mapAllMethodsInProj.model.MethodDeclaration;
 import MARMSUI.migration.mapAllMethodsInProj.util.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class Main {
 
-    static String rootPath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java";
-    static String packagePrefix = "com.sg.sq.marmsui";
-    static String[] whitelistedInterfaces = new String[]{"Serializable", "Cloneable", "Comparable", "java.io.Serializable", "HandlerInterceptor", "WebMvcConfigurer"};
+    public static final String rootPath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java";
+    public static final String packagePrefix = "com.sg.sq.marmsui";
+    public static final String excludedPackage = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/database/sql/persistence/model";
+    private static final String metadataFileName = "/Users/macuser/Desktop/hierarchy-generator/qual-map-metadata";
+    private static final String metadataForMappedProject = "";
 
-    public static void main(String[] args) {
+    // todo: change if necessary
+    private static boolean updateMetadataFileContent = false;
 
-        File[] files = new File(rootPath).listFiles();
-        Map<String, ClassDeclaration> classDeclarationMap = new HashMap<>();
-        // iterate through all files and subdirectories
-//        mapAllFiles(new File(rootPath), classDeclarationMap);
+    public static void main(String[] args) throws IOException {
 
-//        // todo: for testing purposes only, process specific files
-        String path = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/controller/ForceQualificationController.java";
-        processJavaFile(new File(path), classDeclarationMap);
-//        path = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/QualificationService.java";
-//        processJavaFile(new File(path), classDeclarationMap);
+        Map<String, ClassDeclaration> classDeclarationMap;
 
-        // iterate through the map and check for classes with implementedInterfaces
-//        iterateMapAndConnectInterfacesToImpl(classDeclarationMap);
-//        System.out.println(classDeclarationMap.size());
+        if (updateMetadataFileContent) {
+            classDeclarationMap = new HashMap<>();
+            // iterate through all files and subdirectories
+            mapAllFiles(new File(rootPath), classDeclarationMap);
 
-        // check the implemented interfaces with the import statement, pass in AdminFeeImpl file path to test
-        // update the file path of the implementedInterfaces field, use the map, go to the interface classDeclaration and set the concreteClassPath field
+            // iterate through the map and check for classes with implementedInterfaces
+            ConnectInterfacesToImplClass.iterateMapAndConnectInterfacesToImpl(classDeclarationMap);
+            printMapToFile(classDeclarationMap);
+        } else {
+            // extract map from file
+            classDeclarationMap = MapPrinterReader.readMapFromFile(metadataFileName);
+        }
 
-//        String params = "@RequestHeader(name = \"agent_token\") String agentToken, @RequestHeader(name = \"cust_token\") String custToken, @RequestBody Map<String, Object> request";
-//        List<String> types = new ArrayList<>();
-//        extractParameterTypesFromMapParams(params, types);
-//        params = "Map<String,List<String>> req, String userId";
-//        extractParameterTypesFromMapParams(params, types);
-//        params = "Map<String, List<Map<String, Object>>> req, String userId,  int count";
-//        extractParameterTypesFromMapParams(params, types);
-//        System.out.println(types.size());
+        // check if the classes in the map has multiple similar method name with same number of params
+        checkIfAnyClassesHasDuplicateMethodNamesWithSameParamCount(classDeclarationMap);
+
+        // convert field list to field map
+        convertFieldListToFieldMapInAllClasses(classDeclarationMap);
+
+        System.out.println(classDeclarationMap.size());
+
+        // link up all the methods in the concrete classes
+        iterateAllMethodsAndMarkVisited(classDeclarationMap);
+
+        // todo: try to solve why static methods are not picked up
+        System.out.println(classDeclarationMap.size());
+        // possible next use cases for these project
+        // - can extract the hierarchy
+        // - can find all the methods that are not used in the project
+        // - can extend the output to print out all the methods called in the hierarchy and feed into gen ai
+        extendPotentialUseCase(classDeclarationMap);
     }
 
-    private static void iterateMapAndConnectInterfacesToImpl(Map<String, ClassDeclaration> classDeclarationMap) {
+    private static void extendPotentialUseCase(Map<String, ClassDeclaration> classDeclarationMap) {
+        Scanner scanner = new Scanner(System.in);
+        ClassDeclaration classDeclaration = null;
+        String key = null;
+        Object[] arr = getStarterClassName(classDeclarationMap, scanner);
+        classDeclaration = (ClassDeclaration) arr[0];
+        key = (String) arr[1];
+        MethodDeclaration starterMethod = getStarterMethod(scanner, "Enter starter method", classDeclaration.getMethodMap());
+        Map<String, Set<String>> mapOfMethodsRequiredWithClassKey = new HashMap<>();
+        iterateInnerMethodsAndIdentifyAllMethodsRequired(starterMethod, classDeclaration, classDeclarationMap, mapOfMethodsRequiredWithClassKey, key);
+        System.out.println(mapOfMethodsRequiredWithClassKey.size());
+        printMethodsRequired(mapOfMethodsRequiredWithClassKey);
+    }
+
+    private static void printMethodsRequired(Map<String, Set<String>> map) {
+        for (String key : map.keySet()) {
+            System.out.println("Printing out for class: " + key);
+            Set<String> methodDeclaration = map.get(key);
+            for (String val : methodDeclaration) {
+                System.out.println(val);
+            }
+            System.out.println("\n\n");
+        }
+    }
+
+    private static void iterateInnerMethodsAndIdentifyAllMethodsRequired(MethodDeclaration starterMtd, ClassDeclaration starterClass, Map<String, ClassDeclaration> classDeclarationMap, Map<String, Set<String>> mapOfMethodsRequiredWithClassKey, String key) {
+        if (starterMtd.getInnerMethods().isEmpty()) {
+            return;
+        }
+        // starterMtd e.g. getTierSummary of TierHandlerServiceImpl class
+        // iterate through the starterMethod, find all the inner methods, if its ext mtd, directly use the classDec map to find and put into map
+        for (MethodDeclaration inner : starterMtd.getInnerMethods()) {
+            if (inner.getName().contains(".")) {
+                // external methods identified, find the key to enter the external class
+                if (operationsIfExtMethodFound(starterClass, classDeclarationMap, mapOfMethodsRequiredWithClassKey, inner))
+                    continue; // no need to find method listing, since its iterated before
+            } else {
+                // internal method found
+                String combinedMethodKey = Common.combineMethodNameAndParamNum(inner.getName(), String.valueOf(inner.getNumberOfParams()));
+                Set<String> set = mapOfMethodsRequiredWithClassKey.get(key);
+                if (set == null) {
+                    set = new HashSet<>();
+                    mapOfMethodsRequiredWithClassKey.put(key, set);
+                }
+                if (!set.contains(combinedMethodKey)) {
+                    set.add(combinedMethodKey);
+                } else {
+                    continue;
+                }
+                // find the method in the from the same class declaration
+                MethodDeclaration nextMethodDeclaration = starterClass.getMethodMap().get(combinedMethodKey);
+                if(combinedMethodKey.contains("calculateEliteGoldMilesForAirAndNonAir")) {
+                    System.out.println("here");
+                }
+                iterateInnerMethodsAndIdentifyAllMethodsRequired(nextMethodDeclaration, starterClass, classDeclarationMap, mapOfMethodsRequiredWithClassKey, key);
+            }
+        }
+        // if inner method is found, call this method again
+        // inner methods of getTierSummary method is captured in the queue, now we will find them and identify if there are any ext methods
+
+    }
+
+    private static boolean operationsIfExtMethodFound(ClassDeclaration starterClass, Map<String, ClassDeclaration> classDeclarationMap, Map<String, Set<String>> mapOfMethodsRequiredWithClassKey, MethodDeclaration inner) {
+        String nextClsKey = null;
+        String[] arr = null;
+        String nextStarterMtdKey = null;
+        ClassDeclaration nextClassDeclaration = null;
+        MethodDeclaration nextMethodDeclaration = null;
+        try {
+            arr = Common.splitByDot(inner.getName());
+            nextClsKey = starterClass.getFieldMap().get(arr[0]);
+            if (nextClsKey == null) {
+                throw new RuntimeException("ClassKey cannot be null");
+            }
+            nextClsKey = validateIfIsInterface(nextClsKey, classDeclarationMap);
+            Set<String> set = mapOfMethodsRequiredWithClassKey.get(nextClsKey);
+            if (set == null) {
+                set = new HashSet<>();
+                mapOfMethodsRequiredWithClassKey.put(nextClsKey, set);
+            }
+            nextStarterMtdKey = Common.combineMethodNameAndParamNum(arr[1], String.valueOf(inner.getNumberOfParams()));
+            if (!set.contains(nextStarterMtdKey)) {
+                set.add(nextStarterMtdKey);
+            } else {
+                return true;
+            }
+            nextClassDeclaration = classDeclarationMap.get(nextClsKey);
+            nextMethodDeclaration = nextClassDeclaration.getMethodMap().get(nextStarterMtdKey);
+            iterateInnerMethodsAndIdentifyAllMethodsRequired(nextMethodDeclaration, nextClassDeclaration, classDeclarationMap, mapOfMethodsRequiredWithClassKey, nextClsKey);
+            return false;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    private static String validateIfIsInterface(String clsKey, Map<String, ClassDeclaration> map) {
+        if(clsKey.endsWith("Mapper")) {
+            return clsKey;
+        }
+        ClassDeclaration classDeclaration = map.get(clsKey);
+        if (classDeclaration.isInterface()) {
+            return classDeclaration.getConcreteClassPath();
+        }
+        return clsKey;
+    }
+
+
+    private static MethodDeclaration getStarterMethod(Scanner scanner, String userMsg, Map<String, MethodDeclaration> map) {
+        MethodDeclaration methodDeclaration = null;
+        while (methodDeclaration == null) {
+            String name = Common.getUserInputOnce(scanner, userMsg);
+            String paramNum = Common.getUserInputOnce(scanner, "Enter number of parameters");
+            String combinedKey = Common.combineMethodNameAndParamNum(name, paramNum);
+            methodDeclaration = map.get(combinedKey);
+        }
+        return methodDeclaration;
+    }
+
+    private static Object[] getStarterClassName(Map<String, ClassDeclaration> classDeclarationMap, Scanner scanner) {
+        ClassDeclaration classDeclaration = null;
+        String key = "com.sg.sq.marmsui.service.impl.TierHandlerServiceImpl"; // todo: to remove setting the variablr
+        while (classDeclaration == null) {
+            if (key == null)
+                key = Common.getUserInputOnce(scanner, "Enter class name with package name:");
+            if (!classDeclarationMap.containsKey(key)) {
+                System.out.println("Class name is not found: " + key);
+                key = null;
+            } else {
+                classDeclaration = classDeclarationMap.get(key);
+            }
+        }
+        return new Object[]{classDeclaration, key};
+    }
+
+
+    private static void iterateAllMethodsAndMarkVisited(Map<String, ClassDeclaration> classDeclarationMap) {
+//        // todo: for testing only
+//        String key = "com.sg.sq.marmsui.service.impl.data.QualificationData";
+//        ClassDeclaration classDeclaration = classDeclarationMap.get(key);
+//        for(MethodDeclaration methodDeclaration : classDeclaration.getMethodList()) {
+//            markVisitedMethods(classDeclarationMap, methodDeclaration, classDeclaration, key);
+//        }
         for (String key : classDeclarationMap.keySet()) {
             ClassDeclaration classDeclaration = classDeclarationMap.get(key);
-            List<String> implementedInterfacesModified = new ArrayList<>();
+            if (key.contains("CardData")) {
+                System.out.println("re");
+            }
             if (classDeclaration == null) {
-                System.out.println("Class declaration is null for key: " + key);
                 continue;
             }
-            if (!classDeclaration.isInterface() && !classDeclaration.getImplementedInterfaces().isEmpty()) {
-                List<String> importList = classDeclaration.getImportList();
-                for (String interfaceName : classDeclaration.getImplementedInterfaces()) {
-                    if (List.of(whitelistedInterfaces).contains(interfaceName)) {
-                        implementedInterfacesModified.add(interfaceName);
-                        continue;
-                    }
-                    try {
-                        String fullPath = extractInterfaceFullPathFromImplImports(importList, interfaceName);
-                        if (fullPath == null) {
-                            fullPath = checkCurrentDirectoryForFile(key, interfaceName);
-                        }
-                        if (fullPath == null) {
-                            throw new RuntimeException("Could not locate interface: " + interfaceName);
-                        }
-                        implementedInterfacesModified.add(fullPath);
-                        ClassDeclaration interfaceClassDeclaration = classDeclarationMap.get(fullPath);
-                        if (interfaceClassDeclaration == null) {
-                            throw new RuntimeException("Could not find interface class declaration for: " + fullPath + " implemented in class: " + classDeclaration.getName());
-                        }
-                        interfaceClassDeclaration.setConcreteClassPath(key);
-                    } catch (Exception e) {
-                        throw e;
-                    }
+            if (classDeclaration.isInterface()) {
+                continue;
+            }
+            // todo: find a way to mark all the methods in this class and its methods as visited
+            for (MethodDeclaration methodDeclaration : classDeclaration.getMethodList()) {
+                markVisitedMethods(classDeclarationMap, methodDeclaration, classDeclaration, key);
+            }
+        }
+    }
+
+    private static void markVisitedMethods(Map<String, ClassDeclaration> classDeclarationMap, MethodDeclaration methodDeclaration, ClassDeclaration classDeclaration, String key) {
+        methodDeclaration.setViewed(true); // visited by method, does not mean method is used in project
+        List<MethodDeclaration> innerMethods = methodDeclaration.getInnerMethods();
+        if (innerMethods != null && !innerMethods.isEmpty()) {
+            for (MethodDeclaration innerMethod : innerMethods) {
+                if (innerMethod.getName().contains(".")) {
+                    markingExternalMethods(classDeclarationMap, methodDeclaration, classDeclaration, key, innerMethod);
+                } else {
+                    // this is a normal method
+                    markMethodFromSameClass(methodDeclaration, classDeclaration, innerMethod);
                 }
-                classDeclaration.setImplementedInterfaces(implementedInterfacesModified);
             }
         }
     }
 
-    private static String checkCurrentDirectoryForFile(String implClassPath, String interfaceName) {
-        String implDir = implClassPath.contains(".") ? implClassPath.substring(0, implClassPath.lastIndexOf(".")) : implClassPath;
-        String possiblePath = rootPath + File.separator + implDir.replace(".", File.separator) + File.separator + interfaceName + ".java";
-        File file = new File(possiblePath);
-        if (file.exists()) {
-            return implDir + "." + interfaceName;
+    private static void markMethodFromSameClass(MethodDeclaration methodDeclaration, ClassDeclaration classDeclaration, MethodDeclaration innerMethod) {
+        List<MethodDeclaration> classMethods = classDeclaration.getMethodList();
+        if (classMethods == null || classMethods.isEmpty()) {
+            System.out.println("Class methods should not be empty for class: " + classDeclaration.getName());
+            return;
+        }
+        for (MethodDeclaration classMethod : classMethods) {
+            if (classMethod.getName().equals(innerMethod.getName()) && classMethod.getNumberOfParams() == innerMethod.getNumberOfParams()) {
+                // mark as visited and add the calling method
+                classMethod.setUsed(true);
+                Set<String> callingMethods = classMethod.getCallingMethods();
+                if (callingMethods == null) {
+                    callingMethods = new HashSet<>();
+                    classMethod.setCallingMethods(callingMethods);
+                }
+                callingMethods.add(methodDeclaration.getName());
+            }
+        }
+    }
+
+    private static void markingExternalMethods(Map<String, ClassDeclaration> classDeclarationMap, MethodDeclaration methodDeclaration, ClassDeclaration classDeclaration, String key, MethodDeclaration innerMethod) {
+        // this is a field method
+        if (innerMethod.getName().startsWith("QualificationService")) {
+            System.out.println("reached");
+        }
+        String[] parts = innerMethod.getName().split("\\.");
+        if (parts.length != 2) {
+            return;
+        }
+        String fieldType = parts[0];
+        String methodName = parts[1];
+        if (classDeclaration.getFieldMap() == null || classDeclaration.getFieldMap().isEmpty()) {
+            System.out.println("Field map is empty for class: " + classDeclaration.getName());
+            return;
+        }
+        String fieldClassPath = classDeclaration.getFieldMap().get(fieldType);
+        if (fieldClassPath == null) {
+            System.out.println("Field class path is null for field type: " + fieldType + " in class: " + classDeclaration.getName());
+            return;
+        }
+        ClassDeclaration fieldClassDeclaration = classDeclarationMap.get(fieldClassPath);
+        if (fieldClassDeclaration == null) {
+            System.out.println("Field class declaration is null for field class path: " + fieldClassPath + " in class: " + classDeclaration.getName());
+            return;
+        }
+        // from here check the concrete class methods as viewed if it is an interface
+        if (fieldClassDeclaration.isInterface()) {
+            if (fieldClassDeclaration.getConcreteClassPath() == null) {
+                System.out.println("Concrete class path is null for interface: " + fieldClassDeclaration.getName() + " in class: " + classDeclaration.getName());
+            } else {
+                markingImplMethods(classDeclarationMap, methodDeclaration, classDeclarationMap.get(fieldClassDeclaration.getConcreteClassPath()), key, innerMethod);
+                return;
+            }
+        }
+        List<MethodDeclaration> fieldClassMethods = fieldClassDeclaration.getMethodList();
+        if (fieldClassMethods == null || fieldClassMethods.isEmpty()) {
+            System.out.println("Field class methods is empty for field class path: " + fieldClassPath + " in class: " + classDeclaration.getName());
+            return;
+        }
+        MethodDeclaration fieldClassMethod = findMethodByNameAndParamCount(fieldClassMethods, methodName, innerMethod.getNumberOfParams());
+        fieldClassMethod.setUsed(true);
+        Set<String> callingMethods = fieldClassMethod.getCallingMethods();
+        if (callingMethods == null) {
+            callingMethods = new HashSet<>();
+            fieldClassMethod.setCallingMethods(callingMethods);
+        }
+        callingMethods.add(key + "." + methodDeclaration.getName());
+    }
+
+    private static void markingImplMethods(Map<String, ClassDeclaration> classDeclarationMap, MethodDeclaration callingMethodDeclaration, ClassDeclaration implClassDeclaration, String key, MethodDeclaration innerMethod) {
+        // from the inner method, get the method method name to search from the implClassDeclaration methodList
+        String name = innerMethod.getName();
+        // extract the method name from the innerMethod name after the .
+        name = name.substring(name.indexOf(".") + 1);
+        // the extracted method name is the method to search in the implClassDeclaration methodList
+        MethodDeclaration methodDeclarationOfImpl = findMethodByNameAndParamCount(implClassDeclaration.getMethodList(), name, innerMethod.getNumberOfParams());
+        // if found, mark as viewed and add the calling method
+        methodDeclarationOfImpl.setUsed(true);
+        Set<String> callingMethods = methodDeclarationOfImpl.getCallingMethods();
+        if (callingMethods == null) {
+            callingMethods = new HashSet<>();
+            methodDeclarationOfImpl.setCallingMethods(callingMethods);
+        }
+        callingMethods.add(key + "." + callingMethodDeclaration.getName());
+    }
+
+    private static MethodDeclaration findMethodByNameAndParamCount(List<MethodDeclaration> methodList, String methodName, int paramCount) {
+        for (MethodDeclaration methodDeclaration : methodList) {
+            if (methodDeclaration.getName().equals(methodName) && methodDeclaration.getParameters().size() == paramCount) {
+                return methodDeclaration;
+            }
         }
         return null;
     }
 
-    private static String extractInterfaceFullPathFromImplImports(List<String> importList, String interfaceName) {
-        List<String> possibleImports = new ArrayList<>();
-        String fullInterfacePath = null;
-        boolean isFound = false;
-        for (String importStatement : importList) {
-            if (importStatement.contains(interfaceName)) {
-                isFound = true;
-                fullInterfacePath = importStatement;
-                break;
+    private static void convertFieldListToFieldMapInAllClasses(Map<String, ClassDeclaration> classDeclarationMap) {
+        for (String key : classDeclarationMap.keySet()) {
+            ClassDeclaration classDeclaration = classDeclarationMap.get(key);
+            if (classDeclaration == null) {
+                continue;
             }
-            if (importStatement.endsWith(".*")) {
-                possibleImports.add(importStatement.substring(0, importStatement.length() - 2) + "." + interfaceName);
+            if (classDeclaration.getFieldList() == null || classDeclaration.getFieldList().isEmpty()) {
+                continue;
             }
+            classDeclaration.setFieldMap(Common.convertFieldListToMap(classDeclaration.getFieldList()));
         }
-        if (!isFound) {
-            fullInterfacePath = locateFileInPossibleImports(possibleImports);
-        }
-        return fullInterfacePath;
     }
 
-    private static String locateFileInPossibleImports(List<String> possibleImports) {
-        for (String importPath : possibleImports) {
-            String filePath = rootPath + File.separator + importPath.replace(".", File.separator) + ".java";
-            File file = new File(filePath);
-            if (file.exists()) {
-                return filePath.replace(rootPath + File.separator, "").replace(File.separator, ".").replace(".java", "");
-            }
-        }
-        return null;
+    private static void printMapToFile(Map<String, ClassDeclaration> classDeclarationMap) throws IOException {
+        MapPrinterReader.printMapToFile(classDeclarationMap, metadataFileName);
     }
+
+    private static void checkIfAnyClassesHasDuplicateMethodNamesWithSameParamCount(Map<String, ClassDeclaration> classDeclarationMap) {
+        Set<String> duplicates = new HashSet<>();
+        for (String key : classDeclarationMap.keySet()) {
+            ClassDeclaration classDeclaration = classDeclarationMap.get(key);
+            if (classDeclaration == null) {
+                continue;
+            }
+            List<MethodDeclaration> methodList = classDeclaration.getMethodList();
+            for (MethodDeclaration methodDeclaration : methodList) {
+                String methodName = methodDeclaration.getName();
+                int paramCount = methodDeclaration.getParameters().size();
+                String combinedKey = methodName + "-" + paramCount;
+                if (!duplicates.contains(combinedKey)) {
+                    duplicates.add(combinedKey);
+                } else {
+                    System.out.println("Duplicate method found in class: " + key + " | Method: " + methodName + " | Param count: " + paramCount);
+                }
+            }
+            duplicates.clear();
+        }
+    }
+
 
     private static void mapAllFiles(File file, Map<String, ClassDeclaration> classDeclarationMap) {
         if (file.isDirectory()) {
-            if (file.getAbsolutePath().endsWith("vo") || file.getAbsolutePath().startsWith("/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/database/sql/persistence/model")) {
+            if (file.getAbsolutePath().endsWith("vo") || file.getAbsolutePath().startsWith(excludedPackage)) {
                 return; // skip value object directories
             }
             for (File f : file.listFiles()) {
@@ -146,6 +391,9 @@ public class Main {
             classDeclaration = new ClassDeclaration();
             classDeclaration.setInterface(true);
             classDeclaration.setName(file.getAbsolutePath());
+            MethodExtractorAdvanced.ClassAnalysisResult result = MethodExtractorAdvanced.analyzeClass(file.getAbsolutePath(), rootPath);
+            List<MethodExtractorAdvanced.MethodAnalysisResult> methodResult = result.getMethodResults();
+            populateMethodDeclarations(methodResult, classDeclaration);
         } else if (type.equals("abstract") || type.equals("concrete")) {
             classDeclaration = new ClassDeclaration();
             classDeclaration.setInterface(false);
@@ -167,6 +415,7 @@ public class Main {
     }
 
     private static void populateMethodDeclarations(List<MethodExtractorAdvanced.MethodAnalysisResult> methodResults, ClassDeclaration classDeclaration) {
+        Map<String, MethodDeclaration> declarationMap = new HashMap<>();
         List<MethodDeclaration> methodDeclarations = new ArrayList<>();
         for (MethodExtractorAdvanced.MethodAnalysisResult methodResult : methodResults) {
             MethodDeclaration methodDeclaration = new MethodDeclaration();
@@ -178,8 +427,13 @@ public class Main {
             // set the fields methods
             populateFieldMethodsIntoInnerMethod(innerMethodSignatures, methodResult.getProjectFieldMethodCalls());
             methodDeclarations.add(methodDeclaration);
+            if (declarationMap.containsKey(methodDeclaration.getName() + "-" + methodDeclaration.getParameters().size())) {
+                throw new RuntimeException("Duplicate method name - size");
+            }
+            declarationMap.put(methodDeclaration.getName() + "-" + methodDeclaration.getParameters().size(), methodDeclaration);
         }
         classDeclaration.setMethodList(methodDeclarations);
+        classDeclaration.setMethodMap(declarationMap);
     }
 
 
@@ -215,112 +469,12 @@ public class Main {
         int startIndex = methodSignature.indexOf('[');
         int endIndex = methodSignature.lastIndexOf(']');
         String[] paramsArray = methodSignature.substring(startIndex + 1, endIndex).split(",");
-        if(paramsArray.length == 1 && paramsArray[0].trim().isEmpty()) {
+        if (paramsArray.length == 1 && paramsArray[0].trim().isEmpty()) {
             return new ArrayList<>();
         }
         return Arrays.stream(paramsArray).toList();
-//        if (!methodSignature.contains("@")) {
-//            List<String> parameterTypes = new ArrayList<>();
-//            int start = methodSignature.indexOf('(');
-//            int end = methodSignature.indexOf(')');
-//            if (start != -1 && end != -1 && end > start) {
-//                String params = methodSignature.substring(start + 1, end).trim();
-//                if (!params.isEmpty()) {
-//                    if (params.contains("Map ") || params.contains("Map<")) {
-//                        extractParameterTypesFromMapParams(params, parameterTypes);
-//                    } else {
-//                        String[] paramArray = params.split(",");
-//                        for (String param : paramArray) {
-//                            String[] parts = param.trim().split(" ");
-//                            if (parts.length >= 2) {
-//                                parameterTypes.add(parts[0]); // Assuming the first part is the type
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            return parameterTypes;
-//        } else {
-//            List<String> types = new ArrayList<>();
-//            int start = methodSignature.indexOf('(');
-//            int end = methodSignature.lastIndexOf(')');
-//            String values = methodSignature.substring(start + 1, end);
-//            if (values.contains("Map ") || values.contains("Map<")) {
-//                extractParamsForMapAndForAnnotation(values, types); // contain @ and Map<
-//            } else {
-//                String[] splitByComma = values.split(",");
-//                for (String param : splitByComma) {
-//                    String[] parts = param.trim().split(" ");
-//                    if (parts.length >= 2) {
-//                        String type = parts[parts.length - 2];
-//                        types.add(type);
-//                    }
-//                }
-//            }
-//            return types;
-//        }
-
     }
 
-    private static void extractParamsForMapAndForAnnotation(String values, List<String> types) {
-        int startIndex = 0;
-        int endIndex = 0;
-        int mapIndex = 0;
-        while(true) {
-
-        }
-    }
-
-    private static void extractParameterTypesFromMapParams(String values, List<String> types) {
-        values = values.trim();
-        int angleBracketCount = 0;
-        StringBuilder stringBuilder = new StringBuilder();
-        boolean identifyingType = true;
-        boolean commaReachedNextWordNotReached = false;
-        for (char c : values.toCharArray()) {
-            if(commaReachedNextWordNotReached && c != ' ') {
-                identifyingType = true;
-                commaReachedNextWordNotReached = false;
-            }
-            if (c == '<') {
-                angleBracketCount++;
-                stringBuilder.append(c);
-                continue;
-            }
-            if (c == '>') {
-                angleBracketCount--;
-                stringBuilder.append(c);
-                continue;
-            }
-            if (c == ' ') {
-                if (angleBracketCount != 0) {
-                    // add cuz its inside the type declaration
-                    stringBuilder.append(c);
-                } else {
-                    identifyingType = false;
-                }
-                continue;
-            }
-            if (c == ',') {
-                if (angleBracketCount > 0) {
-                    stringBuilder.append(c);
-                } else {
-                    // comma signify transition to another param
-                    types.add(stringBuilder.toString().trim());
-                    stringBuilder.delete(0, stringBuilder.length());
-                    commaReachedNextWordNotReached = true;
-                }
-                continue;
-            }
-            if (identifyingType) {
-                stringBuilder.append(c);
-            }
-
-        }
-        if (!stringBuilder.isEmpty()) {
-            types.add(stringBuilder.toString().trim());
-        }
-    }
 
     private static String getClassNameFromPath(String filePath) {
         // Remove the root path and the .java extension

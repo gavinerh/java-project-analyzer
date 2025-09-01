@@ -1,4 +1,5 @@
 package ComparingMethodContents;
+import MARMSUI.util.WriterToFile;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -105,9 +106,9 @@ public class Main {
     public static void main(String[] args) {
 
         // todo: change file path
-        String oldPath = "/Users/macuser/Downloads/marms-UAT_21May_checkpoint 2/MARMS/Source Code/Business Components/EJB/TierHandler/com/singaporeair/marms/abacus/business/customer/tier/TierHandlerBean.java";
+        String newPath = "/Users/macuser/Downloads/marms-Non_air_cap_final@2191536a12b/MARMS/Source Code/Business Components/EJB/TierHandler/com/singaporeair/marms/abacus/business/customer/tier/TierHandlerBean.java";
         // todo: change file path
-        String newPath = "/Users/macuser/Documents/updated-lsl-app/marms/MARMS/Source Code/Business Components/EJB/TierHandler/com/singaporeair/marms/abacus/business/customer/tier/TierHandlerBean.java";
+        String oldPath = "/Users/macuser/Documents/updated-lsl-app/marms/MARMS/Source Code/Business Components/EJB/TierHandler/com/singaporeair/marms/abacus/business/customer/tier/TierHandlerBean.java";
         // todo: change file path of output
         String outputComparisonForOld = "/Users/macuser/Desktop/holdingForTempFiles/method-comparison/old.txt";
         // todo: change file path of output
@@ -129,12 +130,12 @@ public class Main {
                 List<ComparisonResult> comparisonResultList = MethodBodyComparator.compareMethodBodies(methodInOldCode, methodInMostUpdatedCode);
                 if(comparisonResultList != null) {
                     consolidatedMethodWithDifferences.add(key);
-                    // save old code first
-//                    WriterToFile.saveStringToFile(key,outputComparisonForOld,count != 0);
-//                    WriterToFile.saveStringToFile(comparisonResultList.get(0).getContent() + "\n\n\n====================\n\n\n",outputComparisonForOld,true);
-//                    WriterToFile.saveStringToFile(key,outputComparisonForNew,count != 0);
-//                    WriterToFile.saveStringToFile(comparisonResultList.get(1).getContent() + "\n\n\n====================\n\n\n",outputComparisonForNew,true);
-//                    count++;
+//                     save old code first
+                    WriterToFile.saveStringToFile(key,outputComparisonForOld,count != 0);
+                    WriterToFile.saveStringToFile(comparisonResultList.get(0).getContent() + "\n\n\n====================\n\n\n",outputComparisonForOld,true);
+                    WriterToFile.saveStringToFile(key,outputComparisonForNew,count != 0);
+                    WriterToFile.saveStringToFile(comparisonResultList.get(1).getContent() + "\n\n\n====================\n\n\n",outputComparisonForNew,true);
+                    count++;
                 }
             }
             System.out.println("Printing out methods with differences: -----------\n");

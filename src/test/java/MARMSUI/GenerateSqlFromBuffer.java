@@ -17,13 +17,12 @@ public class GenerateSqlFromBuffer {
         String airTransCode = "'RC','RD'";
         StringBuffer initial = new StringBuffer();
 
-
         sqlQuery.append("SELECT AirNonAir,  SUM(NVL(Elite_value,0)) AS Val from (");
         sqlQuery.append(" SELECT P.ANA_IND AS AirNonAir, NVL(SUM(DECODE(AT.trans_cd, 'TC', AT.pts_awded, 'TD', -AT.pts_awded, 'SC', AT.pts_awded, 'SD', -AT.pts_awded)),0)  Elite_value ");
         sqlQuery.append(" FROM AT_TRANS AT  ");
-        sqlQuery.append(" INNER JOIN PRT P ON  P.PRT_CD = decode(AT.CD_SHARE_PRT, 'SQ', AT.CD_SHARE_PRT, 'MI', AT.CD_SHARE_PRT, AT.PRT_CD )  ");
-        sqlQuery.append(" Where AT.Int_Id = ? And AT.Prg_Cd = 'KF' AND AT.Elite_Bucket_Flg = 'Y' And AT.Flt_Awd_Dt Between trunc(?) and trunc(?) ");
-        sqlQuery.append(" And AT.Trans_Cd In ('TC', 'TD', 'SC', 'SD') And decode(AT.CD_SHARE_PRT, 'SQ', AT.CD_SHARE_PRT, 'MI', AT.CD_SHARE_PRT, AT.PRT_CD ) ");
+        sqlQuery.append(" INNER JOIN PRT P ON  P.PRT_CD = DECODE(AT.CD_SHARE_PRT, NULL, AT.PRT_CD, AT.CD_SHARE_PRT )  ");
+        sqlQuery.append(" Where AT.Int_Id = ? And AT.Prg_Cd = 'KF' AND AT.Elite_Bucket_Flg = 'Y' And AT.Flt_Awd_Dt Between trunc(?) and trunc(?) "); //Added TR for KFPROG-1128 by Saranya
+        sqlQuery.append(" And AT.Trans_Cd In ('TC', 'TD', 'SC', 'SD') And DECODE(AT.CD_SHARE_PRT, NULL, AT.PRT_CD, AT.CD_SHARE_PRT ) ");//Added by Chandima for KFPROG-3998
         sqlQuery.append(" IN (SELECT REF_REC_CD from REFERENCE_CD where REF_REC_TYPE =?)  ");
         sqlQuery.append(" GROUP BY P.ANA_IND  ");
         sqlQuery.append(" UNION ALL ");
@@ -35,12 +34,12 @@ public class GenerateSqlFromBuffer {
         sqlQuery.append(" UNION ALL ");
         sqlQuery.append(" SELECT P.ANA_IND AS AirNonAir, NVL(SUM(DECODE(PT.trans_cd, 'ZC', PT.ELITE_BONUS_MILES_AWDED, 'ZD', -PT.ELITE_BONUS_MILES_AWDED)),0) Elite_value ");
         sqlQuery.append(" FROM PROMO_TRANS PT INNER JOIN PRT P ON  P.PRT_CD = PT.PRT_CD ");
-        sqlQuery.append(" WHERE PT.INT_ID =? AND PT.PRG_CD = 'KF' And PT.Elite_Bonus_Miles_Awded != 0   ");
-        sqlQuery.append(" AND PT.Batch_Dt Between trunc(?) and trunc(?) And PT.Trans_Cd In ('ZC', 'ZD')  ");
-        sqlQuery.append(" AND PT.PRT_CD IN (SELECT REF_REC_CD from REFERENCE_CD where REF_REC_TYPE = ?) GROUP BY P.ANA_IND ) group by AirNonAir ");
+        sqlQuery.append(" WHERE PT.INT_ID =? AND PT.PRG_CD = 'KF' And PT.Elite_Bonus_Miles_Awded != 0   ");//Added TR for KFPROG-1128 by Saranya
+        sqlQuery.append(" AND PT.Batch_Dt Between trunc(?) and trunc(?) And PT.Trans_Cd In ('ZC', 'ZD')  ");//Added TR for KFPROG-1128 by Saranya
+        sqlQuery.append(" AND PT.PRT_CD IN (SELECT REF_REC_CD from REFERENCE_CD where REF_REC_TYPE = ?) GROUP BY P.ANA_IND ) group by AirNonAir ");//Added by Chandima for KFPROG-3998
 
         String paramName = "award";
-        String[] arrToReplace = {"internalId","startDt","endDt","refRecType","internalId","startDt","endDt","refRecType","internalId","startDt","endDt","refRecType"};
+        String[] arrToReplace = {"intId","startDt","endDt","refRecType","intId","startDt","endDt","refRecType","intId","startDt","endDt","refRecType"};
 
         String[] arrTypes = {"NUMERIC","TIMESTAMP","TIMESTAMP","VARCHAR","NUMERIC","TIMESTAMP","TIMESTAMP","VARCHAR","NUMERIC","TIMESTAMP","TIMESTAMP","VARCHAR"};
 

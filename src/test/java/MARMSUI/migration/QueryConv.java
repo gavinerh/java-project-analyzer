@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class QueryConv {
     public static void main(String[] args) throws FileNotFoundException {
-        String fileName = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/migration/TierHandlerServiceImpl.java";
+        String fileName = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-qual/src/main/java/com/sg/sq/marmsui/service/impl/data/QualificationData.java";
         FileInputStream fileInputStream = new FileInputStream(fileName);
         Scanner scanner = new Scanner(fileInputStream);
         List<String> params = new ArrayList<>();

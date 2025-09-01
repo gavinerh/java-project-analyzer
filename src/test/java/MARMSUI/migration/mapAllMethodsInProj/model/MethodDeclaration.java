@@ -4,6 +4,7 @@ import javassist.bytecode.annotation.StringMemberValue;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 public class MethodDeclaration {
     private String name;
@@ -11,6 +12,24 @@ public class MethodDeclaration {
     private List<MethodDeclaration> innerMethods;
     private int numberOfParams;
     private boolean isUsed;
+    private Set<String> callingMethods;
+    private boolean isViewed;
+
+    public boolean isViewed() {
+        return isViewed;
+    }
+
+    public void setViewed(boolean viewed) {
+        isViewed = viewed;
+    }
+
+    public Set<String> getCallingMethods() {
+        return callingMethods;
+    }
+
+    public void setCallingMethods(Set<String> callingMethods) {
+        this.callingMethods = callingMethods;
+    }
 
     public int getNumberOfParams() {
         return numberOfParams;
