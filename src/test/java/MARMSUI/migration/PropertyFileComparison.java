@@ -7,8 +7,8 @@ import java.util.Set;
 
 public class PropertyFileComparison {
     public static void main(String[] args) {
-        String oldFile = "/Users/macuser/Documents/lsl-marmsui-profile/ocp_templates/configmap/sit/app.properties";
-        String newFile = "/Users/macuser/Documents/lsl-marmsui-profile/src/main/resources/properties/app.properties";
+        String oldFile = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/ocp_templates/configmap/uat/app.properties";
+        String newFile = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/ocp_templates/configmap/uat/app-dr.properties";
         Set<String> keysPresentInNew = new HashSet<>();
         Set<String> keysPresentInOld = new HashSet<>();
         FileInputStream fileInputStream = null;

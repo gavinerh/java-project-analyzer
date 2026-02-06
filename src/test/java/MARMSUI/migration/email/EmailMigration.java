@@ -3,16 +3,16 @@ package MARMSUI.migration.email;
 public class EmailMigration {
     public static void main(String[] args) {
 
-        String oldContentId = "HAACDLN";
-        String newContentId = "NM_" + oldContentId;
-        String newHtmlEN = "";
-        String newHtmlID = "";
-        String newHtmlCN = "";
-        String txtFile = "";
-        String oldIDContentId = "";
-        String oldCNContentId = "";
-        String newIDContentId = "NM_" + oldIDContentId;
-        String newCNContentId = "NM_" + oldCNContentId;
+        String oldContentId = "HMAMLCNV";
+        String newContentId = "NMHMAMLCNV";
+        String newHtmlEN = "GYmilesConversion_pps.html";
+        String newHtmlID = "milesConversion_kf2022-ID.html";
+        String newHtmlCN = "milesConversion_kf2022_CN_v2.html";
+        String txtFile = "GYmilesConversion_pps.txt";
+        String oldIDContentId = "UNKNOWNID";
+        String oldCNContentId = "UNKNOWNCN";
+        String newIDContentId = "NM" + oldIDContentId;
+        String newCNContentId = "NM" + oldCNContentId;
         System.out.println("Things to set about the kf member:\n\n");
         System.out.println(String.format("select ctry_of_residence,pref_lang_written_1 from cus_pers where int_id = '8991430688'\n" +
                 "\n" +
@@ -20,7 +20,7 @@ public class EmailMigration {
                 "select * from reference_cd where ref_rec_cd = '%s and ref_rec_type = '552'\n",newContentId));
         String templateForInsertingIntoMstrTable = "INSERT INTO email_cnt_mstr (rcre_user_id, rcre_dt, lchg_user_id, lchg_dt, email_content_id, email_from_addr, \n" +
                 "email_replyto_addr, email_subject, email_htmlfile_name, email_textfile_name, email_body_format,email_desc,\n" +
-                "use_gm_data_flg,cmt_migrated,recipient_type,block_email,block_email1)\n" +
+                "use_gm_data_flg,cmt_migrated,recipient_type,block_email)\n" +
                 "SELECT \n" +
                 "    rcre_user_id,                 \n" +
                 "    sysdate, \n" +
@@ -29,7 +29,7 @@ public class EmailMigration {
                 "    '%s', \n" +
                 "    email_from_addr,email_replyto_addr,\n" +
                 "    email_subject,email_htmlfile_name,email_textfile_name,email_body_format,email_desc,use_gm_data_flg,\n" +
-                "    cmt_migrated,recipient_type,block_email,block_email1\n" +
+                "    cmt_migrated,recipient_type,block_email\n" +
                 "FROM email_cnt_mstr\n" +
                 "WHERE email_content_id = '%s';";
         String sqlForInsertingIntoMstrTable = String.format(templateForInsertingIntoMstrTable, newContentId, oldContentId);
@@ -66,7 +66,7 @@ public class EmailMigration {
         System.out.println(sqlForUpdatingRefTableForOtherLang);
         String sqlForInsertingMstrTableForIDContent = String.format("INSERT INTO email_cnt_mstr (rcre_user_id, rcre_dt, lchg_user_id, lchg_dt, email_content_id, email_from_addr, \n" +
                 "email_replyto_addr, email_subject, email_htmlfile_name, email_textfile_name, email_body_format,email_desc,\n" +
-                "use_gm_data_flg,cmt_migrated,recipient_type,block_email,block_email1)\n" +
+                "use_gm_data_flg,cmt_migrated,recipient_type,block_email)\n" +
                 "SELECT \n" +
                 "    rcre_user_id,                 \n" +
                 "    sysdate, \n" +
@@ -75,14 +75,14 @@ public class EmailMigration {
                 "    '%s_NEW', \n" +
                 "    email_from_addr,email_replyto_addr,\n" +
                 "    email_subject,email_htmlfile_name,email_textfile_name,email_body_format,email_desc,use_gm_data_flg,\n" +
-                "    cmt_migrated,recipient_type,block_email,block_email1\n" +
+                "    cmt_migrated,recipient_type,block_email\n" +
                 "FROM email_cnt_mstr\n" +
                 "WHERE email_content_id = '%s';", oldIDContentId,oldIDContentId);
         System.out.println("\nPrinting sql for inserting sql into mstr table for ID content id:=================================");
         System.out.println(sqlForInsertingMstrTableForIDContent);
         String sqlForInsertingMstrTableForCNContent = String.format("INSERT INTO email_cnt_mstr (rcre_user_id, rcre_dt, lchg_user_id, lchg_dt, email_content_id, email_from_addr, \n" +
                 "email_replyto_addr, email_subject, email_htmlfile_name, email_textfile_name, email_body_format,email_desc,\n" +
-                "use_gm_data_flg,cmt_migrated,recipient_type,block_email,block_email1)\n" +
+                "use_gm_data_flg,cmt_migrated,recipient_type,block_email)\n" +
                 "SELECT \n" +
                 "    rcre_user_id,                 \n" +
                 "    sysdate, \n" +
@@ -91,7 +91,7 @@ public class EmailMigration {
                 "    '%s_NEW', \n" +
                 "    email_from_addr,email_replyto_addr,\n" +
                 "    email_subject,email_htmlfile_name,email_textfile_name,email_body_format,email_desc,use_gm_data_flg,\n" +
-                "    cmt_migrated,recipient_type,block_email,block_email1\n" +
+                "    cmt_migrated,recipient_type,block_email\n" +
                 "FROM email_cnt_mstr\n" +
                 "WHERE email_content_id = '%s';", oldCNContentId,oldCNContentId);
         System.out.println("\nPrinting sql for inserting sql into mstr table for CN content id:===============================\n");

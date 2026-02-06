@@ -106,9 +106,9 @@ public class Main {
     public static void main(String[] args) {
 
         // todo: change file path
-        String newPath = "/Users/macuser/Downloads/marms-Non_air_cap_final@2191536a12b/MARMS/Source Code/Business Components/EJB/TierHandler/com/singaporeair/marms/abacus/business/customer/tier/TierHandlerBean.java";
+        String newPath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/validator/CustomerValidatorDup.java";
         // todo: change file path
-        String oldPath = "/Users/macuser/Documents/updated-lsl-app/marms/MARMS/Source Code/Business Components/EJB/TierHandler/com/singaporeair/marms/abacus/business/customer/tier/TierHandlerBean.java";
+        String oldPath = "/Users/macuser/Documents/updated-lsl-app/lsl-marmsui-profile/src/main/java/com/sg/sq/marmsui/validator/CustomerValidator.java";
         // todo: change file path of output
         String outputComparisonForOld = "/Users/macuser/Desktop/holdingForTempFiles/method-comparison/old.txt";
         // todo: change file path of output

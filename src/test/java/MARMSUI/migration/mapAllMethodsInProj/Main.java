@@ -67,12 +67,13 @@ public class Main {
         Map<String, Set<String>> mapOfMethodsRequiredWithClassKey = new HashMap<>();
         iterateInnerMethodsAndIdentifyAllMethodsRequired(starterMethod, classDeclaration, classDeclarationMap, mapOfMethodsRequiredWithClassKey, key);
         System.out.println(mapOfMethodsRequiredWithClassKey.size());
-        printMethodsRequired(mapOfMethodsRequiredWithClassKey);
+        printMethodsRequired(mapOfMethodsRequiredWithClassKey, classDeclarationMap);
     }
 
-    private static void printMethodsRequired(Map<String, Set<String>> map) {
+    private static void printMethodsRequired(Map<String, Set<String>> map, Map<String,ClassDeclaration> classDeclarationMap) {
         for (String key : map.keySet()) {
-            System.out.println("Printing out for class: " + key);
+            String filePath = classDeclarationMap.get(key).getName();
+            System.out.println("Printing out for class: " + filePath);
             Set<String> methodDeclaration = map.get(key);
             for (String val : methodDeclaration) {
                 System.out.println(val);
@@ -177,7 +178,7 @@ public class Main {
 
     private static Object[] getStarterClassName(Map<String, ClassDeclaration> classDeclarationMap, Scanner scanner) {
         ClassDeclaration classDeclaration = null;
-        String key = "com.sg.sq.marmsui.service.impl.TierHandlerServiceImpl"; // todo: to remove setting the variablr
+        String key = null;
         while (classDeclaration == null) {
             if (key == null)
                 key = Common.getUserInputOnce(scanner, "Enter class name with package name:");

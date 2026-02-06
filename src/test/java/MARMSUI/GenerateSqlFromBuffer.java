@@ -17,31 +17,44 @@ public class GenerateSqlFromBuffer {
         String airTransCode = "'RC','RD'";
         StringBuffer initial = new StringBuffer();
 
-        sqlQuery.append("SELECT AirNonAir,  SUM(NVL(Elite_value,0)) AS Val from (");
-        sqlQuery.append(" SELECT P.ANA_IND AS AirNonAir, NVL(SUM(DECODE(AT.trans_cd, 'TC', AT.pts_awded, 'TD', -AT.pts_awded, 'SC', AT.pts_awded, 'SD', -AT.pts_awded)),0)  Elite_value ");
-        sqlQuery.append(" FROM AT_TRANS AT  ");
-        sqlQuery.append(" INNER JOIN PRT P ON  P.PRT_CD = DECODE(AT.CD_SHARE_PRT, NULL, AT.PRT_CD, AT.CD_SHARE_PRT )  ");
-        sqlQuery.append(" Where AT.Int_Id = ? And AT.Prg_Cd = 'KF' AND AT.Elite_Bucket_Flg = 'Y' And AT.Flt_Awd_Dt Between trunc(?) and trunc(?) "); //Added TR for KFPROG-1128 by Saranya
-        sqlQuery.append(" And AT.Trans_Cd In ('TC', 'TD', 'SC', 'SD') And DECODE(AT.CD_SHARE_PRT, NULL, AT.PRT_CD, AT.CD_SHARE_PRT ) ");//Added by Chandima for KFPROG-3998
-        sqlQuery.append(" IN (SELECT REF_REC_CD from REFERENCE_CD where REF_REC_TYPE =?)  ");
-        sqlQuery.append(" GROUP BY P.ANA_IND  ");
-        sqlQuery.append(" UNION ALL ");
-        sqlQuery.append(" SELECT  P.ANA_IND AS AirNonAir,  NVL(SUM(DECODE(PCM.trans_cd, 'MC', PCM.CUR_ELITE_PTS, 'MD', -PCM.CUR_ELITE_PTS)),0) Elite_value  ");
-        sqlQuery.append(" FROM PRT_CUS_MERGE PCM INNER JOIN PRT P ON  P.PRT_CD = PCM.PRT_CD ");
-        sqlQuery.append(" WHERE PCM.INT_ID =? And PCM.Prg_Cd = 'KF' And PCM.Cur_Elite_Pts != 0   ");
-        sqlQuery.append(" And PCM.Batch_Dt Between trunc(?) and trunc(?) And PCM.Trans_Cd In ('MC', 'MD') AND PCM.PRT_CD ");
-        sqlQuery.append(" IN (SELECT REF_REC_CD from REFERENCE_CD where REF_REC_TYPE =?) GROUP BY P.ANA_IND ");
-        sqlQuery.append(" UNION ALL ");
-        sqlQuery.append(" SELECT P.ANA_IND AS AirNonAir, NVL(SUM(DECODE(PT.trans_cd, 'ZC', PT.ELITE_BONUS_MILES_AWDED, 'ZD', -PT.ELITE_BONUS_MILES_AWDED)),0) Elite_value ");
-        sqlQuery.append(" FROM PROMO_TRANS PT INNER JOIN PRT P ON  P.PRT_CD = PT.PRT_CD ");
-        sqlQuery.append(" WHERE PT.INT_ID =? AND PT.PRG_CD = 'KF' And PT.Elite_Bonus_Miles_Awded != 0   ");//Added TR for KFPROG-1128 by Saranya
-        sqlQuery.append(" AND PT.Batch_Dt Between trunc(?) and trunc(?) And PT.Trans_Cd In ('ZC', 'ZD')  ");//Added TR for KFPROG-1128 by Saranya
-        sqlQuery.append(" AND PT.PRT_CD IN (SELECT REF_REC_CD from REFERENCE_CD where REF_REC_TYPE = ?) GROUP BY P.ANA_IND ) group by AirNonAir ");//Added by Chandima for KFPROG-3998
+        sqlQuery.append("  SELECT SUM(AIR_VAL) AS AIR_VAL, SUM(NON_AIR_VAL) AS NON_AIR_VAL FROM (");
+        sqlQuery.append("  SELECT");
+        sqlQuery.append("  NVL(SUM(DECODE(P.ana_ind, 'A',DECODE(AT.trans_cd, 'TC', AT.PPS_VAL, 'TD', -AT.PPS_VAL, 'SC', AT.PPS_VAL, 'SD', -AT.PPS_VAL),0)),0) AS AIR_VAL, ");
+        sqlQuery.append("  NVL(SUM(DECODE(P.ana_ind, 'N',DECODE(AT.trans_cd, 'TC', AT.PPS_VAL, 'TD', -AT.PPS_VAL, 'SC', AT.PPS_VAL, 'SD', -AT.PPS_VAL),0)),0) AS NON_AIR_VAL");
+        sqlQuery.append("  FROM AT_TRANS AT  INNER JOIN PRT P ON AT.PRT_CD = P.PRT_CD");
+        sqlQuery.append("  WHERE AT.INT_ID = ?");
+        sqlQuery.append("  AND AT.PRG_CD = ? ");
+        sqlQuery.append("  AND AT.PPS_BUCKET_FLG = 'Y' ");
+        sqlQuery.append("  AND AT.FLT_AWD_DT BETWEEN trunc(?) AND trunc(?) ");
+        sqlQuery.append("  AND AT.TRANS_CD in ('TC', 'TD', 'SC', 'SD')");
+        sqlQuery.append("  AND (P.ANA_IND = 'A' OR P.ANA_IND = 'N'${appendVal}" );
+        sqlQuery.append("  UNION ALL");
+        sqlQuery.append("  SELECT");
+        sqlQuery.append("  NVL(SUM(DECODE(P.ana_ind, 'A', DECODE(PCM.trans_cd, 'MC', PCM.CUR_PPS_VAL, 'MD', -PCM.CUR_PPS_VAL),0)),0) AS AIR_VAL,");
+        sqlQuery.append("  NVL(SUM(DECODE(P.ana_ind, 'N', DECODE(PCM.trans_cd, 'MC', PCM.CUR_PPS_VAL, 'MD', -PCM.CUR_PPS_VAL),0)),0) AS NON_AIR_VAL");
+        sqlQuery.append("  FROM PRT_CUS_MERGE PCM INNER JOIN PRT P ON PCM.PRT_CD = P.PRT_CD");
+        sqlQuery.append("  WHERE PCM.INT_ID = ?");
+        sqlQuery.append("  AND PCM.PRG_CD = ? ");
+        sqlQuery.append("  AND (PCM.CUR_PPS_PTS != 0 OR PCM.CUR_SECT_CNT != 0 OR PCM.CUR_PPS_VAL != 0)");
+        sqlQuery.append("  AND PCM.BATCH_DT BETWEEN trunc(?) AND trunc(?) ");
+        sqlQuery.append("  AND PCM.TRANS_CD in ('MC', 'MD')");
+        sqlQuery.append("  AND (P.ANA_IND = 'A' OR P.ANA_IND = 'N'${appendVal}" );
+        sqlQuery.append("  UNION ALL");
+        sqlQuery.append("  SELECT ");
+        sqlQuery.append("  NVL(SUM(DECODE(P.ana_ind, 'A',DECODE(PT.trans_cd, 'ZC', PT.PPS_BONUS_VALUE_AWDED, 'ZD', -PT.PPS_BONUS_VALUE_AWDED),0)),0) AS AIR_VAL,");
+        sqlQuery.append("  NVL(SUM(DECODE(P.ana_ind, 'N',DECODE(PT.trans_cd, 'ZC', PT.PPS_BONUS_VALUE_AWDED, 'ZD', -PT.PPS_BONUS_VALUE_AWDED),0)),0) AS NON_AIR_VAL");
+        sqlQuery.append("  FROM PROMO_TRANS PT INNER JOIN PRT P ON PT.PRT_CD = P.PRT_CD ");
+        sqlQuery.append("  WHERE PT.INT_ID = ?");
+        sqlQuery.append("  AND PT.PRG_CD = ?  ");
+        sqlQuery.append("  AND PT.BATCH_DT BETWEEN trunc(?) AND trunc(?) ");
+        sqlQuery.append("  AND PT.TRANS_CD in ('ZC', 'ZD') ");
+        sqlQuery.append("  AND PT.PPS_BONUS_VALUE_AWDED > 0  ");
+        sqlQuery.append("  AND (P.ANA_IND = 'A' OR P.ANA_IND = 'N'${appendVal})" );
 
         String paramName = "award";
-        String[] arrToReplace = {"intId","startDt","endDt","refRecType","intId","startDt","endDt","refRecType","intId","startDt","endDt","refRecType"};
+        String[] arrToReplace = {"intId","progCode","startDate","endDate","intId","progCode","startDate","endDate","intId","progCode","startDate","endDate"};
 
-        String[] arrTypes = {"NUMERIC","TIMESTAMP","TIMESTAMP","VARCHAR","NUMERIC","TIMESTAMP","TIMESTAMP","VARCHAR","NUMERIC","TIMESTAMP","TIMESTAMP","VARCHAR"};
+        String[] arrTypes = {"NUMERIC","VARCHAR","TIMESTAMP","TIMESTAMP","NUMERIC","VARCHAR","TIMESTAMP","TIMESTAMP","NUMERIC","VARCHAR","TIMESTAMP","TIMESTAMP"};
 
 
         String toPrint = null;

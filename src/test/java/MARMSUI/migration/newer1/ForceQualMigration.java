@@ -42,9 +42,9 @@ public class ForceQualMigration {
                 "                    },\n" +
                 "                    \"chkIncrementQppYears\": {\n" +
                 "                        \"description\": \"Increment QPP Year Qualified\",\n" +
-                "                        \"isEnabled\": \"N\",\n" +
+                "                        \"isEnabled\": \"Y\",\n" +
                 "                        \"value\": \"N\",\n" +
-                "                        \"visible\": \"N\",\n" +
+                "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"chkReinstateRsrvVal\": {\n" +
@@ -71,8 +71,8 @@ public class ForceQualMigration {
                 "                    \"chkReinstate\": {\n" +
                 "                        \"description\": \"Reinstate Cumulative Value\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": \"Y\",\n" +
-                "                        \"visible\": \"Y\",\n" +
+                "                        \"value\": \"N\",\n" +
+                "                        \"visible\": \"N\",\n" +
                 "                        \"type\": \"checkbox\"\n" +
                 "                    },\n" +
                 "                    \"chkYears\": {\n" +
@@ -99,7 +99,7 @@ public class ForceQualMigration {
                 "                    \"txtCardCode\": {\n" +
                 "                        \"description\": \"Card Create Code\",\n" +
                 "                        \"isEnabled\": \"Y\",\n" +
-                "                        \"value\": \"UP\",\n" +
+                "                        \"value\": null,\n" +
                 "                        \"visible\": \"Y\",\n" +
                 "                        \"type\": \"Text\"\n" +
                 "                    },\n" +
@@ -107,19 +107,19 @@ public class ForceQualMigration {
                 "                    \"forceExtLimit\": 0,\n" +
                 "                    \"dateSelection\": [\n" +
                 "                        {\n" +
-                "                            \"description\": \"Other Date\",\n" +
+                "                            \"description\": \"Current Date\",\n" +
                 "                            \"isEnabled\": \"Y\",\n" +
                 "                            \"value\": {\n" +
-                "                                \"qualStartDt\": \"2024-08-01 00:00:00\",\n" +
-                "                                \"qualEndDt\": \"2025-08-31 00:00:00\",\n" +
+                "                                \"qualStartDt\": \"2025-12-23 10:40:39\",\n" +
+                "                                \"qualEndDt\": \"2026-12-31 10:40:39\",\n" +
                 "                                \"extensionStartDt\": null,\n" +
                 "                                \"reinstateStartDt\": null,\n" +
-                "                                \"otherDate\": \"2024-08-01 00:00:00\"\n" +
+                "                                \"otherDate\": null\n" +
                 "                            },\n" +
                 "                            \"visible\": \"Y\",\n" +
                 "                            \"type\": \"Radio\"\n" +
                 "                        }\n" +
-                "                    ]\n" +
+                "                    ]" +
                 "                }";
 //        String flattenedJson = flattenJsonString(jsonString);
         Map<String, Object> objectMap = extractFieldFromJsonString(jsonString);
