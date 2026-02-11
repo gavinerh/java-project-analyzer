@@ -29,7 +29,7 @@ public class MainOneEmailInsertionImproved {
                 String line = scanner.nextLine();
                 // process each line
                 String[] arr = line.split("\t");
-                if(!contentIdsToBeMigrated.contains(arr[0].trim())) {
+                if(!contentIdsToBeMigrated.contains(arr[4].trim())) {
                     continue;
                 }
                 StringBuilder stringBuilder = new StringBuilder();
