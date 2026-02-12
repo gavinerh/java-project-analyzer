@@ -6,27 +6,30 @@ public class TestingPurposes {
 
 
     public static void main(String[] args) throws Exception {
-        String val = "NMLNKGUD\n" +
-                "NMNTDLN\n" +
-                "NMHMALNK\n" +
-                "NMTCLNK\n" +
-                "NMXODLN\n" +
-                "NMTCDLN\n" +
-                "NMNTLNK\n" +
-                "NMXOLNK\n" +
-                "NMLNKMIR\n" +
-                "NMHMADLN";
-        for(String row : val.split("\n")) {
-            String value = row.replaceAll("\"", "'").replaceAll(",","").trim();
-            String template = "DELETE EMAIL_CNT_DTLS WHERE EMAIL_CONTENT_ID = '%s';";
-            System.out.println(String.format(template, value, value));
-        }
 
-        for(String row : val.split("\n")) {
-            String value = row.replaceAll("\"", "'").replaceAll(",","").trim();
-            String template = "DELETE EMAIL_CNT_MSTR WHERE EMAIL_CONTENT_ID = '%s'";
-            System.out.println(String.format(template, value, value));
-        }
+        String val = "\"NMKFRtrRej\",\"NMKFRtrAcc\",\"NMKFRtrAPPS\",\"NMKFRtrRPPS\"";
+        System.out.println(val.replaceAll("\"","'"));
+//        String val = "NMLNKGUD\n" +
+//                "NMNTDLN\n" +
+//                "NMHMALNK\n" +
+//                "NMTCLNK\n" +
+//                "NMXODLN\n" +
+//                "NMTCDLN\n" +
+//                "NMNTLNK\n" +
+//                "NMXOLNK\n" +
+//                "NMLNKMIR\n" +
+//                "NMHMADLN";
+//        for(String row : val.split("\n")) {
+//            String value = row.replaceAll("\"", "'").replaceAll(",","").trim();
+//            String template = "DELETE EMAIL_CNT_DTLS WHERE EMAIL_CONTENT_ID = '%s';";
+//            System.out.println(String.format(template, value, value));
+//        }
+//
+//        for(String row : val.split("\n")) {
+//            String value = row.replaceAll("\"", "'").replaceAll(",","").trim();
+//            String template = "DELETE EMAIL_CNT_MSTR WHERE EMAIL_CONTENT_ID = '%s'";
+//            System.out.println(String.format(template, value, value));
+//        }
 
     }
 
